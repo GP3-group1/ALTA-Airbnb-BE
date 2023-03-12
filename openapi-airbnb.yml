@@ -147,8 +147,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/successGetAllRooms"
-        "400":
-          $ref: "#/components/responses/getDataFailed"
   /rooms/{id_room}:
     get:
       tags:
@@ -161,8 +159,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/successGetRoom"
-        "400":
-          $ref: "#/components/responses/getDataFailed"
   /users/rooms/{id_room}:
     get:
       tags:
