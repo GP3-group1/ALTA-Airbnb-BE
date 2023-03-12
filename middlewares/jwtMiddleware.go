@@ -11,21 +11,21 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// //go:generate mockery --name JWTMiddleware_ --output ../mocks
-// type JWTMiddleware_ interface {
-// 	ExtractToken(e echo.Context) (uint, string, error)
-// }
+//go:generate mockery --name JWTMiddleware_ --output ../mocks
+type JWTMiddleware_ interface {
+	ExtractToken(e echo.Context) (uint, string, error)
+}
 
-// type JWT struct{}
+type JWT struct{}
 
-// // ExtractToken implements JWTMiddleware_
-// func (u *JWT) ExtractToken(e echo.Context) (uint, string, error) {
-// 	return ExtractToken(e)
-// }
+// ExtractToken implements JWTMiddleware_
+func (u *JWT) ExtractToken(e echo.Context) (uint, string, error) {
+	return ExtractToken(e)
+}
 
-// func NewJWT() JWTMiddleware_ {
-// 	return &JWT{}
-// }
+func NewJWT() JWTMiddleware_ {
+	return &JWT{}
+}
 
 func JWTMiddleware() echo.MiddlewareFunc {
 	return echoJwt.WithConfig(echoJwt.Config{
