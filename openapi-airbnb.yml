@@ -1,0 +1,121 @@
+openapi: "3.0.3"
+info:
+  title: "ALTA Airbnb API"
+  version: "1.0.0"
+  description: "API Documentation for Alta Airbnb"
+  contact:
+    name: Group 1
+    url: https://www.example.com/support
+    email: kharisma.januar@gmail.com
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/JURRASIC_1/ALTA-Airbnb-API/1.0
+tags:
+  - name: Authentication
+    description: Endpoint for verifying who a user is
+  - name: Users
+    description: Endpoint for perform operations on users
+  - name: Rooms
+    description: Endpoint for perform operations on rooms
+  - name: Reservations
+    description: Endpoint for perform operations on reservations
+    
+paths:
+  ####################################
+  #  AUTHENTICATION
+  ####################################
+  /login:
+    post:
+      tags:
+        - Login
+      summary: Get token for access to account
+      requestBody:
+
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "use Token"
+
+
+####################################
+#  COMPONENTS
+####################################
+components:
+  schemas:
+
+  parameters:
+
+  requestBodies:
+
+  responses:
+
+  examples:
+    accessIsDenied:
+      value:
+        message: Access is denied ID data is in the orderInvalid Id
+    accessForbidden:
+      value:
+        message: Access Forbidden
+    badRequest:
+      value:
+        message: Bad Request
+    cantConnecttoServer:
+      value:
+        message: Can't Connect to server
+    dataisAvailable:
+      value:
+        message: Data is Available
+    dataNotFound:
+      value:
+        message: Data Not Found
+    detailsCantBeEmpty:
+      value:
+        message: Details Can't Be Empty
+    emailOrTelephoneNumberAlreadyExist:
+      value:
+        message: Email or Telephone Number Already Exist
+    failedtoUploadFile:
+      value:
+        message: Failed to Upload File
+    fileExtensionNotAllowed:
+      value:
+        message: File Extension Not Allowed
+    idProductNotFound:
+      value:
+        message: Id Product Not Found
+    illegalFile:
+      value:
+        message: Illegal File
+    invalidEmail:
+      value:
+        message: Invalid Email
+    invalidId:
+      value:
+        message: Invalid Id
+    invalidName:
+      value:
+        message: Invalid Name
+    invalidParam:
+      value:
+        message: Invalid Param
+    invalidPassword:
+      value:
+        message: Invalid Password
+    invalidTelephoneNumber:
+      value:
+        message: Invalid Telephone Number
+    nameAlphanumeric:
+      value:
+        message: Name can only contains alphanumeric
+    notAvailable:
+      value:
+        message: Not Available
+    passwordMustConsistOf:
+      value:
+        message: Password must consist of 6 characters or more
+    sizeFileTooBig:
+      value:
+        message: Size File Too Big
