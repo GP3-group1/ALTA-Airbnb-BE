@@ -1,12 +1,11 @@
 openapi: "3.0.3"
 info:
   title: "ALTA Airbnb API"
-  version: "1.0.0"
+  version: "1.0"
   description: "API Documentation for Alta Airbnb"
   contact:
     name: Group 1
     url: https://www.example.com/support
-    email: kharisma.januar@gmail.com
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
@@ -28,9 +27,520 @@ paths:
   /login:
     post:
       tags:
-        - Login
+        - Authentication
       summary: Get token for access to account
       requestBody:
+        $ref: "#/components/requestBodies/requestBodyLogin"
+      responses:
+        "200":
+          $ref: "#/components/responses/loginSuccess"
+        "400":
+          $ref: "#/components/responses/loginFailed"
+  ####################################
+  #  USERS
+  ####################################
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create a new account for user
+      security:
+        - JWTAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyUser"
+      responses:
+        "201":
+          $ref: "#/components/responses/successCreateUser"
+        "400":
+          $ref: "#/components/responses/failedCreateUser"
+    get:
+      tags:
+        - Users
+      summary: Get users data by id
+      security:
+        - JWTAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/successGetUser"
+        "400":
+          $ref: "#/components/responses/getDataFailed"
+    put:
+      tags:
+        - Users
+      summary: Edit user's data by id
+      security:
+        - JWTAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyUserUpdate"
+      responses:
+        "200":
+          $ref: "#/components/responses/successUpdateUser"
+        "400":
+          $ref: "#/components/responses/failedUpdateUser"
+    delete:
+      tags:
+        - Users
+      summary: Delete user by id
+      security:
+        - JWTAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/successDeleteUser"
+        "400":
+          $ref: "#/components/responses/failedDeleteUser"
+  /users/password:
+    put:
+      tags:
+        - Users
+      summary: Update password user
+      security:
+        - JWTAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyUpdatePassword"
+      responses:
+        "200":
+          $ref: "#/components/responses/successUpdatePassword"
+        "400":
+          $ref: "#/components/responses/failedUpdatePassword"
+  ####################################
+  #  ROOMS
+  ####################################
+  /rooms:
+    post:
+      tags:
+        - Rooms
+      summary: Create a new room
+      security:
+        - JWTAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyRoom"
+      responses:
+        "201":
+          $ref: "#/components/responses/successCreateRoom"
+        "400":
+          $ref: "#/components/responses/failedCreateRoom"
+    get:
+      tags:
+        - Rooms
+      summary: Get all rooms data
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/nameParam"
+        - $ref: "#/components/parameters/locationParam"
+        - $ref: "#/components/parameters/ratingParam"
+        - $ref: "#/components/parameters/priceParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/successGetAllRooms"
+        "400":
+          $ref: "#/components/responses/getDataFailed"
+  /rooms/{id_room}:
+    get:
+      tags:
+        - Rooms
+      summary: Get room data by id
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idRoomParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/successGetRoom"
+        "400":
+          $ref: "#/components/responses/getDataFailed"
+  /users/rooms/:
+    get:
+      tags:
+        - Rooms
+      summary: Get all rooms data by user id
+      security:
+        - JWTAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/successGetAllRooms"
+        "400":
+          $ref: "#/components/responses/getDataFailed"
+  /users/rooms/{room_id}:
+    get:
+      tags:
+        - Rooms
+      summary: Get room data by id for owner
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idRoomParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/successGetRoom"
+        "400":
+          $ref: "#/components/responses/getDataFailed"
+    put:
+      tags:
+        - Rooms
+      summary: Edit room's data
+      security:
+        - JWTAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyRoomUpdate"
+      responses:
+        "201":
+          $ref: "#/components/responses/successUpdateRoom"
+        "400":
+          $ref: "#/components/responses/failedUpdateRoom"
+    delete:
+      tags:
+        - Rooms
+      summary: Delete room by id
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idRoomParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/successDeleteRoom"
+        "400":
+          $ref: "#/components/responses/failedDeleteRoom"
+  /rooms/{room_id}/rating:
+    post:
+      tags:
+        - Rooms
+      summary: Give rating after customer
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idRoomParam"
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyRating"
+      responses:
+        "201":
+          $ref: "#/components/responses/successCreateRating"
+        "400":
+          $ref: "#/components/responses/failedCreateRating"
+  ####################################
+  #  RESERVATIONS
+  ####################################
+  /rooms/{id_room}/reservations/check:
+    post:
+      tags:
+        - Reservations
+      summary: Check room availability
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idRoomParam"
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyReservationCheck"
+      responses:
+        "201":
+          $ref: "#/components/responses/successCheckReservation"
+        "400":
+          $ref: "#/components/responses/failedCheckReservation"
+  /rooms/{id_room}/reservations:
+    post:
+      tags:
+        - Reservations
+      summary: Create a new room reservation
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idRoomParam"
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyReservation"
+      responses:
+        "201":
+          $ref: "#/components/responses/successReservation"
+        "400":
+          $ref: "#/components/responses/failedReservation"
+  /users/reservations:
+    get:
+      tags:
+        - Reservations
+      summary: Get all reservations data by user id
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - JWTAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/successGetAllReservations"
+        "400":
+          $ref: "#/components/responses/getDataFailed"
+
+####################################
+#  COMPONENTS
+####################################
+components:
+  schemas:
+    requestDataLogin:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    requestDataUser:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+          description: inputted email must be unique
+        password:
+          type: string
+        phone:
+          type: string
+        sex:
+          type: string
+        address:
+          type: string
+    requestUpdatePasswordUser:
+      type: object
+      required:
+        - old_password
+        - new_password
+      properties:
+        old_password:
+          type: string
+        new_password:
+          type: string
+    requestDataRoom:
+      type: object
+      required:
+        - name
+        - description
+        - location
+        - price
+        - image
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        price:
+          type: integer
+        images:
+          type: string
+    requestDataRating:
+      type: object
+      required:
+        - rating
+      properties:
+        rating:
+          type: integer
+    requestDataReservationCheck:
+      type: object
+      required:
+        - check_in
+        - check_out
+      properties:
+        check_in:
+          type: string
+        check_out:
+          type: string
+    requestDataReservation:
+      type: object
+      required:
+        - check_in
+        - check_out
+        - total_price
+      properties:
+        check_in:
+          type: string
+        check_out:
+          type: string
+        total_price:
+          type: integer
+    responseLoginWithData:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            token:
+              type: string
+        message:
+          type: string
+    responseNonData:
+      type: object
+      properties:
+        message:
+          type: string
+    responseUsersWithData:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
+            sex:
+              type: string
+            address:
+              type: string
+    responseRoomWithData:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+            location:
+              type: string
+            price:
+              type: integer
+            url_images:
+              type: string
+            avg_rating:
+                type: integer
+        message:
+          type: string
+    responseRoomsWithDataArray:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              description:
+                type: string
+              location:
+                type: string
+              price:
+                type: integer
+              url_images:
+                type: string
+              avg_rating:
+                type: integer
+        message:
+          type: string
+    responseReservationWithData:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              balance:
+                type: integer
+        message:
+          type: string
+    responseReservationsWithDataArray:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              room_name:
+                type: string
+              check_in:
+                type: string
+              check_out:
+                type: string
+              price:
+                type: integer
+              total_night:
+                type: integer
+              total_price:
+                type: integer
+        message:
+          type: string
+
+  parameters:
+    pageParam:
+      name: page
+      in: query
+      description: Page number to show data
+      required: false
+      schema:
+        type: integer
+        example: 1
+    limitParam:
+      name: limit
+      in: query
+      description: Page number to show data
+      required: false
+      schema:
+        type: integer
+        example: 8
+    nameParam:
+      name: name
+      in: query
+      description: Search room by name
+      required: false
+      schema:
+        type: string
+        example: Villa
+    locationParam:
+      name: location
+      in: query
+      description: Search room by location
+      required: false
+      schema:
+        type: string
+        example: Bali
+    ratingParam:
+      name: rating
+      in: query
+      description: Filter room by rating
+      required: false
+      schema:
+        type: integer
+        example: 3
+    priceParam:
+      name: price
+      in: query
+      description: Filter room by price
+      required: false
+      schema:
+        type: integer
+        example: 100
+    idRoomParam:
+      name: id_room
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 1
 
   securitySchemes:
     JWTAuth:
@@ -39,19 +549,546 @@ paths:
       bearerFormat: JWT
       description: "use Token"
 
-
-####################################
-#  COMPONENTS
-####################################
-components:
-  schemas:
-
-  parameters:
-
   requestBodies:
+    requestBodyLogin:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestDataLogin"
+          example:
+            email: user@mail.com
+            password: user
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestDataLogin"
+    requestBodyUser:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestDataUser"
+          examples:
+            addUser1:
+              value:
+                name: Anna Hathaway
+                email: anna@mail.com
+                password: qwerty
+            addUser2:
+              value:
+                name: Matthew McConaughey
+                email: matt@mail.com
+                password: qwerty
+            addUser3:
+              value:
+                name: Christian Bale
+                email: bale@mail.com
+                password: qwerty
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestDataUser"
+    requestBodyUserUpdate:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestDataUser"
+          examples:
+            newData1:
+              value:
+                name: User
+                email: user@mail.com
+                phone: "08123456789"
+                sex: Female
+                Address: Bandar Lampung
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestDataUser"
+    requestBodyUpdatePassword:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestUpdatePasswordUser"
+          examples:
+            newData1:
+              value:
+                old_password: qwerty
+                new_password: newpass
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestUpdatePasswordUser"
+    requestBodyRoom:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestDataRoom"
+          examples:
+            addRoom1:
+              value:
+                name: Villa Lautan Biru
+                description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
+                location: Bali, Indonesia
+                price: 400
+                images: https://a0.muscache.com/im/pictures/miso/Hosting-36726643/original/0dd03235-858d-4c2b-b1c3-73389a928caa.jpeg?im_w=1200
+            addRoom2:
+              value:
+                name: Penginapan Romantis - Private Sunset Pool
+                description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi
+                location: Bali, Indonesia
+                price: 325
+                images: https://a0.muscache.com/im/pictures/6943ce46-c64f-43b4-824b-5551735befcc.jpg?im_w=1200
+            addRoom3:
+              value:
+                name: Kubu d'Ume
+                description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi pribadi
+                location: Bali, Indonesia
+                price: 50
+                images: https://a0.muscache.com/im/pictures/47b2b626-841b-471a-92aa-fa70761fd832.jpg?im_w=720
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestDataRoom"
+    requestBodyRoomUpdate:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestDataRoom"
+          examples:
+            newData1:
+              value:
+                name: Kubu d'Ume
+                description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi pribadi
+                location: Bali, Indonesia
+                price: 50
+                images: https://a0.muscache.com/im/pictures/47b2b626-841b-471a-92aa-fa70761fd832.jpg?im_w=720
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestDataRoom"
+    requestBodyRating:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestDataRating"
+          examples:
+            addRating1:
+              value:
+                rating: 4
+            addRating2:
+              value:
+                rating: 5
+            addRating3:
+              value:
+                rating: 3
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestDataRating"
+    requestBodyReservationCheck:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestDataReservationCheck"
+          examples:
+            checkReservation1:
+              value:
+                check_in: 2023-12-03
+                check_out: 2023-14-03
+            checkReservation2:
+              value:
+                check_in: 2023-12-04
+                check_out: 2023-14-04
+            checkReservation3:
+              value:
+                check_in: 2023-01-03
+                check_out: 2023-02-03
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestDataReservationCheck"
+    requestBodyReservation:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestDataReservation"
+          examples:
+            addReservation1:
+              value:
+                check_in: 2023-12-03
+                check_out: 2023-14-03
+                total_price: 600
+            addReservation2:
+              value:
+                check_in: 2023-12-04
+                check_out: 2023-14-04
+                total_price: 700
+            addReservation3:
+              value:
+                check_in: 2023-01-03
+                check_out: 2023-02-03
+                total_price: 350
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestDataReservation"
 
   responses:
-
+    loginSuccess:
+      description: Success Response Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseLoginWithData"
+          example:
+            data:
+              {
+                id : 2,
+                name: User,
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2Mzk2OTAwMjMsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6NH0.1Ij1ZVqpqPDOVXzaXyqcyNMlnbLTfwD28Byv0aWNjAQ,
+              }
+            message: Login Success
+    loginFailed:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Email or Password Incorrect
+    successCreateUser:
+      description: Success Response Create User
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Success Add User
+    failedCreateUser:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            Invalid Name:
+              $ref: "#/components/examples/invalidName"
+            Name alphanumeric:
+              $ref: "#/components/examples/nameAlphanumeric"
+            Invalid Email:
+              $ref: "#/components/examples/invalidEmail"
+            Invalid Password:
+              $ref: "#/components/examples/invalidPassword"
+            Password Must Consist Of:
+              $ref: "#/components/examples/passwordMustConsistOf"
+            Email Already Exist:
+              $ref: "#/components/examples/emailOrTelephoneNumberAlreadyExist"
+    successGetUser:
+      description: Success Response Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseUsersWithData"
+          example:
+            data:
+              id: 2
+              name: User
+              email: user@alta.com
+              phone: "08123456789"
+              sex: Male
+              address: Jakarta Selatan
+            message: Success
+    getDataFailed:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            Data Not Found:
+              $ref: "#/components/examples/dataNotFound"
+            Bad Request:
+              $ref: "#/components/examples/badRequest"
+    successUpdateUser:
+      description: Success Response Update User
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Success Update User
+    failedUpdateUser:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            Invalid Id:
+              $ref: "#/components/examples/invalidId"
+            Data Not Found:
+              $ref: "#/components/examples/dataNotFound"
+            Access Forbidden:
+              $ref: "#/components/examples/accessForbidden"
+            Invalid Name:
+              $ref: "#/components/examples/invalidName"
+            Invalid Email:
+              $ref: "#/components/examples/invalidEmail"
+            Invalid Password:
+              $ref: "#/components/examples/invalidPassword"
+            Password Must Consist Of:
+              $ref: "#/components/examples/passwordMustConsistOf"
+            Email Already Exist:
+              $ref: "#/components/examples/emailOrTelephoneNumberAlreadyExist"
+    successDeleteUser:
+      description: Success Response Delete User
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Success Delete User
+    failedDeleteUser:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            Access Forbidden:
+              $ref: "#/components/examples/accessForbidden"
+            Invalid Id:
+              $ref: "#/components/examples/invalidId"
+            Data Not Found:
+              $ref: "#/components/examples/dataNotFound"
+    successUpdatePassword:
+      description: Success Response Update User Password
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Success Update Password
+    failedUpdatePassword:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            Invalid Old Password:
+              $ref: "#/components/examples/invalidPassword"
+    successCreateRoom:
+      description: Success Response Create User
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Success Add Room
+    failedCreateRoom:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            Empty Detail:
+              $ref: "#/components/examples/detailsCantBeEmpty"
+            File Not Allowed:
+              $ref: "#/components/examples/fileExtensionNotAllowed"
+            Illegal File:
+              $ref: "#/components/examples/illegalFile"
+            Size File Too Big:
+              $ref: "#/components/examples/sizeFileTooBig"
+    successGetAllRooms:
+      description: Success Response Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseRoomsWithDataArray"
+          example:
+            data:
+              [
+                {
+                  id: 1,
+                  name: Villa Lautan Biru,
+                  description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet,
+                  location: "Bali, Indonesia",
+                  price: 400,
+                  url_images: https://a0.muscache.com/im/pictures/miso/Hosting-36726643/original/0dd03235-858d-4c2b-b1c3-73389a928caa.jpeg?im_w=1200,
+                  avg_rating: 4.5,
+                },
+                {
+                  id: 2,
+                  name: Penginapan Romantis - Private Sunset Pool,
+                  description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi,
+                  location: "Bali, Indonesia",
+                  price: 325,
+                  url_images: https://a0.muscache.com/im/pictures/6943ce46-c64f-43b4-824b-5551735befcc.jpg?im_w=1200,
+                  avg_rating: 4.2,
+                },
+                {
+                  id: 3,
+                  name: Kubu d'Ume,
+                  description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi pribadi,
+                  location: "Bali, Indonesia",
+                  price: 50,
+                  images: https://a0.muscache.com/im/pictures/47b2b626-841b-471a-92aa-fa70761fd832.jpg?im_w=720,
+                  avg_rating: 3.8,
+                },
+              ]
+            message: Success
+    successGetRoom:
+      description: Success Response Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseRoomWithData"
+          example:
+            data:
+              id: 1
+              name: Villa Lautan Biru
+              description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
+              location: "Bali, Indonesia"
+              price: 400
+              url_images: https://a0.muscache.com/im/pictures/miso/Hosting-36726643/original/0dd03235-858d-4c2b-b1c3-73389a928caa.jpeg?im_w=1200
+              avg_rating: 4.5
+            message: Success
+    successUpdateRoom:
+      description: Success Response Update Room
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Success Update Room
+    failedUpdateRoom:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            Empty Detail:
+              $ref: "#/components/examples/detailsCantBeEmpty"
+            File Not Allowed:
+              $ref: "#/components/examples/fileExtensionNotAllowed"
+            Illegal File:
+              $ref: "#/components/examples/illegalFile"
+            Size File Too Big:
+              $ref: "#/components/examples/sizeFileTooBig"
+    successDeleteRoom:
+      description: Success Response Delete Room
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Success Delete User
+    failedDeleteRoom:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            Access Forbidden:
+              $ref: "#/components/examples/accessForbidden"
+            Invalid Id:
+              $ref: "#/components/examples/invalidId"
+            Data Not Found:
+              $ref: "#/components/examples/dataNotFound"
+    successCreateRating:
+      description: Success Response Create Rating
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Success Add Rating
+    failedCreateRating:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Failed Add Rating
+    successCheckReservation:
+      description: Success Response Room Available
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Room Available
+    failedCheckReservation:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          examples:
+            Not Available:
+              $ref: "#/components/examples/notAvailable"
+    successReservation:
+      description: Success Response Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseReservationWithData"
+          example:
+            data:
+              balance: 600
+            message: Success
+    failedReservation:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Failed Reservation
+    successGetAllReservations:
+      description: Success Response Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseReservationsWithDataArray"
+          example:
+            data:
+              [
+                {
+                  id: 1,
+                  room_name: Villa Lautan Biru,
+                  check_in: 2023-12-03,
+                  check_out: 2023-14-03,
+                  price: 400,
+                  total_night: 2,
+                  total_price: 800,
+                },
+                {
+                  id: 2,
+                  room_name: Penginapan Romantis - Private Sunset Pool,
+                  check_in: 2023-12-04,
+                  check_out: 2023-14-04,
+                  price: 325,
+                  total_night: 2,
+                  total_price: 650,
+                },
+                {
+                  id: 3,
+                  room_name: Kubu d'Ume,
+                  check_in: 2023-01-03,
+                  check_out: 2023-02-03,
+                  price: 50,
+                  total_night: 1,
+                  total_price: 50,
+                },
+              ]
+            message: Success
+            
   examples:
     accessIsDenied:
       value:
