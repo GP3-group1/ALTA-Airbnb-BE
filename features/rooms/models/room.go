@@ -10,10 +10,9 @@ import (
 
 type Room struct {
 	gorm.Model
-	PhotoUrl     string                          `gorm:"type:text"`
 	Name         string                          `gorm:"not null;type:varchar(50)"`
 	Description  string                          `gorm:"not null;type:text"`
-	location     string                          `gorm:"not null;type:text"`
+	Location     string                          `gorm:"not null;type:text"`
 	Price        float64                         `gorm:"not null"`
 	Reservations []_reservationModel.Reservation `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Ratings      []_ratingModel.Rating           `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
