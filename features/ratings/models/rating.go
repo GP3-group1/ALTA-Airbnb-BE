@@ -6,6 +6,6 @@ import (
 
 type Rating struct {
 	gorm.Model
-	rating float64
 	RoomID uint
+	Rating float64
 }

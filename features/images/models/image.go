@@ -6,6 +6,6 @@ import (
 
 type Image struct {
 	gorm.Model
-	url    string `gorm:"not null;type:text"`
 	RoomID uint
+	Url    string `gorm:"not null;type:text"`
 }
