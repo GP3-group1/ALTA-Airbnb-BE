@@ -137,6 +137,18 @@ paths:
           $ref: "#/components/responses/successGetAllRooms"
         "400":
           $ref: "#/components/responses/getDataFailed"
+  /users/rooms/:
+    get:
+      tags:
+        - Rooms
+      summary: Get all rooms data by user id
+      security:
+        - JWTAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/successGetAllRooms"
+        "400":
+          $ref: "#/components/responses/getDataFailed"
   /rooms/{id_room}:
     get:
       tags:
@@ -151,19 +163,7 @@ paths:
           $ref: "#/components/responses/successGetRoom"
         "400":
           $ref: "#/components/responses/getDataFailed"
-  /users/rooms/:
-    get:
-      tags:
-        - Rooms
-      summary: Get all rooms data by user id
-      security:
-        - JWTAuth: []
-      responses:
-        "200":
-          $ref: "#/components/responses/successGetAllRooms"
-        "400":
-          $ref: "#/components/responses/getDataFailed"
-  /users/rooms/{room_id}:
+  /users/rooms/{id_room}:
     get:
       tags:
         - Rooms
@@ -174,7 +174,7 @@ paths:
         - $ref: "#/components/parameters/idRoomParam"
       responses:
         "200":
-          $ref: "#/components/responses/successGetRoom"
+          $ref: "#/components/responses/successGetRoomForOwner"
         "400":
           $ref: "#/components/responses/getDataFailed"
     put:
@@ -183,6 +183,8 @@ paths:
       summary: Edit room's data
       security:
         - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idRoomParam"
       requestBody:
         $ref: "#/components/requestBodies/requestBodyRoomUpdate"
       responses:
@@ -203,7 +205,7 @@ paths:
           $ref: "#/components/responses/successDeleteRoom"
         "400":
           $ref: "#/components/responses/failedDeleteRoom"
-  /rooms/{room_id}/rating:
+  /rooms/{id_room}/rating:
     post:
       tags:
         - Rooms
@@ -222,22 +224,21 @@ paths:
   ####################################
   #  RESERVATIONS
   ####################################
-  /rooms/{id_room}/reservations/check:
-    post:
+  /users/reservations:
+    get:
       tags:
         - Reservations
-      summary: Check room availability
+      summary: Get all reservations data by user id
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
       security:
         - JWTAuth: []
-      parameters:
-        - $ref: "#/components/parameters/idRoomParam"
-      requestBody:
-        $ref: "#/components/requestBodies/requestBodyReservationCheck"
       responses:
-        "201":
-          $ref: "#/components/responses/successCheckReservation"
+        "200":
+          $ref: "#/components/responses/successGetAllReservations"
         "400":
-          $ref: "#/components/responses/failedCheckReservation"
+          $ref: "#/components/responses/getDataFailed"
   /rooms/{id_room}/reservations:
     post:
       tags:
@@ -254,21 +255,22 @@ paths:
           $ref: "#/components/responses/successReservation"
         "400":
           $ref: "#/components/responses/failedReservation"
-  /users/reservations:
-    get:
+  /rooms/{id_room}/reservations/check:
+    post:
       tags:
         - Reservations
-      summary: Get all reservations data by user id
-      parameters:
-        - $ref: "#/components/parameters/pageParam"
-        - $ref: "#/components/parameters/limitParam"
+      summary: Check room availability
       security:
         - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idRoomParam"
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyReservationCheck"
       responses:
-        "200":
-          $ref: "#/components/responses/successGetAllReservations"
+        "201":
+          $ref: "#/components/responses/successCheckReservation"
         "400":
-          $ref: "#/components/responses/getDataFailed"
+          $ref: "#/components/responses/failedCheckReservation"
 
 ####################################
 #  COMPONENTS
@@ -333,7 +335,7 @@ components:
           type: string
         price:
           type: integer
-        images:
+        image:
           type: string
     requestDataRating:
       type: object
@@ -384,7 +386,7 @@ components:
       properties:
         message:
           type: string
-    responseUsersWithData:
+    responseUserWithData:
       type: object
       properties:
         data:
@@ -402,6 +404,8 @@ components:
               type: string
             address:
               type: string
+        message:
+          type: string
     responseRoomWithData:
       type: object
       properties:
@@ -422,6 +426,26 @@ components:
               type: string
             avg_rating:
                 type: integer
+        message:
+          type: string
+    responseRoomWithDataForOwner:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+            location:
+              type: string
+            price:
+              type: integer
+            url_images:
+              type: string
         message:
           type: string
     responseRoomsWithDataArray:
@@ -452,12 +476,10 @@ components:
       type: object
       properties:
         data:
-          type: array
-          items:
-            type: object
-            properties:
-              balance:
-                type: integer
+          type: object
+          properties:
+            balance:
+              type: integer
         message:
           type: string
     responseReservationsWithDataArray:
@@ -631,21 +653,21 @@ components:
                 description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
                 location: Bali, Indonesia
                 price: 400
-                images: https://a0.muscache.com/im/pictures/miso/Hosting-36726643/original/0dd03235-858d-4c2b-b1c3-73389a928caa.jpeg?im_w=1200
+                image: urlimage
             addRoom2:
               value:
                 name: Penginapan Romantis - Private Sunset Pool
                 description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi
                 location: Bali, Indonesia
                 price: 325
-                images: https://a0.muscache.com/im/pictures/6943ce46-c64f-43b4-824b-5551735befcc.jpg?im_w=1200
+                image: urlimage
             addRoom3:
               value:
                 name: Kubu d'Ume
                 description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi pribadi
                 location: Bali, Indonesia
                 price: 50
-                images: https://a0.muscache.com/im/pictures/47b2b626-841b-471a-92aa-fa70761fd832.jpg?im_w=720
+                image: urlimage
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/requestDataRoom"
@@ -662,7 +684,7 @@ components:
                 description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi pribadi
                 location: Bali, Indonesia
                 price: 50
-                images: https://a0.muscache.com/im/pictures/47b2b626-841b-471a-92aa-fa70761fd832.jpg?im_w=720
+                images: urlimage
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/requestDataRoom"
@@ -742,11 +764,9 @@ components:
             $ref: "#/components/schemas/responseLoginWithData"
           example:
             data:
-              {
-                id : 2,
-                name: User,
-                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2Mzk2OTAwMjMsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6NH0.1Ij1ZVqpqPDOVXzaXyqcyNMlnbLTfwD28Byv0aWNjAQ,
-              }
+              id : 2
+              name: User
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2Mzk2OTAwMjMsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6NH0.1Ij1ZVqpqPDOVXzaXyqcyNMlnbLTfwD28Byv0aWNjAQ
             message: Login Success
     loginFailed:
       description: Bad Request Response
@@ -788,7 +808,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/responseUsersWithData"
+            $ref: "#/components/schemas/responseUserWithData"
           example:
             data:
               id: 2
@@ -823,23 +843,8 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/responseNonData"
-          examples:
-            Invalid Id:
-              $ref: "#/components/examples/invalidId"
-            Data Not Found:
-              $ref: "#/components/examples/dataNotFound"
-            Access Forbidden:
-              $ref: "#/components/examples/accessForbidden"
-            Invalid Name:
-              $ref: "#/components/examples/invalidName"
-            Invalid Email:
-              $ref: "#/components/examples/invalidEmail"
-            Invalid Password:
-              $ref: "#/components/examples/invalidPassword"
-            Password Must Consist Of:
-              $ref: "#/components/examples/passwordMustConsistOf"
-            Email Already Exist:
-              $ref: "#/components/examples/emailOrTelephoneNumberAlreadyExist"
+          example:
+            message: Failed Update User
     successDeleteUser:
       description: Success Response Delete User
       content:
@@ -855,8 +860,6 @@ components:
           schema:
             $ref: "#/components/schemas/responseNonData"
           examples:
-            Access Forbidden:
-              $ref: "#/components/examples/accessForbidden"
             Invalid Id:
               $ref: "#/components/examples/invalidId"
             Data Not Found:
@@ -876,7 +879,7 @@ components:
           schema:
             $ref: "#/components/schemas/responseNonData"
           examples:
-            Invalid Old Password:
+            Invalid Password:
               $ref: "#/components/examples/invalidPassword"
     successCreateRoom:
       description: Success Response Create User
@@ -892,15 +895,8 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/responseNonData"
-          examples:
-            Empty Detail:
-              $ref: "#/components/examples/detailsCantBeEmpty"
-            File Not Allowed:
-              $ref: "#/components/examples/fileExtensionNotAllowed"
-            Illegal File:
-              $ref: "#/components/examples/illegalFile"
-            Size File Too Big:
-              $ref: "#/components/examples/sizeFileTooBig"
+          example:
+            message: Failed Add Room
     successGetAllRooms:
       description: Success Response Data
       content:
@@ -916,7 +912,7 @@ components:
                   description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet,
                   location: "Bali, Indonesia",
                   price: 400,
-                  url_images: https://a0.muscache.com/im/pictures/miso/Hosting-36726643/original/0dd03235-858d-4c2b-b1c3-73389a928caa.jpeg?im_w=1200,
+                  url_images: urlimage,
                   avg_rating: 4.5,
                 },
                 {
@@ -925,7 +921,7 @@ components:
                   description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi,
                   location: "Bali, Indonesia",
                   price: 325,
-                  url_images: https://a0.muscache.com/im/pictures/6943ce46-c64f-43b4-824b-5551735befcc.jpg?im_w=1200,
+                  url_images: urlimage,
                   avg_rating: 4.2,
                 },
                 {
@@ -934,7 +930,7 @@ components:
                   description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi pribadi,
                   location: "Bali, Indonesia",
                   price: 50,
-                  images: https://a0.muscache.com/im/pictures/47b2b626-841b-471a-92aa-fa70761fd832.jpg?im_w=720,
+                  images: urlimage,
                   avg_rating: 3.8,
                 },
               ]
@@ -952,8 +948,23 @@ components:
               description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
               location: "Bali, Indonesia"
               price: 400
-              url_images: https://a0.muscache.com/im/pictures/miso/Hosting-36726643/original/0dd03235-858d-4c2b-b1c3-73389a928caa.jpeg?im_w=1200
+              url_images: urlimage
               avg_rating: 4.5
+            message: Success
+    successGetRoomForOwner:
+      description: Success Response Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseRoomWithDataForOwner"
+          example:
+            data:
+              id: 1
+              name: Villa Lautan Biru
+              description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
+              location: "Bali, Indonesia"
+              price: 400
+              url_images: urlimage
             message: Success
     successUpdateRoom:
       description: Success Response Update Room
@@ -969,15 +980,8 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/responseNonData"
-          examples:
-            Empty Detail:
-              $ref: "#/components/examples/detailsCantBeEmpty"
-            File Not Allowed:
-              $ref: "#/components/examples/fileExtensionNotAllowed"
-            Illegal File:
-              $ref: "#/components/examples/illegalFile"
-            Size File Too Big:
-              $ref: "#/components/examples/sizeFileTooBig"
+          example:
+            message: Failed Update Room
     successDeleteRoom:
       description: Success Response Delete Room
       content:
@@ -985,20 +989,15 @@ components:
           schema:
             $ref: "#/components/schemas/responseNonData"
           example:
-            message: Success Delete User
+            message: Success Delete Room
     failedDeleteRoom:
       description: Bad Request Response
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/responseNonData"
-          examples:
-            Access Forbidden:
-              $ref: "#/components/examples/accessForbidden"
-            Invalid Id:
-              $ref: "#/components/examples/invalidId"
-            Data Not Found:
-              $ref: "#/components/examples/dataNotFound"
+          example:
+            message: Failed Delete Room
     successCreateRating:
       description: Success Response Create Rating
       content:
