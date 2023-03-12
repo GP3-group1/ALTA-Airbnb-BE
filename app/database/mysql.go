@@ -8,6 +8,11 @@ import (
 	"gorm.io/gorm"
 
 	"alta-airbnb-be/app/config"
+	_imageModel "alta-airbnb-be/features/images/models"
+	_ratingModel "alta-airbnb-be/features/ratings/models"
+	_reservationModel "alta-airbnb-be/features/reservations/models"
+	_roomModel "alta-airbnb-be/features/rooms/models"
+	_userModel "alta-airbnb-be/features/users/models"
 )
 
 func InitDB(cfg config.AppConfig) *gorm.DB {
@@ -24,5 +29,5 @@ func InitDB(cfg config.AppConfig) *gorm.DB {
 }
 
 func InitialMigration(db *gorm.DB) {
-	// db.AutoMigrate()
+	db.AutoMigrate(_userModel.User{}, _roomModel.Room{}, _reservationModel.Reservation{}, _imageModel.Image{}, _ratingModel.Rating{})
 }
