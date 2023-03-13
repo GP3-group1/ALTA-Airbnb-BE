@@ -15,7 +15,14 @@ type userQuery struct {
 
 // Delete implements users.UserDataInterface_
 func (userQuery *userQuery) Delete(userID uint) error {
-	panic("unimplemented")
+	txDelete := userQuery.db.Delete(&models.User{}, userID)
+	if txDelete.Error != nil {
+		return txDelete.Error
+	}
+	if txDelete.RowsAffected == 0 {
+		return errors.New(consts.SERVER_ZeroRowsAffected)
+	}
+	return nil
 }
 
 // Insert implements users.UserDataInterface_
@@ -43,12 +50,25 @@ func (userQuery *userQuery) Login(email string) (users.UserEntity, error) {
 
 // SelectData implements users.UserDataInterface_
 func (userQuery *userQuery) SelectData(userID uint) (users.UserEntity, error) {
-	panic("unimplemented")
+	userGorm := models.User{}
+	txSelect := userQuery.db.Where("id = ?", userID).First(&userGorm)
+	if txSelect.Error != nil {
+		return users.UserEntity{}, txSelect.Error
+	}
+	return GormToEntity(userGorm), nil
 }
 
 // UpdateData implements users.UserDataInterface_
-func (userQuery *userQuery) UpdateData(input users.UserEntity) error {
-	panic("unimplemented")
+func (userQuery *userQuery) UpdateData(userID uint, input users.UserEntity) error {
+	userGorm := EntityToGorm(input)
+	txUpdate := userQuery.db.Where("id = ?", userID).Updates(&userGorm)
+	if txUpdate.Error != nil {
+		return txUpdate.Error
+	}
+	if txUpdate.RowsAffected == 0 {
+		return errors.New(consts.SERVER_ZeroRowsAffected)
+	}
+	return nil
 }
 
 func New(db *gorm.DB) users.UserDataInterface_ {

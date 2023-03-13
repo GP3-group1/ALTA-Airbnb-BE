@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"alta-airbnb-be/features/users"
+	"alta-airbnb-be/middlewares"
 	"alta-airbnb-be/utils/consts"
 	"alta-airbnb-be/utils/helpers"
 	"net/http"
@@ -15,14 +16,19 @@ type UserHandler struct {
 
 // GetUserData implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) GetUserData(c echo.Context) error {
-	panic("unimplemented")
+	userID := middlewares.ExtractTokenUserId(c)
+	userEntity, errSelect := userHandler.userService.GetData(userID)
+	if errSelect != nil {
+		return c.JSON(helpers.ErrorResponse(errSelect))
+	}
+	return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.USER_SuccessReadUserData, entityToResponse(userEntity)))
 }
 
 // Login implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) Login(c echo.Context) error {
 	loginInput := users.UserLogin{}
-	err := c.Bind(&loginInput)
-	if err != nil {
+	errBind := c.Bind(&loginInput)
+	if errBind != nil {
 		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
 	}
 	userEntity, token, errLogin := userHandler.userService.Login(loginInput.Email, loginInput.Password)
@@ -40,12 +46,11 @@ func (userHandler *UserHandler) Login(c echo.Context) error {
 // Register implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) Register(c echo.Context) error {
 	userInput := users.UserRegister{}
-	err := c.Bind(&userInput)
-	if err != nil {
+	errBind := c.Bind(&userInput)
+	if errBind != nil {
 		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
 	}
-	userEntity := registerToEntity(userInput)
-	errInsert := userHandler.userService.Create(userEntity)
+	errInsert := userHandler.userService.Create(registerToEntity(userInput))
 	if errInsert != nil {
 		return c.JSON(helpers.ErrorResponse(errInsert))
 	}
@@ -55,17 +60,43 @@ func (userHandler *UserHandler) Register(c echo.Context) error {
 
 // RemoveAccount implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) RemoveAccount(c echo.Context) error {
-	panic("unimplemented")
+	userID := middlewares.ExtractTokenUserId(c)
+	errDelete := userHandler.userService.Remove(userID)
+	if errDelete != nil {
+		return c.JSON(helpers.ErrorResponse(errDelete))
+	}
+	return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessDelete))
 }
 
 // UpdateAccount implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) UpdateAccount(c echo.Context) error {
-	panic("unimplemented")
+	userID := middlewares.ExtractTokenUserId(c)
+	userInput := users.UserUpdate{}
+	errBind := c.Bind(&userInput)
+	if errBind != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
+	}
+	errUpdate := userHandler.userService.ModifyData(userID, requestUpdateToEntity(userInput))
+	if errUpdate != nil {
+		return c.JSON(helpers.ErrorResponse(errUpdate))
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateUserData))
 }
 
 // UpdatePassword implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) UpdatePassword(c echo.Context) error {
-	panic("unimplemented")
+	userID := middlewares.ExtractTokenUserId(c)
+	input := users.UserUpdatePassword{}
+	errBind := c.Bind(&input)
+	if errBind != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
+	}
+	errUpdatePassword := userHandler.userService.ModifyPassword(userID, requestUpdatePasswordToEntity(input))
+	if errUpdatePassword != nil {
+		return c.JSON(helpers.ErrorResponse(errUpdatePassword))
+	}
+	return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateUserData))
 }
 
 func New(userService users.UserServiceInterface_) users.UserDeliveryInterface_ {
