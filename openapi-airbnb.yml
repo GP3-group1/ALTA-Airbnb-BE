@@ -157,6 +157,22 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/successGetRoom"
+        "400":
+          $ref: "#/components/responses/getDataFailed"
+  /users/rooms/{id_room}:
+    get:
+      tags:
+        - Rooms
+      summary: Get room data by id for owner
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idRoomParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/successGetRoomForOwner"
+        "400":
+          $ref: "#/components/responses/getDataFailed"
     put:
       tags:
         - Rooms
