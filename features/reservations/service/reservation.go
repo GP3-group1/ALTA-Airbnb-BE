@@ -12,8 +12,18 @@ type reservationService struct {
 }
 
 // Create implements reservations.ReservationServiceInterface_
-func (*reservationService) Create(input reservations.ReservationEntity) error {
-	panic("unimplemented")
+func (reservationService *reservationService) Create(input reservations.ReservationEntity) error {
+	errValidate := reservationService.validate.Struct(input)
+	if errValidate != nil {
+		return errValidate
+	}
+
+	errInsert := reservationService.reservationData.Insert(input)
+	if errInsert != nil {
+		return errInsert
+	}
+
+	return nil
 }
 
 func New(reservationData reservations.ReservationDataInterface_) reservations.ReservationServiceInterface_ {

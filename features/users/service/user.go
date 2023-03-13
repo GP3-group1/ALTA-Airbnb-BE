@@ -17,7 +17,7 @@ type userService struct {
 
 // Create implements users.UserServiceInterface_
 func (userService *userService) Create(input users.UserEntity) error {
-	errValidate := userService.validate.StructExcept(input)
+	errValidate := userService.validate.Struct(input)
 	if errValidate != nil {
 		return errValidate
 	}
