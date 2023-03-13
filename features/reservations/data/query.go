@@ -19,7 +19,7 @@ type reservationQuery struct {
 func (reservationQuery *reservationQuery) SelectAll(page int, limit int, userID uint) ([]reservations.ReservationEntity, error) {
 	reservationGorm := []models.Reservation{}
 	limit, offset := helpers.LimitOffsetConvert(page, limit)
-	txSelect := reservationQuery.db.Offset(offset).Limit(limit).Find(&reservationGorm, "user_id = ?", userID)
+	txSelect := reservationQuery.db.Offset(offset).Limit(limit).Select("reservations.id, room.name AS room_name, reservations.check_in_date, reservations.check_out_date, rooms.price, reservations.total_night, reservations.total_price").Joins("JOIN rooms ON reservations.room_id = rooms.id").Find(&reservationGorm, "user_id = ?", userID)
 	if txSelect.Error != nil {
 		return []reservations.ReservationEntity{}, txSelect.Error
 	}
