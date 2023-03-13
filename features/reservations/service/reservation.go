@@ -12,11 +12,14 @@ type reservationService struct {
 }
 
 // Create implements reservations.ReservationServiceInterface_
-func (reservationService *reservationService) Create(input reservations.ReservationEntity) error {
+func (reservationService *reservationService) Create(userID, idParam uint, input reservations.ReservationEntity) error {
 	errValidate := reservationService.validate.Struct(input)
 	if errValidate != nil {
 		return errValidate
 	}
+
+	input.UserID = userID
+	input.RoomID = idParam
 
 	errInsert := reservationService.reservationData.Insert(input)
 	if errInsert != nil {

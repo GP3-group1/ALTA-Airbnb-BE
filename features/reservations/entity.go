@@ -19,13 +19,13 @@ type ReservationEntity struct {
 }
 
 type ReservationInsert struct {
-	CheckInDate  string
-	CheckOutDate string
+	CheckInDate  string `json:"check_in" form:"check_in"`
+	CheckOutDate string `json:"check_out" form:"check_out"`
 }
 
 //go:generate mockery --name ReservationService_ --output ../../mocks
 type ReservationServiceInterface_ interface {
-	Create(input ReservationEntity) error
+	Create(userID, idParam uint, input ReservationEntity) error
 }
 
 //go:generate mockery --name ReservationData_ --output ../../mocks
