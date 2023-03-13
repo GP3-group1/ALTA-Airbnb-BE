@@ -29,11 +29,15 @@ const (
 	// Update
 	USER_SuccessUpdateUserData string = "succesfully update user data"
 
+	// Update Password
+	USER_SuccessUpdatePasswordUserData string = "succesfully update user's password"
+
 	// Delete
 	USER_SuccessDelete string = "succesfully delete user"
 )
 
 // Validation
 const (
-	USER_EmptyCredentialError string = "email and password must be filled"
+	USER_EmptyCredentialError     string = "email and password must be filled"
+	USER_EmptyUpdatePasswordError string = "old password and new password must be filled"
 )

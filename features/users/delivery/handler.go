@@ -27,8 +27,8 @@ func (userHandler *UserHandler) GetUserData(c echo.Context) error {
 // Login implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) Login(c echo.Context) error {
 	loginInput := users.UserLogin{}
-	err := c.Bind(&loginInput)
-	if err != nil {
+	errBind := c.Bind(&loginInput)
+	if errBind != nil {
 		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
 	}
 	userEntity, token, errLogin := userHandler.userService.Login(loginInput.Email, loginInput.Password)
@@ -46,8 +46,8 @@ func (userHandler *UserHandler) Login(c echo.Context) error {
 // Register implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) Register(c echo.Context) error {
 	userInput := users.UserRegister{}
-	err := c.Bind(&userInput)
-	if err != nil {
+	errBind := c.Bind(&userInput)
+	if errBind != nil {
 		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
 	}
 	errInsert := userHandler.userService.Create(registerToEntity(userInput))
@@ -72,11 +72,11 @@ func (userHandler *UserHandler) RemoveAccount(c echo.Context) error {
 func (userHandler *UserHandler) UpdateAccount(c echo.Context) error {
 	userID := middlewares.ExtractTokenUserId(c)
 	userInput := users.UserUpdate{}
-	err := c.Bind(&userInput)
-	if err != nil {
+	errBind := c.Bind(&userInput)
+	if errBind != nil {
 		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
 	}
-	errUpdate := userHandler.userService.ModifyData(userID, requestToEntity(userInput))
+	errUpdate := userHandler.userService.ModifyData(userID, requestUpdateToEntity(userInput))
 	if errUpdate != nil {
 		return c.JSON(helpers.ErrorResponse(errUpdate))
 	}
@@ -86,7 +86,17 @@ func (userHandler *UserHandler) UpdateAccount(c echo.Context) error {
 
 // UpdatePassword implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) UpdatePassword(c echo.Context) error {
-	panic("unimplemented")
+	userID := middlewares.ExtractTokenUserId(c)
+	input := users.UserUpdatePassword{}
+	errBind := c.Bind(&input)
+	if errBind != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
+	}
+	errUpdatePassword := userHandler.userService.ModifyPassword(userID, requestUpdatePasswordToEntity(input))
+	if errUpdatePassword != nil {
+		return c.JSON(helpers.ErrorResponse(errUpdatePassword))
+	}
+	return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateUserData))
 }
 
 func New(userService users.UserServiceInterface_) users.UserDeliveryInterface_ {

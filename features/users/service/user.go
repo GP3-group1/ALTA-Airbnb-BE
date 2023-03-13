@@ -17,7 +17,7 @@ type userService struct {
 
 // Create implements users.UserServiceInterface_
 func (userService *userService) Create(input users.UserEntity) error {
-	errValidate := userService.validate.Struct(input)
+	errValidate := userService.validate.StructExcept(input)
 	if errValidate != nil {
 		return errValidate
 	}
@@ -83,7 +83,30 @@ func (userService *userService) ModifyData(userID uint, input users.UserEntity) 
 
 // ModifyPassword implements users.UserServiceInterface_
 func (userService *userService) ModifyPassword(userID uint, input users.UserEntity) error {
-	panic("unimplemented")
+	if input.Password == "" || input.NewPassword == "" {
+		return errors.New(consts.USER_EmptyUpdatePasswordError)
+	}
+
+	userEntity, errSelect := userService.userData.SelectData(userID)
+	if errSelect != nil {
+		return errSelect
+	}
+
+	if !helpers.CompareHashPassword(input.Password, userEntity.Password) {
+		return errors.New(consts.USER_WrongPassword)
+	}
+
+	hashedPassword, errHash := helpers.HashPassword(input.NewPassword)
+	if errHash != nil {
+		return errHash
+	}
+	input.Password = hashedPassword
+
+	errUpdatePassword := userService.userData.UpdateData(userID, input)
+	if errUpdatePassword != nil {
+		return errUpdatePassword
+	}
+	return nil
 }
 
 // Remove implements users.UserServiceInterface_
