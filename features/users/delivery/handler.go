@@ -38,7 +38,7 @@ func (userHandler *UserHandler) Login(c echo.Context) error {
 	dataResponse := map[string]any{
 		"id":    userEntity.ID,
 		"name":  userEntity.Name,
-		"tokne": token,
+		"token": token,
 	}
 	return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.USER_LoginSuccess, dataResponse))
 }
