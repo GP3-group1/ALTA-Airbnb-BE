@@ -9,7 +9,7 @@ import (
 type UserEntity struct {
 	ID          uint
 	Name        string `validate:"required"`
-	Email       string `validate:"required, email"`
+	Email       string `validate:"required,email"`
 	Password    string `validate:"required"`
 	Sex         string
 	Address     string
