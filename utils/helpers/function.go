@@ -3,6 +3,7 @@ package helpers
 import (
 	"alta-airbnb-be/utils/consts"
 	"errors"
+	"mime/multipart"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -39,3 +40,15 @@ func ExtractPageLimit(c echo.Context) (page int, limit int, err error) {
 	return page, limit, nil
 }
 
+func ExtractImage(c echo.Context, key string) (multipart.File, string, error) {
+	f, err := c.FormFile(key)
+	if err != nil {
+		return nil, "", err
+	}
+
+	blobFile, err := f.Open()
+	if err != nil {
+		return nil, "", err
+	}
+	return blobFile, f.Filename, nil
+}
