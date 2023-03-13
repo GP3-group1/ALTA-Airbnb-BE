@@ -44,8 +44,6 @@ paths:
       tags:
         - Users
       summary: Create a new account for user
-      security:
-        - JWTAuth: []
       requestBody:
         $ref: "#/components/requestBodies/requestBodyUser"
       responses:
