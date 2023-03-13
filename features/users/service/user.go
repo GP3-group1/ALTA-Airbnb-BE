@@ -2,7 +2,10 @@ package service
 
 import (
 	"alta-airbnb-be/features/users"
+	"alta-airbnb-be/middlewares"
+	"alta-airbnb-be/utils/consts"
 	"alta-airbnb-be/utils/helpers"
+	"errors"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -40,7 +43,25 @@ func (userService *userService) GetData(userID uint) (users.UserEntity, error) {
 
 // Login implements users.UserServiceInterface_
 func (userService *userService) Login(email string, password string) (users.UserEntity, string, error) {
-	panic("unimplemented")
+	if email == "" || password == "" {
+		return users.UserEntity{}, "", errors.New(consts.USER_EmptyCredentialError)
+	}
+
+	userEntity, errLogin := userService.userData.Login(email)
+	if errLogin != nil {
+		return users.UserEntity{}, "", errLogin
+	}
+
+	if !helpers.CompareHashPassword(password, userEntity.Password) {
+		return users.UserEntity{}, "", errors.New(consts.USER_WrongPassword)
+	}
+
+	token, errToken := middlewares.CreateToken(userEntity.ID)
+	if errToken != nil {
+		return users.UserEntity{}, "", errToken
+	}
+
+	return userEntity, token, nil
 }
 
 // ModifyData implements users.UserServiceInterface_

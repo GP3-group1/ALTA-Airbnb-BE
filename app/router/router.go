@@ -14,6 +14,7 @@ func initUserRouter(db *gorm.DB, e *echo.Echo) {
 	userService := _userService.New(userData)
 	userHandler := _userDelivery.New(userService)
 
+	e.POST("/login", userHandler.Login)
 	e.POST("/users", userHandler.Register)
 }
 

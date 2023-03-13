@@ -25,6 +25,11 @@ type UserRegister struct {
 	Password string `json:"password" form:"password"`
 }
 
+type UserLogin struct {
+	Email    string `json:"email" form:"email"`
+	Password string `json:"password" form:"password"`
+}
+
 type UserRequest struct {
 	Name        string `json:"name" form:"name"`
 	Email       string `json:"email" form:"email"`
@@ -55,7 +60,7 @@ type UserServiceInterface_ interface {
 
 //go:generate mockery --name UserData_ --output ../../mocks
 type UserDataInterface_ interface {
-	Login(email string, password string) (UserEntity, string, error)
+	Login(email string) (UserEntity, error)
 	Insert(input UserEntity) error
 	SelectData(userID uint) (UserEntity, error)
 	UpdateData(input UserEntity) error
