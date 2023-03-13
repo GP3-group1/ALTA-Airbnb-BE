@@ -123,8 +123,6 @@ paths:
       tags:
         - Rooms
       summary: Get all rooms data
-      security:
-        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/pageParam"
         - $ref: "#/components/parameters/limitParam"
@@ -147,8 +145,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/successGetAllRooms"
-        "400":
-          $ref: "#/components/responses/getDataFailed"
   /rooms/{id_room}:
     get:
       tags:
@@ -161,22 +157,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/successGetRoom"
-        "400":
-          $ref: "#/components/responses/getDataFailed"
-  /users/rooms/{id_room}:
-    get:
-      tags:
-        - Rooms
-      summary: Get room data by id for owner
-      security:
-        - JWTAuth: []
-      parameters:
-        - $ref: "#/components/parameters/idRoomParam"
-      responses:
-        "200":
-          $ref: "#/components/responses/successGetRoomForOwner"
-        "400":
-          $ref: "#/components/responses/getDataFailed"
     put:
       tags:
         - Rooms
@@ -205,22 +185,34 @@ paths:
           $ref: "#/components/responses/successDeleteRoom"
         "400":
           $ref: "#/components/responses/failedDeleteRoom"
-  /rooms/{id_room}/rating:
+  /rooms/{id_room}/reviews:
     post:
       tags:
         - Rooms
-      summary: Give rating after customer
+      summary: Give review after customer checked out
       security:
         - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/idRoomParam"
       requestBody:
-        $ref: "#/components/requestBodies/requestBodyRating"
+        $ref: "#/components/requestBodies/requestBodyReview"
       responses:
         "201":
-          $ref: "#/components/responses/successCreateRating"
+          $ref: "#/components/responses/successCreateReview"
         "400":
-          $ref: "#/components/responses/failedCreateRating"
+          $ref: "#/components/responses/failedCreateReview"
+    get:
+      tags:
+        - Rooms
+      summary: Get all review by room id
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idRoomParam"
+      responses:
+        "201":
+          $ref: "#/components/responses/successGetAllReview"
+      
   ####################################
   #  RESERVATIONS
   ####################################
@@ -237,8 +229,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/successGetAllReservations"
-        "400":
-          $ref: "#/components/responses/getDataFailed"
   /rooms/{id_room}/reservations:
     post:
       tags:
@@ -322,28 +312,38 @@ components:
       type: object
       required:
         - name
+        - overview
         - description
+        - facilities
         - location
         - price
         - image
       properties:
         name:
           type: string
+        overview:
+          type: string
         description:
           type: string
         location:
           type: string
+        facilities:
+          type: array
+          items:
+            type: string
         price:
           type: integer
         image:
           type: string
-    requestDataRating:
+    requestDataReview:
       type: object
       required:
         - rating
       properties:
         rating:
           type: integer
+        comment:
+          type: string
     requestDataReservationCheck:
       type: object
       required:
@@ -359,14 +359,11 @@ components:
       required:
         - check_in
         - check_out
-        - total_price
       properties:
         check_in:
           type: string
         check_out:
           type: string
-        total_price:
-          type: integer
     responseLoginWithData:
       type: object
       properties:
@@ -414,10 +411,18 @@ components:
           properties:
             id:
               type: integer
+            username:
+              type: string
             name:
+              type: string
+            overview:
               type: string
             description:
               type: string
+            facilities:
+              type: array
+              items:
+                type: string
             location:
               type: string
             price:
@@ -428,24 +433,22 @@ components:
                 type: integer
         message:
           type: string
-    responseRoomWithDataForOwner:
+    responseReviewsWithDataArray:
       type: object
       properties:
         data:
-          type: object
-          properties:
-            id:
-              type: integer
-            name:
-              type: string
-            description:
-              type: string
-            location:
-              type: string
-            price:
-              type: integer
-            url_images:
-              type: string
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              username:
+                type: string
+              rating:
+                type: integer
+              comment:
+                type: string
         message:
           type: string
     responseRoomsWithDataArray:
@@ -650,21 +653,27 @@ components:
             addRoom1:
               value:
                 name: Villa Lautan Biru
+                overview: "Villa murah tapi bagus"
                 description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
+                facilities: ["Gym, Pool"]
                 location: Bali, Indonesia
                 price: 400
                 image: urlimage
             addRoom2:
               value:
                 name: Penginapan Romantis - Private Sunset Pool
+                overview: "Villa biasa tapi mahal"
                 description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi
+                facilities: ["Gym, Pool"]
                 location: Bali, Indonesia
                 price: 325
                 image: urlimage
             addRoom3:
               value:
                 name: Kubu d'Ume
+                overview: "Villa murah tapi angker"
                 description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi pribadi
+                facilities: ["Gym, Pool"]
                 location: Bali, Indonesia
                 price: 50
                 image: urlimage
@@ -680,33 +689,37 @@ components:
           examples:
             newData1:
               value:
-                name: Kubu d'Ume
-                description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi pribadi
-                location: Bali, Indonesia
-                price: 50
-                images: urlimage
+                name: Villa Lautan Biru
+                overview: "Villa mahal tapi pasti puas"
+                description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
+                facilities: ["Gym", "Pool"]
+                location: "Bali, Indonesia"
+                price: 400
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/requestDataRoom"
-    requestBodyRating:
+    requestBodyReview:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/requestDataRating"
+            $ref: "#/components/schemas/requestDataReview"
           examples:
             addRating1:
               value:
                 rating: 4
+                comment: "Bagus sekali"
             addRating2:
               value:
                 rating: 5
+                comment: "Tempatnya nyaman"
             addRating3:
               value:
                 rating: 3
+                comment: "Tempatnya biasa aja"
         multipart/form-data:
           schema:
-            $ref: "#/components/schemas/requestDataRating"
+            $ref: "#/components/schemas/requestDataReview"
     requestBodyReservationCheck:
       required: true
       content:
@@ -740,17 +753,14 @@ components:
               value:
                 check_in: 2023-12-03
                 check_out: 2023-14-03
-                total_price: 600
             addReservation2:
               value:
                 check_in: 2023-12-04
                 check_out: 2023-14-04
-                total_price: 700
             addReservation3:
               value:
                 check_in: 2023-01-03
                 check_out: 2023-02-03
-                total_price: 350
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/requestDataReservation"
@@ -944,27 +954,15 @@ components:
           example:
             data:
               id: 1
+              username: "Mike Tyson"
               name: Villa Lautan Biru
+              overview: "Villa mahal tapi pasti puas"
               description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
+              facilities: ["Gym", "Pool"]
               location: "Bali, Indonesia"
               price: 400
               url_images: urlimage
               avg_rating: 4.5
-            message: Success
-    successGetRoomForOwner:
-      description: Success Response Data
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/responseRoomWithDataForOwner"
-          example:
-            data:
-              id: 1
-              name: Villa Lautan Biru
-              description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
-              location: "Bali, Indonesia"
-              price: 400
-              url_images: urlimage
             message: Success
     successUpdateRoom:
       description: Success Response Update Room
@@ -998,22 +996,51 @@ components:
             $ref: "#/components/schemas/responseNonData"
           example:
             message: Failed Delete Room
-    successCreateRating:
+    successCreateReview:
       description: Success Response Create Rating
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/responseNonData"
           example:
-            message: Success Add Rating
-    failedCreateRating:
+            message: Success Add Review
+    failedCreateReview:
       description: Bad Request Response
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/responseNonData"
           example:
-            message: Failed Add Rating
+            message: Failed Add Review
+    successGetAllReview:
+      description: Success Response Get All Review
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseReviewsWithDataArray"
+          example:
+            data:
+              [
+                {
+                  id: 1,
+                  username: "Budi",
+                  rating: 5,
+                  comment: "Ga bakal nyesel disini",
+                },
+                {
+                  id: 2,
+                  username: "Jordy",
+                  rating: 2,
+                  comment: "Butuh lebih banyak improve lagi dari sisi pelayanan",
+                },
+                {
+                  id: 3,
+                  username: "Raisa",
+                  rating: 4,
+                  comment: "Recommender guysssssss",
+                },
+              ]
+            message: Success Get All Review
     successCheckReservation:
       description: Success Response Room Available
       content:
