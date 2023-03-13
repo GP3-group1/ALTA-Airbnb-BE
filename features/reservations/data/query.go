@@ -17,12 +17,9 @@ type reservationQuery struct {
 // SelectAll implements reservations.ReservationDataInterface_
 func (reservationQuery *reservationQuery) SelectAll(limit, offset int, userID uint) ([]reservations.ReservationEntity, error) {
 	reservationGorm := []models.Reservation{}
-	txSelect := reservationQuery.db.Offset(offset).Limit(limit).Select("reservations.id, rooms.name AS room_name, reservations.check_in_date, reservations.check_out_date, rooms.price, reservations.total_night, reservations.total_price").Joins("JOIN rooms ON reservations.room_id = rooms.id").Find(&reservationGorm, "user_id = ?", userID)
+	txSelect := reservationQuery.db.Limit(limit).Offset(offset).Where("reservations.user_id = ?", userID).Select("reservations.id, rooms.name AS room_name, reservations.check_in_date, reservations.check_out_date, rooms.price, reservations.total_night, reservations.total_price").Joins("JOIN rooms ON reservations.room_id = rooms.id").Find(&reservationGorm)
 	if txSelect.Error != nil {
-		return []reservations.ReservationEntity{}, txSelect.Error
-	}
-	if txSelect.RowsAffected == 0 {
-		return []reservations.ReservationEntity{}, errors.New(consts.SERVER_ZeroRowsAffected)
+		return nil, txSelect.Error
 	}
 	return ListGormToEntity(reservationGorm), nil
 }
