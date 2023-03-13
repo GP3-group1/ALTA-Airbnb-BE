@@ -70,7 +70,15 @@ func (userService *userService) Login(email string, password string) (users.User
 
 // ModifyData implements users.UserServiceInterface_
 func (userService *userService) ModifyData(userID uint, input users.UserEntity) error {
-	panic("unimplemented")
+	errValidate := userService.validate.StructExcept(input, input.Password)
+	if errValidate != nil {
+		return errValidate
+	}
+	errUpdate := userService.userData.UpdateData(userID, input)
+	if errUpdate != nil {
+		return errUpdate
+	}
+	return nil
 }
 
 // ModifyPassword implements users.UserServiceInterface_

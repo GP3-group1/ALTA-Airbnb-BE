@@ -52,9 +52,9 @@ func (userQuery *userQuery) SelectData(userID uint) (users.UserEntity, error) {
 }
 
 // UpdateData implements users.UserDataInterface_
-func (userQuery *userQuery) UpdateData(input users.UserEntity) error {
+func (userQuery *userQuery) UpdateData(userID uint, input users.UserEntity) error {
 	userGorm := EntityToGorm(input)
-	txUpdate := userQuery.db.Updates(&userGorm)
+	txUpdate := userQuery.db.Where("id = ?", userID).Updates(&userGorm)
 	if txUpdate.Error != nil {
 		return txUpdate.Error
 	}

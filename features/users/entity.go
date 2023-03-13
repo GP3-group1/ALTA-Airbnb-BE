@@ -63,7 +63,7 @@ type UserDataInterface_ interface {
 	Login(email string) (UserEntity, error)
 	Insert(input UserEntity) error
 	SelectData(userID uint) (UserEntity, error)
-	UpdateData(input UserEntity) error
+	UpdateData(userID uint, input UserEntity) error
 	Delete(userID uint) error
 }
 
