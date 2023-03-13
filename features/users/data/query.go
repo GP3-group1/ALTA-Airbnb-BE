@@ -2,6 +2,7 @@ package data
 
 import (
 	"alta-airbnb-be/features/users"
+	"alta-airbnb-be/features/users/models"
 	"alta-airbnb-be/utils/consts"
 	"errors"
 	"strings"
@@ -35,8 +36,17 @@ func (userQuery *userQuery) Insert(input users.UserEntity) error {
 }
 
 // Login implements users.UserDataInterface_
-func (userQuery *userQuery) Login(email string, password string) (users.UserEntity, string, error) {
-	panic("unimplemented")
+func (userQuery *userQuery) Login(email string, password string) (users.UserEntity, error) {
+	userLogin := models.User{}
+	txSelect := userQuery.db.Where("email = ?", email).First(&userLogin)
+	if txSelect.Error != nil {
+		if txSelect.Error == gorm.ErrRecordNotFound {
+			return users.UserEntity{}, errors.New(gorm.ErrRecordNotFound.Error())
+		}
+		return users.UserEntity{}, errors.New(consts.SERVER_InternalServerError)
+	}
+	userEntity := GormToEntity(userLogin)
+	return userEntity, nil
 }
 
 // SelectData implements users.UserDataInterface_
