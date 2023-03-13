@@ -1,7 +1,6 @@
 package reservations
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -9,8 +8,8 @@ import (
 
 type ReservationEntity struct {
 	ID           uint
-	CheckInDate  sql.NullTime `validate:"required"`
-	CheckOutDate sql.NullTime `validate:"required"`
+	CheckInDate  time.Time `validate:"required"`
+	CheckOutDate time.Time `validate:"required"`
 	TotalNight   int
 	TotalPrice   int
 	RoomID       uint
@@ -20,22 +19,22 @@ type ReservationEntity struct {
 }
 
 type ReservationInsert struct {
-	CheckInDate  sql.NullTime
-	CheckOutDate sql.NullTime
+	CheckInDate  string
+	CheckOutDate string
 }
 
 //go:generate mockery --name ReservationService_ --output ../../mocks
-type UserServiceInterface_ interface {
+type ReservationServiceInterface_ interface {
 	Create(input ReservationEntity) error
 }
 
 //go:generate mockery --name ReservationData_ --output ../../mocks
-type UserDataInterface_ interface {
+type ReservationDataInterface_ interface {
 	Insert(input ReservationEntity) error
 }
 
 //go:generate mockery --name ReservationDelivery_ --output ../../mocks
-type UserDeliveryInterface_ interface {
+type ReservationDeliveryInterface_ interface {
 	AddReservation(c echo.Context) error
 	CheckReservation(c echo.Context) error
 	GetAllReservation(c echo.Context) error
