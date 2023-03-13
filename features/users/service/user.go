@@ -38,7 +38,11 @@ func (userService *userService) Create(input users.UserEntity) error {
 
 // GetData implements users.UserServiceInterface_
 func (userService *userService) GetData(userID uint) (users.UserEntity, error) {
-	panic("unimplemented")
+	userEntity, errSelect := userService.userData.SelectData(userID)
+	if errSelect != nil {
+		return users.UserEntity{}, errSelect
+	}
+	return userEntity, nil
 }
 
 // Login implements users.UserServiceInterface_
