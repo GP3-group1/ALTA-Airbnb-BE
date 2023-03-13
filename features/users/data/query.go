@@ -15,7 +15,14 @@ type userQuery struct {
 
 // Delete implements users.UserDataInterface_
 func (userQuery *userQuery) Delete(userID uint) error {
-	panic("unimplemented")
+	txDelete := userQuery.db.Delete(models.User{}, userID)
+	if txDelete.Error != nil {
+		return txDelete.Error
+	}
+	if txDelete.RowsAffected == 0 {
+		return errors.New(consts.SERVER_ZeroRowsAffected)
+	}
+	return nil
 }
 
 // Insert implements users.UserDataInterface_
