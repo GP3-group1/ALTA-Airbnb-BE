@@ -51,7 +51,7 @@ func (userQuery *userQuery) Login(email string) (users.UserEntity, error) {
 // SelectData implements users.UserDataInterface_
 func (userQuery *userQuery) SelectData(userID uint) (users.UserEntity, error) {
 	userGorm := models.User{}
-	txSelect := userQuery.db.Where("id = ?", userID).First(&userGorm)
+	txSelect := userQuery.db.First(&userGorm, userID)
 	if txSelect.Error != nil {
 		return users.UserEntity{}, txSelect.Error
 	}
