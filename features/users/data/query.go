@@ -44,7 +44,7 @@ func (userQuery *userQuery) Login(email string) (users.UserEntity, error) {
 // SelectData implements users.UserDataInterface_
 func (userQuery *userQuery) SelectData(userID uint) (users.UserEntity, error) {
 	userGorm := models.User{}
-	txSelect := userQuery.db.Model(&userGorm).Where("id = ?", userID).First(&userGorm)
+	txSelect := userQuery.db.Where("id = ?", userID).First(&userGorm)
 	if txSelect.Error != nil {
 		return users.UserEntity{}, txSelect.Error
 	}
@@ -53,7 +53,15 @@ func (userQuery *userQuery) SelectData(userID uint) (users.UserEntity, error) {
 
 // UpdateData implements users.UserDataInterface_
 func (userQuery *userQuery) UpdateData(input users.UserEntity) error {
-	panic("unimplemented")
+	userGorm := EntityToGorm(input)
+	txUpdate := userQuery.db.Updates(&userGorm)
+	if txUpdate.Error != nil {
+		return txUpdate.Error
+	}
+	if txUpdate.RowsAffected == 0 {
+		return errors.New(consts.SERVER_ZeroRowsAffected)
+	}
+	return nil
 }
 
 func New(db *gorm.DB) users.UserDataInterface_ {
