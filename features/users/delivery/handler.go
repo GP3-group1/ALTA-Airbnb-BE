@@ -60,7 +60,12 @@ func (userHandler *UserHandler) Register(c echo.Context) error {
 
 // RemoveAccount implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) RemoveAccount(c echo.Context) error {
-	panic("unimplemented")
+	userID := middlewares.ExtractTokenUserId(c)
+	errDelete := userHandler.userService.Remove(userID)
+	if errDelete != nil {
+		return c.JSON(helpers.ErrorResponse(errDelete))
+	}
+	return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessDelete))
 }
 
 // UpdateAccount implements users.UserDeliveryInterface_

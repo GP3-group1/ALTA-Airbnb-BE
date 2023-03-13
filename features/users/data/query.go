@@ -15,7 +15,7 @@ type userQuery struct {
 
 // Delete implements users.UserDataInterface_
 func (userQuery *userQuery) Delete(userID uint) error {
-	txDelete := userQuery.db.Delete(models.User{}, userID)
+	txDelete := userQuery.db.Delete(&models.User{}, userID)
 	if txDelete.Error != nil {
 		return txDelete.Error
 	}
