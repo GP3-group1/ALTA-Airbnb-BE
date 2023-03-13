@@ -27,7 +27,7 @@ func (userHandler *UserHandler) Login(c echo.Context) error {
 	}
 	userEntity, token, errLogin := userHandler.userService.Login(loginInput.Email, loginInput.Password)
 	if errLogin != nil {
-		return c.JSON(http.StatusInternalServerError, helpers.Response("error: "+err.Error()))
+		return c.JSON(helpers.ErrorResponse(errLogin))
 	}
 	dataResponse := map[string]any{
 		"id":    userEntity.ID,
@@ -47,7 +47,7 @@ func (userHandler *UserHandler) Register(c echo.Context) error {
 	userEntity := registerToEntity(userInput)
 	errInsert := userHandler.userService.Create(userEntity)
 	if errInsert != nil {
-		return c.JSON(http.StatusInternalServerError, helpers.Response("error: "+err.Error()))
+		return c.JSON(helpers.ErrorResponse(errInsert))
 	}
 
 	return c.JSON(http.StatusCreated, helpers.Response(consts.USER_RegisterSuccess))
