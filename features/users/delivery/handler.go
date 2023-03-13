@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"alta-airbnb-be/features/users"
+	"alta-airbnb-be/middlewares"
 	"alta-airbnb-be/utils/consts"
 	"alta-airbnb-be/utils/helpers"
 	"net/http"
@@ -15,7 +16,12 @@ type UserHandler struct {
 
 // GetUserData implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) GetUserData(c echo.Context) error {
-	panic("unimplemented")
+	userID := middlewares.ExtractTokenUserId(c)
+	userEntity, errSelect := userHandler.userService.GetData(userID)
+	if errSelect != nil {
+		return c.JSON(helpers.ErrorResponse(errSelect))
+	}
+	return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.USER_SuccessReadUserData, entityToResponse(userEntity)))
 }
 
 // Login implements users.UserDeliveryInterface_
