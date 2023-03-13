@@ -47,18 +47,18 @@ type UserResponse struct {
 type UserServiceInterface_ interface {
 	Login(email string, password string) (UserEntity, string, error)
 	GetData(userID uint) (UserEntity, error)
-	Create(input UserEntity) (UserEntity, error)
-	ModifyData(userID uint, input UserEntity) (UserEntity, error)
-	ModifyPassword(userID uint, input UserEntity) (UserEntity, error)
+	Create(input UserEntity) error
+	ModifyData(userID uint, input UserEntity) error
+	ModifyPassword(userID uint, input UserEntity) error
 	Remove(userID uint) error
 }
 
 //go:generate mockery --name UserData_ --output ../../mocks
 type UserDataInterface_ interface {
 	Login(email string, password string) (UserEntity, string, error)
-	Insert(input UserEntity) (UserEntity, error)
+	Insert(input UserEntity) error
 	SelectData(userID uint) (UserEntity, error)
-	UpdateData(input UserEntity) (UserEntity, error)
+	UpdateData(input UserEntity) error
 	Delete(userID uint) error
 }
 

@@ -44,12 +44,12 @@ func (userService *userService) Login(email string, password string) (users.User
 }
 
 // ModifyData implements users.UserServiceInterface_
-func (userService *userService) ModifyData(userID uint, input users.UserEntity) (users.UserEntity, error) {
+func (userService *userService) ModifyData(userID uint, input users.UserEntity) error {
 	panic("unimplemented")
 }
 
 // ModifyPassword implements users.UserServiceInterface_
-func (userService *userService) ModifyPassword(userID uint, input users.UserEntity) (users.UserEntity, error) {
+func (userService *userService) ModifyPassword(userID uint, input users.UserEntity) error {
 	panic("unimplemented")
 }
 
