@@ -1,20 +1,12 @@
 package helpers
 
-func FailedResponse(message string) map[string]any {
+func Response(message string) map[string]any {
 	return map[string]any{
-		"status":  "failed",
 		"message": message,
 	}
 }
 
-func SuccessResponse(message string) map[string]any {
-	return map[string]any{
-		"status":  "success",
-		"message": message,
-	}
-}
-
-func SuccessWithDataResponse(message string, data any) map[string]any {
+func ResponseWithData(message string, data any) map[string]any {
 	return map[string]any{
 		"status":  "success",
 		"message": message,
