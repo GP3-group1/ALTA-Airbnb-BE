@@ -42,13 +42,23 @@ func (reservationHandler *ReservationHandler) AddReservation(c echo.Context) err
 }
 
 // CheckReservation implements reservations.ReservationDeliveryInterface_
-func (*ReservationHandler) CheckReservation(c echo.Context) error {
+func (reservationHandler *ReservationHandler) CheckReservation(c echo.Context) error {
 	panic("unimplemented")
 }
 
 // GetAllReservation implements reservations.ReservationDeliveryInterface_
-func (*ReservationHandler) GetAllReservation(c echo.Context) error {
-	panic("unimplemented")
+func (reservationHandler *ReservationHandler) GetAllReservation(c echo.Context) error {
+	userID := middlewares.ExtractTokenUserId(c)
+	page, limit, errParam := helpers.ExtractPageLimit(c)
+	if errParam != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(errParam.Error()))
+	}
+
+	reservationEntity, errSelect := reservationHandler.reservationService.GetAll(page, limit, userID)
+	if errSelect != nil {
+		return c.JSON(helpers.ErrorResponse(errSelect))
+	}
+	return c.JSON(http.StatusOK, helpers.ResponseWithData("Success", entityToResponseList(reservationEntity)))
 }
 
 func New(reservationService reservations.ReservationServiceInterface_) reservations.ReservationDeliveryInterface_ {
