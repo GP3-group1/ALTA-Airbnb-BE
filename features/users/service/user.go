@@ -70,7 +70,7 @@ func (userService *userService) Login(email string, password string) (users.User
 
 // ModifyData implements users.UserServiceInterface_
 func (userService *userService) ModifyData(userID uint, input users.UserEntity) error {
-	errValidate := userService.validate.StructExcept(input, input.Password)
+	errValidate := userService.validate.StructExcept(input, "Password")
 	if errValidate != nil {
 		return errValidate
 	}

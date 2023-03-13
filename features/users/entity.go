@@ -30,10 +30,9 @@ type UserLogin struct {
 	Password string `json:"password" form:"password"`
 }
 
-type UserRequest struct {
+type UserUpdate struct {
 	Name        string `json:"name" form:"name"`
 	Email       string `json:"email" form:"email"`
-	Password    string `json:"password" form:"password"`
 	Sex         string `json:"sex" form:"sex"`
 	Address     string `json:"address" form:"address"`
 	PhoneNumber string `json:"phone_number" form:"phone_number"`

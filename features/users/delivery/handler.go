@@ -66,7 +66,7 @@ func (userHandler *UserHandler) RemoveAccount(c echo.Context) error {
 // UpdateAccount implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) UpdateAccount(c echo.Context) error {
 	userID := middlewares.ExtractTokenUserId(c)
-	userInput := users.UserRequest{}
+	userInput := users.UserUpdate{}
 	err := c.Bind(&userInput)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))

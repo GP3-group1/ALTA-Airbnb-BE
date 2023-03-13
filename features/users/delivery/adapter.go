@@ -10,14 +10,13 @@ func registerToEntity(userRegister users.UserRegister) users.UserEntity {
 	}
 }
 
-func requestToEntity(userRequest users.UserRequest) users.UserEntity {
+func requestToEntity(userUpdate users.UserUpdate) users.UserEntity {
 	return users.UserEntity{
-		Name:        userRequest.Name,
-		Email:       userRequest.Email,
-		Password:    userRequest.Password,
-		Sex:         userRequest.Sex,
-		Address:     userRequest.Address,
-		PhoneNumber: userRequest.PhoneNumber,
+		Name:        userUpdate.Name,
+		Email:       userUpdate.Email,
+		Sex:         userUpdate.Sex,
+		Address:     userUpdate.Address,
+		PhoneNumber: userUpdate.PhoneNumber,
 	}
 }
 
