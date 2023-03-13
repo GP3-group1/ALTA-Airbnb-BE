@@ -8,11 +8,10 @@ import (
 
 type Reservation struct {
 	gorm.Model
-	CheckIn    sql.NullTime `gorm:"not null;type:date"`
-	CheckOut   sql.NullTime `gorm:"not null;type:date"`
-	TotalNight int          `gorm:"not null"`
-	TotalPrice int          `gorm:"not null"`
-	Rating     float64      `gorm:"not null"`
-	RoomID     uint
-	UserID     uint
+	CheckInDate  sql.NullTime `gorm:"not null;type:date"`
+	CheckOutDate sql.NullTime `gorm:"not null;type:date"`
+	TotalNight   int          `gorm:"not null"`
+	TotalPrice   int          `gorm:"not null"`
+	RoomID       uint
+	UserID       uint
 }
