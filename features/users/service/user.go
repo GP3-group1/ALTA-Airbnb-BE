@@ -88,7 +88,11 @@ func (userService *userService) ModifyPassword(userID uint, input users.UserEnti
 
 // Remove implements users.UserServiceInterface_
 func (userService *userService) Remove(userID uint) error {
-	panic("unimplemented")
+	errDelete := userService.userData.Delete(userID)
+	if errDelete != nil {
+		return errDelete
+	}
+	return nil
 }
 
 func New(userData users.UserDataInterface_) users.UserServiceInterface_ {
