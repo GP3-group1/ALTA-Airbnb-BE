@@ -50,8 +50,7 @@ func (userHandler *UserHandler) Register(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
 	}
-	userEntity := registerToEntity(userInput)
-	errInsert := userHandler.userService.Create(userEntity)
+	errInsert := userHandler.userService.Create(registerToEntity(userInput))
 	if errInsert != nil {
 		return c.JSON(helpers.ErrorResponse(errInsert))
 	}
@@ -66,7 +65,18 @@ func (userHandler *UserHandler) RemoveAccount(c echo.Context) error {
 
 // UpdateAccount implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) UpdateAccount(c echo.Context) error {
-	panic("unimplemented")
+	userID := middlewares.ExtractTokenUserId(c)
+	userInput := users.UserRequest{}
+	err := c.Bind(&userInput)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
+	}
+	errUpdate := userHandler.userService.ModifyData(userID, requestToEntity(userInput))
+	if errUpdate != nil {
+		return c.JSON(helpers.ErrorResponse(errUpdate))
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateUserData))
 }
 
 // UpdatePassword implements users.UserDeliveryInterface_
