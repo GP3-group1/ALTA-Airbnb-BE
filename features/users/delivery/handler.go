@@ -28,15 +28,15 @@ func (userHandler *UserHandler) Register(c echo.Context) error {
 	userInput := users.UserRegister{}
 	err := c.Bind(&userInput)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, helpers.FailedResponse(consts.USER_ErrorBindUserData))
+		return c.JSON(http.StatusInternalServerError, helpers.Response(consts.USER_ErrorBindUserData))
 	}
 	userEntity := registerToEntity(userInput)
 	errInsert := userHandler.userService.Create(userEntity)
 	if errInsert != nil {
-		return c.JSON(http.StatusInternalServerError, helpers.FailedResponse("error: "+err.Error()))
+		return c.JSON(http.StatusInternalServerError, helpers.Response("error: "+err.Error()))
 	}
 
-	return c.JSON(http.StatusCreated, helpers.SuccessResponse(consts.USER_RegisterSuccess))
+	return c.JSON(http.StatusCreated, helpers.Response(consts.USER_RegisterSuccess))
 }
 
 // RemoveAccount implements users.UserDeliveryInterface_
