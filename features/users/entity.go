@@ -25,22 +25,40 @@ type UserRegister struct {
 	Password string `json:"password" form:"password"`
 }
 
+type UserRequest struct {
+	Name        string `json:"name" form:"name"`
+	Email       string `json:"email" form:"email"`
+	Password    string `json:"password" form:"password"`
+	Sex         string `json:"sex" form:"sex"`
+	Address     string `json:"address" form:"address"`
+	PhoneNumber string `json:"phone_number" form:"phone_number"`
+}
+
+type UserResponse struct {
+	ID          uint
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	Sex         string `json:"sex"`
+	Address     string `json:"address"`
+	PhoneNumber string `json:"phone_number"`
+}
+
 //go:generate mockery --name UserService_ --output ../../mocks
 type UserServiceInterface_ interface {
 	Login(email string, password string) (UserEntity, string, error)
-	GetData(userID uint) error
+	GetData(userID uint) (UserEntity, error)
 	Create(input UserEntity) (UserEntity, error)
-	ModifyData(userID uint, input UserEntity) error
-	ModifyPassword(userID uint, input UserEntity) error
+	ModifyData(userID uint, input UserEntity) (UserEntity, error)
+	ModifyPassword(userID uint, input UserEntity) (UserEntity, error)
 	Remove(userID uint) error
 }
 
 //go:generate mockery --name UserData_ --output ../../mocks
 type UserDataInterface_ interface {
 	Login(email string, password string) (UserEntity, string, error)
-	Insert(input UserEntity) error
+	Insert(input UserEntity) (UserEntity, error)
 	SelectData(userID uint) (UserEntity, error)
-	UpdateData(input UserEntity) error
+	UpdateData(input UserEntity) (UserEntity, error)
 	Delete(userID uint) error
 }
 
