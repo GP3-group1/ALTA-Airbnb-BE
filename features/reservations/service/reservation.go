@@ -21,6 +21,9 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 	input.UserID = userID
 	input.RoomID = idParam
 
+	diff := input.CheckOutDate.Sub(input.CheckInDate)
+	input.TotalNight = int(diff.Hours() / 24)
+
 	errInsert := reservationService.reservationData.Insert(input)
 	if errInsert != nil {
 		return errInsert

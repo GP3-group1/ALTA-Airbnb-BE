@@ -2,6 +2,7 @@ package data
 
 import (
 	"alta-airbnb-be/features/reservations"
+	_modelRoom "alta-airbnb-be/features/rooms/models"
 	"alta-airbnb-be/utils/consts"
 	"errors"
 
@@ -10,6 +11,16 @@ import (
 
 type reservationQuery struct {
 	db *gorm.DB
+}
+
+// SelectRoom implements reservations.ReservationDataInterface_
+func (reservationQuery *reservationQuery) SelectData(roomID uint) (_modelRoom.Room, error) {
+	roomGorm := _modelRoom.Room{}
+	txSelect := reservationQuery.db.First(&roomGorm, roomID)
+	if txSelect.Error != nil {
+		return _modelRoom.Room{}, txSelect.Error
+	}
+	return roomGorm, nil
 }
 
 // Insert implements reservations.ReservationDataInterface_
