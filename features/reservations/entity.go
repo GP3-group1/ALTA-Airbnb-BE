@@ -46,7 +46,7 @@ type ReservationServiceInterface_ interface {
 type ReservationDataInterface_ interface {
 	SelectData(roomID uint) (_modelRoom.Room, error)
 	Insert(input ReservationEntity) error
-	SelectAll(page, limit int, userID uint) ([]ReservationEntity, error)
+	SelectAll(offset, limit int, userID uint) ([]ReservationEntity, error)
 }
 
 //go:generate mockery --name ReservationDelivery_ --output ../../mocks

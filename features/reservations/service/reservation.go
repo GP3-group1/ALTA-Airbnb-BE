@@ -2,6 +2,7 @@ package service
 
 import (
 	"alta-airbnb-be/features/reservations"
+	"alta-airbnb-be/utils/helpers"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -12,8 +13,13 @@ type reservationService struct {
 }
 
 // GetAll implements reservations.ReservationServiceInterface_
-func (*reservationService) GetAll(page int, limit int, userID uint) ([]reservations.ReservationEntity, error) {
-	panic("unimplemented")
+func (reservationService *reservationService) GetAll(page int, limit int, userID uint) ([]reservations.ReservationEntity, error) {
+	limit, offset := helpers.LimitOffsetConvert(page, limit)
+	reservationEntity, errSelect := reservationService.reservationData.SelectAll(offset, limit, userID)
+	if errSelect != nil {
+		return []reservations.ReservationEntity{}, errSelect
+	}
+	return reservationEntity, nil
 }
 
 // Create implements reservations.ReservationServiceInterface_
