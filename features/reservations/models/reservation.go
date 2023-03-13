@@ -14,4 +14,6 @@ type Reservation struct {
 	TotalPrice   int       `gorm:"not null"`
 	RoomID       uint
 	UserID       uint
+	RoomName     string
+	Price        float64
 }

@@ -2,8 +2,10 @@ package data
 
 import (
 	"alta-airbnb-be/features/reservations"
+	"alta-airbnb-be/features/reservations/models"
 	_modelRoom "alta-airbnb-be/features/rooms/models"
 	"alta-airbnb-be/utils/consts"
+	"alta-airbnb-be/utils/helpers"
 	"errors"
 
 	"gorm.io/gorm"
@@ -13,12 +15,29 @@ type reservationQuery struct {
 	db *gorm.DB
 }
 
+// SelectAll implements reservations.ReservationDataInterface_
+func (reservationQuery *reservationQuery) SelectAll(page int, limit int, userID uint) ([]reservations.ReservationEntity, error) {
+	reservationGorm := []models.Reservation{}
+	limit, offset := helpers.LimitOffsetConvert(page, limit)
+	txSelect := reservationQuery.db.Offset(offset).Limit(limit).Find(&reservationGorm, "user_id = ?", userID)
+	if txSelect.Error != nil {
+		return []reservations.ReservationEntity{}, txSelect.Error
+	}
+	if txSelect.RowsAffected == 0 {
+		return []reservations.ReservationEntity{}, errors.New(consts.SERVER_ZeroRowsAffected)
+	}
+	return ListGormToEntity(reservationGorm), nil
+}
+
 // SelectRoom implements reservations.ReservationDataInterface_
 func (reservationQuery *reservationQuery) SelectData(roomID uint) (_modelRoom.Room, error) {
 	roomGorm := _modelRoom.Room{}
 	txSelect := reservationQuery.db.First(&roomGorm, roomID)
 	if txSelect.Error != nil {
 		return _modelRoom.Room{}, txSelect.Error
+	}
+	if txSelect.RowsAffected == 0 {
+		return _modelRoom.Room{}, errors.New(consts.SERVER_ZeroRowsAffected)
 	}
 	return roomGorm, nil
 }

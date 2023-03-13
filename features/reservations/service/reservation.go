@@ -11,6 +11,11 @@ type reservationService struct {
 	validate        *validator.Validate
 }
 
+// GetAll implements reservations.ReservationServiceInterface_
+func (*reservationService) GetAll(page int, limit int, userID uint) ([]reservations.ReservationEntity, error) {
+	panic("unimplemented")
+}
+
 // Create implements reservations.ReservationServiceInterface_
 func (reservationService *reservationService) Create(userID, idParam uint, input reservations.ReservationEntity) error {
 	errValidate := reservationService.validate.Struct(input)

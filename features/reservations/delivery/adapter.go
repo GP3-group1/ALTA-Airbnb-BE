@@ -20,3 +20,25 @@ func insertToEntity(reservationInsert reservations.ReservationInsert) (reservati
 		CheckOutDate: CheckOutDate,
 	}, nil
 }
+
+func entityToResponse(reservationEntity reservations.ReservationEntity) reservations.ReservationResponse {
+	CheckInDate := reservationEntity.CheckInDate.Format("2006-01-02")
+	CheckOutDate := reservationEntity.CheckOutDate.Format("2006-01-02")
+	return reservations.ReservationResponse{
+		ID:           reservationEntity.ID,
+		RoomName:     reservationEntity.RoomName,
+		CheckInDate:  CheckInDate,
+		CheckOutDate: CheckOutDate,
+		Price:        reservationEntity.Price,
+		TotalNight:   reservationEntity.TotalNight,
+		TotalPrice:   reservationEntity.TotalPrice,
+	}
+}
+
+func entityToResponseList(reservationEntity []reservations.ReservationEntity) []reservations.ReservationResponse {
+	var dataResponse []reservations.ReservationResponse
+	for _, v := range reservationEntity {
+		dataResponse = append(dataResponse, entityToResponse(v))
+	}
+	return dataResponse
+}
