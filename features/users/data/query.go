@@ -36,7 +36,7 @@ func (userQuery *userQuery) Insert(input users.UserEntity) error {
 }
 
 // Login implements users.UserDataInterface_
-func (userQuery *userQuery) Login(email string, password string) (users.UserEntity, error) {
+func (userQuery *userQuery) Login(email string) (users.UserEntity, error) {
 	userLogin := models.User{}
 	txSelect := userQuery.db.Where("email = ?", email).First(&userLogin)
 	if txSelect.Error != nil {

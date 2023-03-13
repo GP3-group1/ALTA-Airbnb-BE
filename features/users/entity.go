@@ -60,7 +60,7 @@ type UserServiceInterface_ interface {
 
 //go:generate mockery --name UserData_ --output ../../mocks
 type UserDataInterface_ interface {
-	Login(email string, password string) (UserEntity, error)
+	Login(email string) (UserEntity, error)
 	Insert(input UserEntity) error
 	SelectData(userID uint) (UserEntity, error)
 	UpdateData(input UserEntity) error

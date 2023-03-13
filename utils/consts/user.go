@@ -32,3 +32,8 @@ const (
 	// Delete
 	USER_SuccessDelete string = "succesfully delete user"
 )
+
+// Validation
+const (
+	USER_EmptyCredentialError string = "email and password must be filled"
+)
