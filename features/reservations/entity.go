@@ -1,7 +1,6 @@
 package reservations
 
 import (
-	_modelRoom "alta-airbnb-be/features/rooms/models"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -53,7 +52,7 @@ type ReservationService_ interface {
 
 //go:generate mockery --name ReservationData_ --output ../../mocks
 type ReservationData_ interface {
-	SelectData(roomID uint) (_modelRoom.Room, error)
+	SelectRoomPrice(roomID uint) (ReservationEntity, error)
 	Insert(input ReservationEntity) error
 	SelectAll(limit, offset int, userID uint) ([]ReservationEntity, error)
 }
