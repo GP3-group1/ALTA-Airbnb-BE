@@ -27,6 +27,7 @@ func (userService *userService) Create(input users.UserEntity) error {
 		return errHash
 	}
 	input.Password = hashedPassword
+	input.Balance = 0
 
 	errInsert := userService.userData.Insert(input)
 	if errInsert != nil {
