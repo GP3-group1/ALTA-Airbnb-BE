@@ -15,6 +15,18 @@ type reservationQuery struct {
 	db *gorm.DB
 }
 
+// CheckReservation implements reservations.ReservationData_
+func (reservationQuery *reservationQuery) CheckReservation(input reservations.ReservationEntity, roomID uint) ([]reservations.ReservationEntity, error) {
+	CheckInDate := input.CheckInDate.Format("2006-01-02")
+	CheckOutDate := input.CheckOutDate.Format("2006-01-02")
+	reservationGorm := []models.Reservation{}
+	txSelect := reservationQuery.db.Where("room_id = ? AND check_in_date BETWEEN ? AND ? AND check_out_date BETWEEN ? AND ?", roomID, CheckInDate, CheckOutDate, CheckInDate, CheckOutDate).Find(&reservationGorm)
+	if txSelect.Error != nil {
+		return nil, txSelect.Error
+	}
+	return ListGormToEntity(reservationGorm), nil
+}
+
 // SelectUserBalance implements reservations.ReservationData_
 func (reservationQuery *reservationQuery) SelectUserBalance(userID uint) (reservations.ReservationEntity, error) {
 	reservationGorm := models.Reservation{}

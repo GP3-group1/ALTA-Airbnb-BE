@@ -14,6 +14,19 @@ type reservationService struct {
 	validate        *validator.Validate
 }
 
+// CheckReservation implements reservations.ReservationService_
+func (reservationService *reservationService) CheckReservation(input reservations.ReservationEntity, roomID uint) ([]reservations.ReservationEntity, error) {
+	errValidate := reservationService.validate.Struct(input)
+	if errValidate != nil {
+		return nil, errValidate
+	}
+	reservationEntity, errSelect := reservationService.reservationData.CheckReservation(input, roomID)
+	if errSelect != nil {
+		return nil, errSelect
+	}
+	return reservationEntity, nil
+}
+
 // GetAll implements reservations.ReservationServiceInterface_
 func (reservationService *reservationService) GetAll(page, limit int, userID uint) ([]reservations.ReservationEntity, error) {
 	offset := (page - 1) * limit
