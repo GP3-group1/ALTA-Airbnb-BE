@@ -133,7 +133,7 @@ func (roomData *RoomData) SelectRooms(limit, offset int, queryParams map[string]
 func (roomData *RoomData) SelectRoomByRoomId(roomEntity *rooms.RoomEntity) (*rooms.RoomEntity, error) {
 	roomGorm := convertToGorm(roomEntity)
 
-	tx := roomData.db.Preload("Facilities").Where(&roomGorm).First(&roomGorm)
+	tx := roomData.db.First(&roomGorm)
 	if tx.Error != nil {
 		if tx.Error.Error() == gorm.ErrRecordNotFound.Error() {
 			return nil, tx.Error
