@@ -16,7 +16,7 @@ type reservationQuery struct {
 // SelectRoomPrice implements reservations.ReservationData_
 func (reservationQuery *reservationQuery) SelectRoomPrice(roomID uint) (reservations.ReservationEntity, error) {
 	reservationGorm := models.Reservation{}
-	txSelect := reservationQuery.db.Where("rooms.id = ?", roomID).Select("rooms.price").First(&reservationGorm, roomID)
+	txSelect := reservationQuery.db.Table("rooms").Where("id = ?", roomID).Select("price").First(&reservationGorm)
 	if txSelect.Error != nil {
 		return reservations.ReservationEntity{}, txSelect.Error
 	}
