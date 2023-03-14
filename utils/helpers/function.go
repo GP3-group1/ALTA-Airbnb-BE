@@ -4,6 +4,7 @@ import (
 	"alta-airbnb-be/utils/consts"
 	"errors"
 	"mime/multipart"
+	"net/url"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -17,13 +18,13 @@ func LimitOffsetConvert(page, limit int) (int, int) {
 	return limit, offset
 }
 
-func ExtractIDParam(c echo.Context) (int, error) {
+func ExtractIDParam(c echo.Context) (uint, error) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return 0, errors.New(consts.ECHO_InvaildIdParam)
 	}
-	return id, nil
+	return uint(id), nil
 }
 
 func ExtractPageLimit(c echo.Context) (page int, limit int, err error) {
@@ -38,6 +39,16 @@ func ExtractPageLimit(c echo.Context) (page int, limit int, err error) {
 		return -1, -1, errors.New(consts.ECHO_InvaildLimitParam)
 	}
 	return page, limit, nil
+}
+
+func ExtractQueryParams(queryParams url.Values) map[string]interface{} {
+	extractedQueryParams := make(map[string]interface{})
+	for key, val := range queryParams {
+		if key != "page" && key != "limit"{
+			extractedQueryParams[key]=val[0]
+		}
+	}
+	return extractedQueryParams
 }
 
 func ExtractImage(c echo.Context, key string) (multipart.File, string, error) {
