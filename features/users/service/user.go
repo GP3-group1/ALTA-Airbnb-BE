@@ -16,8 +16,20 @@ type userService struct {
 }
 
 // UpdateBalance implements users.UserService_
-func (*userService) UpdateBalance(userID uint, input users.UserEntity) error {
-	panic("unimplemented")
+func (userService *userService) UpdateBalance(userID uint, input users.UserEntity) error {
+	if input.Balance < 1 {
+		return errors.New(consts.USER_InvalidInput)
+	}
+	userEntity, errSelect := userService.userData.SelectData(userID)
+	if errSelect != nil {
+		return errSelect
+	}
+	input.Balance += userEntity.Balance
+	errUpdate := userService.userData.UpdateData(userID, input)
+	if errUpdate != nil {
+		return errUpdate
+	}
+	return nil
 }
 
 // Create implements users.UserServiceInterface_
