@@ -64,8 +64,8 @@ func (reservationHandler *ReservationHandler) CheckReservation(c echo.Context) e
 		return c.JSON(helpers.ErrorResponse(errSelect))
 	}
 
-	listReservation := entityToResponseList(reservationEntity)
-	if len(listReservation) != 0 {
+	data := entityToResponseList(reservationEntity)
+	if len(data) != 0 {
 		return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_RoomNotAvailable))
 	}
 

@@ -17,8 +17,10 @@ type reservationQuery struct {
 
 // CheckReservation implements reservations.ReservationData_
 func (reservationQuery *reservationQuery) CheckReservation(input reservations.ReservationEntity, roomID uint) ([]reservations.ReservationEntity, error) {
+	CheckInDate := input.CheckInDate.Format("2006-01-02")
+	CheckOutDate := input.CheckOutDate.Format("2006-01-02")
 	reservationGorm := []models.Reservation{}
-	txSelect := reservationQuery.db.Where("room_id = ?", roomID).Where("check_in_date BETWEEN ? AND ?", input.CheckInDate, input.CheckOutDate).Where("check_out_date BETWEEN ? AND ?", input.CheckInDate, input.CheckOutDate).Find(&reservationGorm)
+	txSelect := reservationQuery.db.Where("room_id = ? AND check_in_date BETWEEN ? AND ? AND check_out_date BETWEEN ? AND ?", roomID, CheckInDate, CheckOutDate, CheckInDate, CheckOutDate).Find(&reservationGorm)
 	if txSelect.Error != nil {
 		return nil, txSelect.Error
 	}

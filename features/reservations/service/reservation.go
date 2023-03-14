@@ -18,12 +18,11 @@ type reservationService struct {
 func (reservationService *reservationService) CheckReservation(input reservations.ReservationEntity, roomID uint) ([]reservations.ReservationEntity, error) {
 	errValidate := reservationService.validate.Struct(input)
 	if errValidate != nil {
-		return []reservations.ReservationEntity{}, errValidate
+		return nil, errValidate
 	}
-
 	reservationEntity, errSelect := reservationService.reservationData.CheckReservation(input, roomID)
 	if errSelect != nil {
-		return []reservations.ReservationEntity{}, errSelect
+		return nil, errSelect
 	}
 	return reservationEntity, nil
 }
