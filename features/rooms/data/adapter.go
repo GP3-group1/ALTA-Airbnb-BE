@@ -1,8 +1,6 @@
 package data
 
 import (
-	"alta-airbnb-be/features/facilities"
-	_facilityData "alta-airbnb-be/features/facilities/data"
 	"alta-airbnb-be/features/rooms"
 	_roomModel "alta-airbnb-be/features/rooms/models"
 )
@@ -15,16 +13,13 @@ func convertToGorm(roomEntity *rooms.RoomEntity) _roomModel.Room {
 		Description: roomEntity.Description,
 		Location:    roomEntity.Location,
 		Price:       roomEntity.Price,
+		Facilities:  roomEntity.Facilities,
 	}
 	roomModel.ID = roomEntity.ID
 	return roomModel
 }
 
 func convertToEntity(roomModels *_roomModel.Room) *rooms.RoomEntity {
-	facilities := []facilities.FacilityEntity{}
-	for _, val := range roomModels.Facilities {
-		facilities = append(facilities, _facilityData.ConvertToEntity(&val))
-	}
 	roomEntity := rooms.RoomEntity{
 		ID:          roomModels.ID,
 		UserID:      roomModels.UserID,
@@ -33,7 +28,7 @@ func convertToEntity(roomModels *_roomModel.Room) *rooms.RoomEntity {
 		Description: roomModels.Description,
 		Location:    roomModels.Location,
 		Price:       roomModels.Price,
-		Facilities:  facilities,
+		Facilities:  roomModels.Facilities,
 	}
 	return &roomEntity
 }

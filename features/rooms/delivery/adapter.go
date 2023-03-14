@@ -1,15 +1,12 @@
 package delivery
 
 import (
-	_facilityDelivery "alta-airbnb-be/features/facilities/delivery"
-	"alta-airbnb-be/features/images"
-	_imageDelivery "alta-airbnb-be/features/images/delivery"
 	"alta-airbnb-be/features/rooms"
+	"strings"
 )
 
 func convertToEntity(roomRequest *rooms.RoomRequest) rooms.RoomEntity {
-	imageEntity := _imageDelivery.RequestToEntity(&roomRequest.ImageRequest)
-	facilityEntities := _facilityDelivery.ConvertToEntities(roomRequest)
+	// imageEntity := _imageDelivery.RequestToEntity(&roomRequest.ImageRequest)
 	roomEntity := rooms.RoomEntity{
 		ID:          roomRequest.ID,
 		UserID:      roomRequest.UserID,
@@ -18,16 +15,15 @@ func convertToEntity(roomRequest *rooms.RoomRequest) rooms.RoomEntity {
 		Description: roomRequest.Description,
 		Location:    roomRequest.Location,
 		Price:       roomRequest.Price,
-		Images:      []images.ImageEntity{imageEntity},
-		Facilities:  facilityEntities,
+		Facilities:  roomRequest.Facilities,
 	}
 	return roomEntity
 }
 
 func convertToResponse(roomEntity *rooms.RoomEntity) *rooms.RoomResponse {
 	facilities := []string{}
-	for _, val := range roomEntity.Facilities {
-		facilities = append(facilities, val.Name)
+	for _, val := range strings.Split(roomEntity.Facilities, ", ") {
+		facilities = append(facilities, val)
 	}
 	roomResponse := rooms.RoomResponse{
 		ID:          roomEntity.ID,
