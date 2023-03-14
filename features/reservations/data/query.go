@@ -7,12 +7,23 @@ import (
 	_mapUser "alta-airbnb-be/features/users/data"
 	"alta-airbnb-be/utils/consts"
 	"errors"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 type reservationQuery struct {
 	db *gorm.DB
+}
+
+// CheckReservation implements reservations.ReservationData_
+func (reservationQuery *reservationQuery) CheckReservation(CheckInDate time.Time, CheckOutDate time.Time, roomID uint) ([]reservations.ReservationEntity, error) {
+	reservationGorm := []models.Reservation{}
+	txSelect := reservationQuery.db.Where("room_id = ?", roomID).Where("check_in_date BETWEEN ? AND ?", CheckInDate, CheckOutDate).Where("check_out_date BETWEEN ? AND ?", CheckInDate, CheckOutDate).Find(&reservationGorm)
+	if txSelect.Error != nil {
+		return nil, txSelect.Error
+	}
+	return ListGormToEntity(reservationGorm), nil
 }
 
 // SelectUserBalance implements reservations.ReservationData_

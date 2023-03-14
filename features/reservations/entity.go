@@ -50,6 +50,7 @@ type ReservationResponse struct {
 type ReservationService_ interface {
 	Create(userID, idParam uint, inputReservation ReservationEntity) error
 	GetAll(page, limit int, userID uint) ([]ReservationEntity, error)
+	CheckReservation(CheckInDate, CheckOutDate time.Time, roomID uint) error
 }
 
 //go:generate mockery --name ReservationData_ --output ../../mocks
@@ -58,6 +59,7 @@ type ReservationData_ interface {
 	SelectUserBalance(userID uint) (ReservationEntity, error)
 	Insert(inputReservation ReservationEntity, inputUser users.UserEntity, userID uint) error
 	SelectAll(limit, offset int, userID uint) ([]ReservationEntity, error)
+	CheckReservation(CheckInDate, CheckOutDate time.Time, roomID uint) ([]ReservationEntity, error)
 }
 
 //go:generate mockery --name ReservationDelivery_ --output ../../mocks

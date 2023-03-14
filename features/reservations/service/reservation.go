@@ -5,6 +5,7 @@ import (
 	"alta-airbnb-be/features/users"
 	"alta-airbnb-be/utils/consts"
 	"errors"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -12,6 +13,11 @@ import (
 type reservationService struct {
 	reservationData reservations.ReservationData_
 	validate        *validator.Validate
+}
+
+// CheckReservation implements reservations.ReservationService_
+func (*reservationService) CheckReservation(CheckInDate time.Time, CheckOutDate time.Time, roomID uint) error {
+	panic("unimplemented")
 }
 
 // GetAll implements reservations.ReservationServiceInterface_
