@@ -3,6 +3,8 @@ package data
 import (
 	"alta-airbnb-be/features/reservations"
 	"alta-airbnb-be/features/reservations/models"
+	"alta-airbnb-be/features/users"
+	_mapUser "alta-airbnb-be/features/users/data"
 	"alta-airbnb-be/utils/consts"
 	"errors"
 
@@ -50,16 +52,32 @@ func (reservationQuery *reservationQuery) SelectAll(limit, offset int, userID ui
 }
 
 // Insert implements reservations.ReservationDataInterface_
-func (reservationQuery *reservationQuery) Insert(input reservations.ReservationEntity) error {
-	reservationGorm := EntityToGorm(input)
-	txInsert := reservationQuery.db.Create(&reservationGorm)
-	if txInsert.Error != nil {
-		return txInsert.Error
+func (reservationQuery *reservationQuery) Insert(inputReservation reservations.ReservationEntity, inputUser users.UserEntity, userID uint) error {
+	reservationGorm := EntityToGorm(inputReservation)
+	userGorm := _mapUser.EntityToGorm(inputUser)
+
+	tx := reservationQuery.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Error; err != nil {
+		return err
 	}
-	if txInsert.RowsAffected == 0 {
-		return errors.New(consts.SERVER_ZeroRowsAffected)
+
+	if err := tx.Create(&reservationGorm).Error; err != nil {
+		tx.Rollback()
+		return err
 	}
-	return nil
+
+	if err := tx.Where("id = ?", userID).Updates(&userGorm).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
 func New(db *gorm.DB) reservations.ReservationData_ {

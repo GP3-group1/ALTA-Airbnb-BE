@@ -1,6 +1,7 @@
 package reservations
 
 import (
+	"alta-airbnb-be/features/users"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -47,7 +48,7 @@ type ReservationResponse struct {
 
 //go:generate mockery --name ReservationService_ --output ../../mocks
 type ReservationService_ interface {
-	Create(userID, idParam uint, input ReservationEntity) error
+	Create(userID, idParam uint, inputReservation ReservationEntity) error
 	GetAll(page, limit int, userID uint) ([]ReservationEntity, error)
 }
 
@@ -55,7 +56,7 @@ type ReservationService_ interface {
 type ReservationData_ interface {
 	SelectRoomPrice(roomID uint) (ReservationEntity, error)
 	SelectUserBalance(userID uint) (ReservationEntity, error)
-	Insert(input ReservationEntity) error
+	Insert(inputReservation ReservationEntity, inputUser users.UserEntity, userID uint) error
 	SelectAll(limit, offset int, userID uint) ([]ReservationEntity, error)
 }
 
