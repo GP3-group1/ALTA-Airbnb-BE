@@ -117,6 +117,17 @@ paths:
           $ref: "#/components/responses/successUpdateBalance"
         "400":
           $ref: "#/components/responses/failedUpdateBalance"
+    get:
+      tags:
+        - Users
+      summary: Get user's balance by id
+      security:
+        - JWTAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/successGetBalance"
+        "400":
+          $ref: "#/components/responses/getDataFailed"
 
   ####################################
   #  ROOMS
@@ -418,6 +429,18 @@ components:
               type: string
             address:
               type: string
+        message:
+          type: string
+    responseBalanceWithData:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+            balance:
+              type: integer
         message:
           type: string
     responseRoomWithData:
@@ -921,6 +944,17 @@ components:
           examples:
             Invalid Password:
               $ref: "#/components/examples/invalidPassword"
+    successGetBalance:
+      description: Success Response Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseBalanceWithData"
+          example:
+            data:
+              id: 1
+              balance: 500
+            message: Success
     successUpdateBalance:
       description: Success Response Update User
       content:
