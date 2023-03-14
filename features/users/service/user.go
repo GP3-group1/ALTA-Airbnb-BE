@@ -11,7 +11,7 @@ import (
 )
 
 type userService struct {
-	userData users.UserDataInterface_
+	userData users.UserData_
 	validate *validator.Validate
 }
 
@@ -118,7 +118,7 @@ func (userService *userService) Remove(userID uint) error {
 	return nil
 }
 
-func New(userData users.UserDataInterface_) users.UserServiceInterface_ {
+func New(userData users.UserData_) users.UserService_ {
 	return &userService{
 		userData: userData,
 		validate: validator.New(),

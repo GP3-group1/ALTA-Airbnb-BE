@@ -7,7 +7,7 @@ import (
 )
 
 type reservationService struct {
-	reservationData reservations.ReservationDataInterface_
+	reservationData reservations.ReservationData_
 	validate        *validator.Validate
 }
 
@@ -49,7 +49,7 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 	return nil
 }
 
-func New(reservationData reservations.ReservationDataInterface_) reservations.ReservationServiceInterface_ {
+func New(reservationData reservations.ReservationData_) reservations.ReservationService_ {
 	return &reservationService{
 		reservationData: reservationData,
 		validate:        validator.New(),

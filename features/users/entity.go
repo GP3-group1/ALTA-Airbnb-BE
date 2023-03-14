@@ -54,7 +54,7 @@ type UserResponse struct {
 }
 
 //go:generate mockery --name UserService_ --output ../../mocks
-type UserServiceInterface_ interface {
+type UserService_ interface {
 	Login(email string, password string) (UserEntity, string, error)
 	GetData(userID uint) (UserEntity, error)
 	Create(input UserEntity) error
@@ -64,7 +64,7 @@ type UserServiceInterface_ interface {
 }
 
 //go:generate mockery --name UserData_ --output ../../mocks
-type UserDataInterface_ interface {
+type UserData_ interface {
 	Login(email string) (UserEntity, error)
 	Insert(input UserEntity) error
 	SelectData(userID uint) (UserEntity, error)
@@ -73,7 +73,7 @@ type UserDataInterface_ interface {
 }
 
 //go:generate mockery --name UserDelivery_ --output ../../mocks
-type UserDeliveryInterface_ interface {
+type UserDelivery_ interface {
 	Login(c echo.Context) error
 	Register(c echo.Context) error
 	GetUserData(c echo.Context) error

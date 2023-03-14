@@ -12,7 +12,7 @@ import (
 )
 
 type ReservationHandler struct {
-	reservationService reservations.ReservationServiceInterface_
+	reservationService reservations.ReservationService_
 }
 
 // AddReservation implements reservations.ReservationDeliveryInterface_
@@ -78,7 +78,7 @@ func (reservationHandler *ReservationHandler) GetAllReservation(c echo.Context) 
 	return c.JSON(http.StatusOK, helpers.ResponseWithData("Success", entityToResponseList(reservationEntity)))
 }
 
-func New(reservationService reservations.ReservationServiceInterface_) reservations.ReservationDeliveryInterface_ {
+func New(reservationService reservations.ReservationService_) reservations.ReservationDelivery_ {
 	return &ReservationHandler{
 		reservationService: reservationService,
 	}

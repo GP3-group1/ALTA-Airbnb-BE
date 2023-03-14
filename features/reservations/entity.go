@@ -46,20 +46,20 @@ type ReservationResponse struct {
 }
 
 //go:generate mockery --name ReservationService_ --output ../../mocks
-type ReservationServiceInterface_ interface {
+type ReservationService_ interface {
 	Create(userID, idParam uint, input ReservationEntity) error
 	GetAll(page, limit int, userID uint) ([]ReservationEntity, error)
 }
 
 //go:generate mockery --name ReservationData_ --output ../../mocks
-type ReservationDataInterface_ interface {
+type ReservationData_ interface {
 	SelectData(roomID uint) (_modelRoom.Room, error)
 	Insert(input ReservationEntity) error
 	SelectAll(limit, offset int, userID uint) ([]ReservationEntity, error)
 }
 
 //go:generate mockery --name ReservationDelivery_ --output ../../mocks
-type ReservationDeliveryInterface_ interface {
+type ReservationDelivery_ interface {
 	AddReservation(c echo.Context) error
 	CheckReservation(c echo.Context) error
 	GetAllReservation(c echo.Context) error

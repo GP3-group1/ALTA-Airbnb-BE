@@ -11,7 +11,7 @@ import (
 )
 
 type UserHandler struct {
-	userService users.UserServiceInterface_
+	userService users.UserService_
 }
 
 // GetUserData implements users.UserDeliveryInterface_
@@ -99,7 +99,7 @@ func (userHandler *UserHandler) UpdatePassword(c echo.Context) error {
 	return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateUserData))
 }
 
-func New(userService users.UserServiceInterface_) users.UserDeliveryInterface_ {
+func New(userService users.UserService_) users.UserDelivery_ {
 	return &UserHandler{
 		userService: userService,
 	}

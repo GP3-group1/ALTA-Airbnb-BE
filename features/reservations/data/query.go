@@ -50,7 +50,7 @@ func (reservationQuery *reservationQuery) Insert(input reservations.ReservationE
 	return nil
 }
 
-func New(db *gorm.DB) reservations.ReservationDataInterface_ {
+func New(db *gorm.DB) reservations.ReservationData_ {
 	return &reservationQuery{
 		db: db,
 	}

@@ -71,7 +71,7 @@ func (userQuery *userQuery) UpdateData(userID uint, input users.UserEntity) erro
 	return nil
 }
 
-func New(db *gorm.DB) users.UserDataInterface_ {
+func New(db *gorm.DB) users.UserData_ {
 	return &userQuery{
 		db: db,
 	}
