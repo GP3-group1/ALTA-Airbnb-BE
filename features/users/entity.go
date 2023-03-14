@@ -15,7 +15,7 @@ type UserEntity struct {
 	Sex         string
 	Address     string
 	PhoneNumber string
-	Balance     int `validate:"gt=0"`
+	Balance     int
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
