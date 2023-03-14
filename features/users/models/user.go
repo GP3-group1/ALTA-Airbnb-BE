@@ -13,7 +13,7 @@ type User struct {
 	Name         string                          `gorm:"not null;type:varchar(50)"`
 	Email        string                          `gorm:"not null;unique;type:varchar(50)"`
 	Password     string                          `gorm:"not null;type:text"`
-	Sex          string                          `gorm:"not null;type:enum('Male','Female');default:'Male'"`
+	Sex          string                          `gorm:"type:varchar(10)"`
 	Address      string                          `gorm:"type:varchar(100)"`
 	PhoneNumber  string                          `gorm:"type:varchar(12)"`
 	Balance      float64                         `gorm:"type:float not null"`

@@ -38,7 +38,6 @@ func (reservationHandler *ReservationHandler) AddReservation(c echo.Context) err
 	if errInsert != nil {
 		return c.JSON(helpers.ErrorResponse(errInsert))
 	}
-
 	return c.JSON(http.StatusCreated, helpers.Response(consts.RESERVATION_InsertSuccess))
 }
 
