@@ -16,7 +16,7 @@ type User struct {
 	Sex          string                          `gorm:"not null;type:enum('Male','Female');default:'Male'"`
 	Address      string                          `gorm:"type:varchar(100)"`
 	PhoneNumber  string                          `gorm:"type:varchar(12)"`
-	Balance      float64                         `gorm:"type:float not null default 1000"`
+	Balance      float64                         `gorm:"type:float not null"`
 	Room         []_roomModel.Room               `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Reservations []_reservationModel.Reservation `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Reviews      []_reviewModel.Review           `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
