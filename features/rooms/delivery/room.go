@@ -23,13 +23,13 @@ func New(roomService rooms.RoomService_) rooms.RoomDelivery_ {
 }
 
 func (roomDelivery *RoomDelivery) AddRoom(c echo.Context) error {
-	userId := middlewares.ExtractTokenUserId(c)
+	// userId := middlewares.ExtractTokenUserId(c)
 	roomRequest := rooms.RoomRequest{}
 	err := c.Bind(&roomRequest)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.Response(consts.ROOM_ErrorBindRoomData))
 	}
-	roomRequest.UserID = userId
+	// roomRequest.UserID = userId
 
 	file, _, err := helpers.ExtractImage(c, "image")
 	if err != nil {
@@ -45,6 +45,37 @@ func (roomDelivery *RoomDelivery) AddRoom(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, helpers.Response(consts.ROOM_SuccessInsertRoomData))
+}
+
+func (roomDelivery *RoomDelivery) ModifyRoom(c echo.Context) error {
+	// userId := middlewares.ExtractTokenUserId(c)
+	roomId, err := helpers.ExtractIDParam(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(err.Error()))
+	}
+
+	roomRequest := rooms.RoomRequest{}
+	err = c.Bind(&roomRequest)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response(consts.ROOM_ErrorBindRoomData))
+	}
+	roomRequest.ID = roomId
+	// roomRequest.UserID = userId
+
+	file, _, err := helpers.ExtractImage(c, "image")
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response(err.Error()))
+	}
+	roomRequest.Image = file
+
+	roomEntity := convertToEntity(&roomRequest)
+	err = roomDelivery.roomService.ChangeRoom(&roomEntity)
+	if err != nil {
+		codeStatus, message := helpers.ValidateRoomFailedResponse(c, err)
+		return c.JSON(codeStatus, helpers.Response(message))
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response(consts.ROOM_SuccessUpdateRoomData))
 }
 
 func (roomDelivery *RoomDelivery) GetRooms(c echo.Context) error {

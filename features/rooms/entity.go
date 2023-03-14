@@ -1,7 +1,6 @@
 package rooms
 
 import (
-	"alta-airbnb-be/features/facilities"
 	"alta-airbnb-be/features/images"
 	"alta-airbnb-be/features/reservations"
 	"alta-airbnb-be/features/reviews"
@@ -11,19 +10,16 @@ import (
 )
 
 type RoomEntity struct {
-	ID           uint
-	UserID       uint
-	Username     string
-	Name         string `validate:"required"`
-	Overview     string `validate:"required"`
-	Description  string `validate:"required"`
-	Location     string `validate:"required"`
-	Price        int    `validate:"required"`
-	Reservations []reservations.ReservationEntity
-	Images       []images.ImageEntity
-	Reviews      []reviews.ReviewEntity
-	AVG_Ratings  float64
-	Facilities   []facilities.FacilityEntity
+	ID          uint
+	UserID      uint
+	Username    string
+	Name        string `validate:"required"`
+	Overview    string `validate:"required"`
+	Description string `validate:"required"`
+	Location    string `validate:"required"`
+	Price       int    `validate:"required"`
+	Facilities  string
+	AVG_Ratings float64
 }
 
 type RoomRequest struct {
@@ -47,17 +43,17 @@ type RoomResponse struct {
 	Description  string                           `json:"description,omitempty" form:"description"`
 	Location     string                           `json:"location,omitempty" form:"location"`
 	Price        int                              `json:"price,omitempty" form:"price"`
+	Facilities   []string                         `json:"facilities,omitempty"`
 	Reservations []reservations.ReservationEntity `json:"reservations,omitempty"`
 	Images       []images.ImageEntity             `json:"ratings,omitempty"`
 	Reviews      []reviews.ReviewEntity           `json:"reviews,omitempty"`
 	AVG_Ratings  float64                          `json:"avg_ratings"`
-	Facilities   []string                         `json:"facilities,omitempty"`
 }
 
 //go:generate mockery --name MenteeData_ --output ../../mocks
 type RoomData_ interface {
 	InsertRoom(roomEntity *RoomEntity) error
-	// UpdateRoom(roomEntity *RoomEntity) error
+	UpdateRoom(roomEntity *RoomEntity) error
 	DeleteRoom(RoomEntity *RoomEntity) error
 	SelectRooms(limit, offset int, extractedQueryParams map[string]any) ([]*RoomEntity, error)
 	SelectRoomByRoomId(roomEntity *RoomEntity) (*RoomEntity, error)
@@ -69,7 +65,7 @@ type RoomData_ interface {
 //go:generate mockery --name MenteeService_ --output ../../mocks
 type RoomService_ interface {
 	CreateRoom(roomEntity *RoomEntity) error
-	// ChangeRoom(roomEntity *RoomEntity) error
+	ChangeRoom(roomEntity *RoomEntity) error
 	RemoveRoom(RoomEntity *RoomEntity) error
 	GetRooms(limit, offset int, queryParams url.Values) ([]*RoomEntity, error)
 	GetRoomByRoomId(RoomEntity *RoomEntity) (*RoomEntity, error)
@@ -81,7 +77,7 @@ type RoomService_ interface {
 //go:generate mockery --name MenteeDelivery_ --output ../../mocks
 type RoomDelivery_ interface {
 	AddRoom(c echo.Context) error
-	// ModifyRoom(c echo.Context) error
+	ModifyRoom(c echo.Context) error
 	RemoveRoom(c echo.Context) error
 	GetRooms(c echo.Context) error
 	GetRoomByRoomId(c echo.Context) error

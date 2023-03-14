@@ -6,9 +6,9 @@ import (
 	"alta-airbnb-be/features/reviews/models"
 	"alta-airbnb-be/features/rooms"
 	_roomModel "alta-airbnb-be/features/rooms/models"
-	_facilityModel "alta-airbnb-be/features/facilities/models"
 	"alta-airbnb-be/utils/consts"
 	"errors"
+	"fmt"
 	"strings"
 
 	"gorm.io/gorm"
@@ -29,7 +29,7 @@ func (roomData *RoomData) InsertRoom(roomEntity *rooms.RoomEntity) error {
 
 	txTransaction := roomData.db.Begin()
 	if txTransaction.Error != nil {
-		// txTransaction.Rollback()
+		txTransaction.Rollback()
 		return errors.New(consts.SERVER_InternalServerError)
 	}
 
@@ -45,15 +45,34 @@ func (roomData *RoomData) InsertRoom(roomEntity *rooms.RoomEntity) error {
 		return errors.New(consts.SERVER_InternalServerError)
 	}
 
-	for _, facility := range roomEntity.Facilities {
-		tx = txTransaction.Create(&_facilityModel.Facility{
-			RoomID: roomGorm.ID,
-			Name:   facility.Name,
-		})
-		if tx.Error != nil {
-			txTransaction.Rollback()
-			return errors.New(consts.SERVER_InternalServerError)
+	tx = txTransaction.Commit()
+	if tx.Error != nil {
+		tx.Rollback()
+		return errors.New(consts.SERVER_InternalServerError)
+	}
+
+	return nil
+}
+
+func (roomData *RoomData) UpdateRoom(roomEntity *rooms.RoomEntity) error {
+	roomGorm := convertToGorm(roomEntity)
+
+	txTransaction := roomData.db.Begin()
+	if txTransaction.Error != nil {
+		// txTransaction.Rollback()
+		return errors.New(consts.SERVER_InternalServerError)
+	}
+
+	tx := txTransaction.Model(&roomGorm).Where("id = ? AND user_id = ?", roomGorm.ID, roomGorm.UserID).Updates(&roomGorm)
+	if tx.Error != nil {
+		txTransaction.Rollback()
+		if strings.Contains(tx.Error.Error(), "Error 1452 (23000)") {
+			return errors.New(consts.ROOM_UserNotExisted)
 		}
+		if strings.Contains(tx.Error.Error(), "Error 1062 (23000)") {
+			return errors.New(consts.ROOM_RoomNameAlreadyExisted)
+		}
+		return errors.New(consts.SERVER_InternalServerError)
 	}
 
 	tx = txTransaction.Commit()
@@ -76,7 +95,20 @@ func (roomData *RoomData) DeleteRoom(roomEntity *rooms.RoomEntity) error {
 func (roomData *RoomData) SelectRooms(limit, offset int, queryParams map[string]any) ([]*rooms.RoomEntity, error) {
 	roomsGormOutput := []*_roomModel.Room{}
 
-	tx := roomData.db.Where(&_roomModel.Room{}).Find(&roomsGormOutput)
+	query := ""
+	for key, val := range queryParams {
+		if query != "" {
+			query += " AND "
+		}
+		if key != "price" {
+			query += fmt.Sprintf("%s LIKE %s%s%s ", key, "'%", val, "%'")
+		} else {
+			priceRange := strings.Split(val.(string), " - ")
+			query += fmt.Sprintf("%s BETWEEN %s AND %s ", key, priceRange[0], priceRange[1])
+		}
+	}
+
+	tx := roomData.db.Where(query).Find(&roomsGormOutput)
 	if tx.Error != nil {
 		return nil, errors.New(consts.SERVER_InternalServerError)
 	}

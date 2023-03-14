@@ -36,6 +36,19 @@ func (roomService *RoomService) CreateRoom(roomEntity *rooms.RoomEntity) error {
 	return nil
 }
 
+func (roomService *RoomService) ChangeRoom(roomEntity *rooms.RoomEntity) error {
+	err := roomService.validate.Struct(roomEntity)
+	if err != nil {
+		return errors.New(consts.ROOM_InvalidInput)
+	}
+
+	err = roomService.roomData.UpdateRoom(roomEntity)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (roomService *RoomService) RemoveRoom(roomEntity *rooms.RoomEntity) error {
 	err := roomService.roomData.DeleteRoom(roomEntity)
 	if err != nil {
