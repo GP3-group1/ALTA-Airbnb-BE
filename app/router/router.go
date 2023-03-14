@@ -4,6 +4,9 @@ import (
 	_reservationData "alta-airbnb-be/features/reservations/data"
 	_reservationDelivery "alta-airbnb-be/features/reservations/delivery"
 	_reservationService "alta-airbnb-be/features/reservations/service"
+	_roomData "alta-airbnb-be/features/rooms/data"
+	_roomDelivery "alta-airbnb-be/features/rooms/delivery"
+	_roomService "alta-airbnb-be/features/rooms/service"
 	_userData "alta-airbnb-be/features/users/data"
 	_userDelivery "alta-airbnb-be/features/users/delivery"
 	_userService "alta-airbnb-be/features/users/service"
@@ -35,7 +38,22 @@ func initReservationRouter(db *gorm.DB, e *echo.Echo) {
 	e.GET("/users/reservations", reservationHandler.GetAllReservation, middlewares.JWTMiddleware())
 }
 
+func initRoomRouter(db *gorm.DB, e *echo.Echo) {
+	roomData := _roomData.New(db)
+	roomService := _roomService.New(roomData)
+	roomHandler := _roomDelivery.New(roomService)
+
+	e.POST("/rooms", roomHandler.AddRoom)
+	e.DELETE("/rooms/:id", roomHandler.RemoveRoom)
+	e.GET("/rooms", roomHandler.GetRooms)
+	e.GET("/rooms/users", roomHandler.GetRoomsByUserId)
+	e.GET("/rooms/:id", roomHandler.GetRoomByRoomId)
+	e.POST("/rooms/:id/reviews", roomHandler.AddReview)
+	e.GET("/rooms/:id/reviews", roomHandler.GetReviewsByRoomId)
+}
+
 func InitRouter(db *gorm.DB, e *echo.Echo) {
 	initUserRouter(db, e)
 	initReservationRouter(db, e)
+	initRoomRouter(db, e)
 }
