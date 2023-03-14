@@ -4,6 +4,7 @@ import (
 	"alta-airbnb-be/features/images"
 	"alta-airbnb-be/features/reservations"
 	"alta-airbnb-be/features/reviews"
+	"mime/multipart"
 	"net/url"
 
 	"github.com/labstack/echo/v4"
@@ -12,6 +13,8 @@ import (
 type RoomEntity struct {
 	ID          uint
 	UserID      uint
+	Image       multipart.File
+	ImageName   string
 	Username    string
 	Name        string `validate:"required"`
 	Overview    string `validate:"required"`
@@ -20,12 +23,14 @@ type RoomEntity struct {
 	Price       int    `validate:"required"`
 	Facilities  string
 	AVG_Ratings float64
+	Images      []images.ImageEntity
 }
 
 type RoomRequest struct {
-	ID     uint `json:"id" form:"id"`
-	UserID uint `json:"user_id" form:"user_id"`
-	images.ImageRequest
+	ID          uint           `json:"id" form:"id"`
+	UserID      uint           `json:"user_id" form:"user_id"`
+	Image       multipart.File `json:"image" form:"image"`
+	ImageName   string
 	Name        string `json:"name" form:"name"`
 	Overview    string `json:"overview" form:"overview"`
 	Description string `json:"description" form:"description"`
@@ -36,6 +41,7 @@ type RoomRequest struct {
 
 type RoomResponse struct {
 	ID           uint                             `json:"id,omitempty" form:"id"`
+	Url          string                           `json:"url_image,omitempty" form:"id"`
 	Username     string                           `json:"username,omitempty" form:"username"`
 	UserID       uint                             `json:"user_id,omitempty" form:"user_id"`
 	Name         string                           `json:"name,omitempty" form:"name"`
@@ -45,7 +51,7 @@ type RoomResponse struct {
 	Price        int                              `json:"price,omitempty" form:"price"`
 	Facilities   []string                         `json:"facilities,omitempty"`
 	Reservations []reservations.ReservationEntity `json:"reservations,omitempty"`
-	Images       []images.ImageEntity             `json:"ratings,omitempty"`
+	Images       []images.ImageResponse           `json:"images,omitempty"`
 	Reviews      []reviews.ReviewEntity           `json:"reviews,omitempty"`
 	AVG_Ratings  float64                          `json:"avg_ratings"`
 }

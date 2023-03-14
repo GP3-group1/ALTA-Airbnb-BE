@@ -6,7 +6,9 @@ import (
 	"alta-airbnb-be/features/reviews/models"
 	"alta-airbnb-be/features/rooms"
 	_roomModel "alta-airbnb-be/features/rooms/models"
+	_imageModel "alta-airbnb-be/features/images/models"
 	"alta-airbnb-be/utils/consts"
+	"alta-airbnb-be/app/storage"
 	"errors"
 	"fmt"
 	"strings"
@@ -45,11 +47,17 @@ func (roomData *RoomData) InsertRoom(roomEntity *rooms.RoomEntity) error {
 		return errors.New(consts.SERVER_InternalServerError)
 	}
 
-	// err := storage.GetStorageClient().UploadFile(roomEntity.Image, roomEntity.ImageName)
-	// if err != nil {
-	// 	tx.Rollback()
-	// 	return err
-	// }
+	imageName, err := storage.GetStorageClient().UploadFile(roomEntity.Image, roomEntity.ImageName)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx = txTransaction.Create(&_imageModel.Image{RoomID: roomGorm.ID, Url: imageName})
+	if tx.Error != nil {
+		txTransaction.Rollback()
+		return errors.New(consts.SERVER_InternalServerError)
+	}
 
 	tx = txTransaction.Commit()
 	if tx.Error != nil {
@@ -114,7 +122,7 @@ func (roomData *RoomData) SelectRooms(limit, offset int, queryParams map[string]
 		}
 	}
 
-	tx := roomData.db.Where(query).Find(&roomsGormOutput)
+	tx := roomData.db.Where(query).Preload("Images").Find(&roomsGormOutput)
 	if tx.Error != nil {
 		return nil, errors.New(consts.SERVER_InternalServerError)
 	}
@@ -133,7 +141,7 @@ func (roomData *RoomData) SelectRooms(limit, offset int, queryParams map[string]
 func (roomData *RoomData) SelectRoomByRoomId(roomEntity *rooms.RoomEntity) (*rooms.RoomEntity, error) {
 	roomGorm := convertToGorm(roomEntity)
 
-	tx := roomData.db.First(&roomGorm)
+	tx := roomData.db.Preload("Images").First(&roomGorm)
 	if tx.Error != nil {
 		if tx.Error.Error() == gorm.ErrRecordNotFound.Error() {
 			return nil, tx.Error
@@ -158,7 +166,7 @@ func (roomData *RoomData) SelectRoomsByUserId(roomEntity *rooms.RoomEntity) ([]*
 	roomGorm := convertToGorm(roomEntity)
 	roomsGormOutput := []*_roomModel.Room{}
 
-	tx := roomData.db.Where(&roomGorm).Find(&roomsGormOutput)
+	tx := roomData.db.Where(&roomGorm).Preload("Images").Find(&roomsGormOutput)
 	if tx.Error != nil {
 		return nil, errors.New(consts.SERVER_InternalServerError)
 	}

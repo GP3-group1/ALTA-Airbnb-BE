@@ -23,19 +23,20 @@ func New(roomService rooms.RoomService_) rooms.RoomDelivery_ {
 }
 
 func (roomDelivery *RoomDelivery) AddRoom(c echo.Context) error {
-	userId := middlewares.ExtractTokenUserId(c)
+	// userId := middlewares.ExtractTokenUserId(c)
 	roomRequest := rooms.RoomRequest{}
 	err := c.Bind(&roomRequest)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.Response(consts.ROOM_ErrorBindRoomData))
 	}
-	roomRequest.UserID = userId
+	// roomRequest.UserID = userId
 
-	file, _, err := helpers.ExtractImage(c, "image")
+	file, fileName, err := helpers.ExtractImage(c, "image")
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.Response(err.Error()))
 	}
 	roomRequest.Image = file
+	roomRequest.ImageName = fileName
 
 	roomEntity := convertToEntity(&roomRequest)
 	err = roomDelivery.roomService.CreateRoom(&roomEntity)

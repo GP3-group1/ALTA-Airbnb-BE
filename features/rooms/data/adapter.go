@@ -1,6 +1,7 @@
 package data
 
 import (
+	_imageData "alta-airbnb-be/features/images/data"
 	"alta-airbnb-be/features/rooms"
 	_roomModel "alta-airbnb-be/features/rooms/models"
 )
@@ -29,6 +30,7 @@ func convertToEntity(roomModels *_roomModel.Room) *rooms.RoomEntity {
 		Location:    roomModels.Location,
 		Price:       roomModels.Price,
 		Facilities:  roomModels.Facilities,
+		Images:      _imageData.ConvertToEntities(roomModels.Images),
 	}
 	return &roomEntity
 }

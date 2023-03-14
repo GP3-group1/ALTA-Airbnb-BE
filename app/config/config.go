@@ -19,9 +19,6 @@ type AppConfig struct {
 	DB_PORT     int
 	DB_NAME     string
 	JWT_KEY     string
-
-	// GCP_PROJECT_ID  string
-	// GCP_BUCKET_NAME string
 }
 
 func InitConfig() *AppConfig {
@@ -57,14 +54,6 @@ func ReadEnv() *AppConfig {
 		app.DB_NAME = val
 		isRead = false
 	}
-	// if val, found := os.LookupEnv("GCP_PROJECT_ID"); found {
-	// 	app.GCP_PROJECT_ID = val
-	// 	isRead = false
-	// }
-	// if val, found := os.LookupEnv("GCP_BUCKET_NAME"); found {
-	// 	app.GCP_BUCKET_NAME = val
-	// 	isRead = false
-	// }
 
 	if isRead {
 		viper.AddConfigPath(".")
@@ -82,8 +71,6 @@ func ReadEnv() *AppConfig {
 		app.DB_HOSTNAME = viper.Get("DB_HOSTNAME").(string)
 		app.DB_PORT, _ = strconv.Atoi(viper.Get("DB_PORT").(string))
 		app.DB_NAME = viper.Get("DB_NAME").(string)
-		// app.GCP_PROJECT_ID = viper.Get("GCP_PROJECT_ID").(string)
-		// app.GCP_BUCKET_NAME = viper.Get("GCP_BUCKET_NAME").(string)
 
 	}
 
