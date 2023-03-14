@@ -166,8 +166,6 @@ paths:
       tags:
         - Rooms
       summary: Get room data by id
-      security:
-        - JWTAuth: []
       parameters:
         - $ref: "#/components/parameters/idRoomParam"
       responses:
