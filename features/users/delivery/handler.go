@@ -14,6 +14,21 @@ type UserHandler struct {
 	userService users.UserService_
 }
 
+// GetUserBalance implements users.UserDelivery_
+func (userHandler *UserHandler) GetUserBalance(c echo.Context) error {
+	userID := middlewares.ExtractTokenUserId(c)
+	userEntity, errSelect := userHandler.userService.GetData(userID)
+	if errSelect != nil {
+		return c.JSON(helpers.ErrorResponse(errSelect))
+	}
+	response := entityToResponse(userEntity)
+	dataResponse := map[string]any{
+		"id":      response.ID,
+		"balance": response.Balance,
+	}
+	return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.USER_SuccessReadBalance, dataResponse))
+}
+
 // GetUserData implements users.UserDeliveryInterface_
 func (userHandler *UserHandler) GetUserData(c echo.Context) error {
 	userID := middlewares.ExtractTokenUserId(c)

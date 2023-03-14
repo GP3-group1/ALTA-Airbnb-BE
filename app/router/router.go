@@ -27,6 +27,7 @@ func initUserRouter(db *gorm.DB, e *echo.Echo) {
 	e.PUT("/users", userHandler.UpdateAccount, middlewares.JWTMiddleware())
 	e.PUT("/users/password", userHandler.UpdatePassword, middlewares.JWTMiddleware())
 	e.DELETE("/users", userHandler.RemoveAccount, middlewares.JWTMiddleware())
+	e.GET("/users/balances", userHandler.GetUserBalance, middlewares.JWTMiddleware())
 }
 
 func initReservationRouter(db *gorm.DB, e *echo.Echo) {

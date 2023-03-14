@@ -35,5 +35,6 @@ func entityToResponse(userEntity users.UserEntity) users.UserResponse {
 		Sex:         userEntity.Sex,
 		Address:     userEntity.Address,
 		PhoneNumber: userEntity.PhoneNumber,
+		Balance:     userEntity.Balance,
 	}
 }

@@ -26,6 +26,9 @@ const (
 	// Select
 	USER_SuccessReadUserData string = "succesfully read user data"
 
+	// Select
+	USER_SuccessReadBalance string = "succesfully read user's balance data"
+
 	// Update
 	USER_SuccessUpdateUserData string = "succesfully update user data"
 

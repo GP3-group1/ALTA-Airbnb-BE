@@ -32,11 +32,12 @@ type UserLogin struct {
 }
 
 type UserUpdate struct {
-	Name        string `json:"name" form:"name"`
-	Email       string `json:"email" form:"email"`
-	Sex         string `json:"sex" form:"sex"`
-	Address     string `json:"address" form:"address"`
-	PhoneNumber string `json:"phone_number" form:"phone_number"`
+	Name        string  `json:"name" form:"name"`
+	Email       string  `json:"email" form:"email"`
+	Sex         string  `json:"sex" form:"sex"`
+	Address     string  `json:"address" form:"address"`
+	PhoneNumber string  `json:"phone_number" form:"phone_number"`
+	Balance     float64 `json:"balance" form:"balance"`
 }
 
 type UserUpdatePassword struct {
@@ -46,11 +47,12 @@ type UserUpdatePassword struct {
 
 type UserResponse struct {
 	ID          uint
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	Sex         string `json:"sex"`
-	Address     string `json:"address"`
-	PhoneNumber string `json:"phone_number"`
+	Name        string  `json:"name"`
+	Email       string  `json:"email"`
+	Sex         string  `json:"sex"`
+	Address     string  `json:"address"`
+	PhoneNumber string  `json:"phone_number"`
+	Balance     float64 `json:"balance"`
 }
 
 //go:generate mockery --name UserService_ --output ../../mocks
@@ -80,4 +82,5 @@ type UserDelivery_ interface {
 	UpdateAccount(c echo.Context) error
 	UpdatePassword(c echo.Context) error
 	RemoveAccount(c echo.Context) error
+	GetUserBalance(c echo.Context) error
 }
