@@ -21,6 +21,9 @@ const (
 	// Select
 	ROOM_SuccesReadRoomData string = "succesfully read room data"
 
+	// Update
+	ROOM_SuccessUpdateRoomData string = "succesfully update room data"
+
 	// Delete
 	ROOM_SuccesDeleteRoomData string = "succesfully delete room data"
 )
