@@ -4,6 +4,7 @@ import (
 	"alta-airbnb-be/features/reviews"
 	_reviewDelivery "alta-airbnb-be/features/reviews/delivery"
 	"alta-airbnb-be/features/rooms"
+	"alta-airbnb-be/middlewares"
 	"alta-airbnb-be/utils/consts"
 	"alta-airbnb-be/utils/helpers"
 	"net/http"
@@ -79,7 +80,7 @@ func New(roomService rooms.RoomService_) rooms.RoomDelivery_ {
 // 	if err != nil {
 // 		return c.JSON(http.StatusInternalServerError, helpers.Response(consts.ROOM_ErrorBindRoomData))
 // 	}
-// 	roomRequest.UserID = userId
+// 	roomRequest.UserID = user
 // 	roomRequest.ID = roomId
 
 // 	roomEntity := convertToEntity(&roomRequest)
@@ -136,30 +137,30 @@ func New(roomService rooms.RoomService_) rooms.RoomDelivery_ {
 // 	return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.ROOM_SuccesReadRoomData, roomResponses))
 // }
 
-// func (roomDelivery *RoomDelivery) AddReview(c echo.Context) error {
-// 	userId := middlewares.ExtractTokenUserId(c)
-// 	roomId, err := helpers.ExtractIDParam(c)
-// 	if err != nil {
-// 		return c.JSON(http.StatusBadRequest, helpers.Response(err.Error()))
-// 	}
+func (roomDelivery *RoomDelivery) AddReview(c echo.Context) error {
+	userId := middlewares.ExtractTokenUserId(c)
+	roomId, err := helpers.ExtractIDParam(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(err.Error()))
+	}
 
-// 	reviewRequest := reviews.ReviewRequest{}
-// 	err = c.Bind(&reviewRequest)
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, helpers.Response(consts.REVIEW_ErrorBindReviewData))
-// 	}
-// 	reviewRequest.UserID = userId
-// 	reviewRequest.RoomID = roomId
+	reviewRequest := reviews.ReviewRequest{}
+	err = c.Bind(&reviewRequest)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response(consts.REVIEW_ErrorBindReviewData))
+	}
+	reviewRequest.UserID = userId
+	reviewRequest.RoomID = roomId
 
-// 	reviewEntity := _reviewDelivery.ConvertToEntity(&reviewRequest)
-// 	err = roomDelivery.roomService.CreateReview(&reviewEntity)
-// 	if err != nil {
-// 		codeStatus, message := helpers.ValidateReviewFailedResponse(c, err)
-// 		return c.JSON(codeStatus, helpers.Response(message))
-// 	}
+	reviewEntity := _reviewDelivery.ConvertToEntity(&reviewRequest)
+	err = roomDelivery.roomService.CreateReview(&reviewEntity)
+	if err != nil {
+		codeStatus, message := helpers.ValidateReviewFailedResponse(c, err)
+		return c.JSON(codeStatus, helpers.Response(message))
+	}
 
-// 	return c.JSON(http.StatusOK, helpers.Response(consts.REVIEW_SuccessInsertReviewData))
-// }
+	return c.JSON(http.StatusOK, helpers.Response(consts.REVIEW_SuccessInsertReviewData))
+}
 
 func (roomDelivery *RoomDelivery) GetReviewsByRoomId(c echo.Context) error {
 	roomId, err := helpers.ExtractIDParam(c)

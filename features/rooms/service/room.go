@@ -65,18 +65,18 @@ func New(roomData rooms.RoomData_) rooms.RoomService_ {
 // 	return roomEntities, nil
 // }
 
-// func (roomService *RoomService) CreateReview(reviewEntity *reviews.ReviewEntity) error {
-// 	err := Validate(roomService, reviewEntity)
-// 	if err != nil {
-// 		return err
-// 	}
+func (roomService *RoomService) CreateReview(reviewEntity *reviews.ReviewEntity) error {
+	err := Validate(roomService, reviewEntity)
+	if err != nil {
+		return err
+	}
 
-// 	err = roomService.roomData.InsertReview(reviewEntity)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
+	err = roomService.roomData.InsertReview(reviewEntity)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 func (roomService *RoomService) GetReviewsByRoomId(reviewEntity *reviews.ReviewEntity) ([]*reviews.ReviewEntity, error) {
 	reviewEntities, err := roomService.roomData.SelectReviewsByRoomId(reviewEntity)

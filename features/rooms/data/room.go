@@ -7,6 +7,7 @@ import (
 	"alta-airbnb-be/features/rooms"
 	"alta-airbnb-be/utils/consts"
 	"errors"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -133,22 +134,22 @@ func New(db *gorm.DB) rooms.RoomData_ {
 // 	return roomEntities, nil
 // }
 
-// func (roomData *RoomData) InsertReview(reviewEntity *reviews.ReviewEntity) error {
-// 	reviewGorm := _reviewData.ConvertToGorm(reviewEntity)
+func (roomData *RoomData) InsertReview(reviewEntity *reviews.ReviewEntity) error {
+	reviewGorm := _reviewData.ConvertToGorm(reviewEntity)
 
-// 	tx := roomData.db.Create(&reviewGorm)
-// 	if tx.Error != nil {
-// 		if strings.Contains(tx.Error.Error(), "users") {
-// 			return errors.New(consts.REVIEW_UserNotExisted)
-// 		}
-// 		if strings.Contains(tx.Error.Error(), "rooms") {
-// 			return errors.New(consts.REVIEW_RoomNotExisted)
-// 		}
-// 		return tx.Error
-// 	}
+	tx := roomData.db.Create(&reviewGorm)
+	if tx.Error != nil {
+		if strings.Contains(tx.Error.Error(), "users") {
+			return errors.New(consts.REVIEW_UserNotExisted)
+		}
+		if strings.Contains(tx.Error.Error(), "rooms") {
+			return errors.New(consts.REVIEW_RoomNotExisted)
+		}
+		return tx.Error
+	}
 
-// 	return nil
-// }
+	return nil
+}
 
 func (roomData *RoomData) SelectReviewsByRoomId(reviewEntity *reviews.ReviewEntity) ([]*reviews.ReviewEntity, error) {
 	reviewGorm := _reviewData.ConvertToGorm(reviewEntity)
