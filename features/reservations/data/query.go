@@ -13,6 +13,19 @@ type reservationQuery struct {
 	db *gorm.DB
 }
 
+// SelectUserBalance implements reservations.ReservationData_
+func (reservationQuery *reservationQuery) SelectUserBalance(userID uint) (reservations.ReservationEntity, error) {
+	reservationGorm := models.Reservation{}
+	txSelect := reservationQuery.db.Table("users").Where("id = ?", userID).Select("balance").First(&reservationGorm)
+	if txSelect.Error != nil {
+		return reservations.ReservationEntity{}, txSelect.Error
+	}
+	if txSelect.RowsAffected == 0 {
+		return reservations.ReservationEntity{}, errors.New(consts.SERVER_ZeroRowsAffected)
+	}
+	return GormToEntity(reservationGorm), nil
+}
+
 // SelectRoomPrice implements reservations.ReservationData_
 func (reservationQuery *reservationQuery) SelectRoomPrice(roomID uint) (reservations.ReservationEntity, error) {
 	reservationGorm := models.Reservation{}

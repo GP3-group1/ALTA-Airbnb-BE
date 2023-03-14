@@ -15,6 +15,7 @@ func EntityToGorm(reservationEntity reservations.ReservationEntity) _reservation
 		UserID:       reservationEntity.UserID,
 		RoomName:     reservationEntity.RoomName,
 		Price:        reservationEntity.Price,
+		Balance:      reservationEntity.Balance,
 	}
 	return reservationGorm
 }
@@ -30,6 +31,7 @@ func GormToEntity(reservationGorm _reservationModel.Reservation) reservations.Re
 		UserID:       reservationGorm.UserID,
 		RoomName:     reservationGorm.RoomName,
 		Price:        reservationGorm.Price,
+		Balance:      reservationGorm.Balance,
 		CreatedAt:    reservationGorm.CreatedAt,
 		UpdatedAt:    reservationGorm.UpdatedAt,
 	}

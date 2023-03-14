@@ -16,4 +16,5 @@ type Reservation struct {
 	UserID       uint
 	RoomName     string
 	Price        float64
+	Balance      float64
 }

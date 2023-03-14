@@ -16,6 +16,7 @@ type ReservationEntity struct {
 	UserID       uint
 	RoomName     string
 	Price        float64
+	Balance      float64
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
@@ -53,6 +54,7 @@ type ReservationService_ interface {
 //go:generate mockery --name ReservationData_ --output ../../mocks
 type ReservationData_ interface {
 	SelectRoomPrice(roomID uint) (ReservationEntity, error)
+	SelectUserBalance(userID uint) (ReservationEntity, error)
 	Insert(input ReservationEntity) error
 	SelectAll(limit, offset int, userID uint) ([]ReservationEntity, error)
 }
