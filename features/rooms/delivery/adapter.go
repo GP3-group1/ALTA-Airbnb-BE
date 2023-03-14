@@ -2,11 +2,11 @@ package delivery
 
 import (
 	"alta-airbnb-be/features/rooms"
+	_imageDelivery "alta-airbnb-be/features/images/delivery"
 	"strings"
 )
 
 func convertToEntity(roomRequest *rooms.RoomRequest) rooms.RoomEntity {
-	// imageEntity := _imageDelivery.RequestToEntity(&roomRequest.ImageRequest)
 	roomEntity := rooms.RoomEntity{
 		ID:          roomRequest.ID,
 		UserID:      roomRequest.UserID,
@@ -16,6 +16,8 @@ func convertToEntity(roomRequest *rooms.RoomRequest) rooms.RoomEntity {
 		Location:    roomRequest.Location,
 		Price:       roomRequest.Price,
 		Facilities:  roomRequest.Facilities,
+		Image:       roomRequest.Image,
+		ImageName:   roomRequest.ImageName,
 	}
 	return roomEntity
 }
@@ -36,6 +38,7 @@ func convertToResponse(roomEntity *rooms.RoomEntity) *rooms.RoomResponse {
 		Price:       roomEntity.Price,
 		AVG_Ratings: roomEntity.AVG_Ratings,
 		Facilities:  facilities,
+		Images:      _imageDelivery.ConvertToResponses(roomEntity.Images),
 	}
 	return &roomResponse
 }
