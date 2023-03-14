@@ -54,7 +54,12 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 	}
 
 	inputUser := users.UserEntity{}
-	inputUser.Balance = reservationEntity.Balance - float64(inputReservation.TotalPrice)
+	if reservationEntity.Balance == float64(inputReservation.TotalPrice) {
+		zero := float64(0)
+		inputUser.Balance = zero
+	} else {
+		inputUser.Balance = reservationEntity.Balance - float64(inputReservation.TotalPrice)
+	}
 
 	errInsert := reservationService.reservationData.Insert(inputReservation, inputUser, userID)
 	if errInsert != nil {
