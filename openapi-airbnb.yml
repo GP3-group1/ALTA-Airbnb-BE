@@ -951,12 +951,9 @@ components:
           schema:
             $ref: "#/components/schemas/responseBalanceWithData"
           example:
-            data1:
+            data:
               id: 1
-              balance: 0
-            data2:
-              id: 1
-              balance: 1000
+              balance: 500
             message: Success
     successUpdateBalance:
       description: Success Response Update User
