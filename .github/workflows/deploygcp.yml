@@ -40,4 +40,4 @@ jobs:
             docker rm ${{ secrets.CONTAINER }}
             docker rmi ${{ secrets.DOCKER_USER }}/${{ secrets.IMAGES }}
             docker pull ${{ secrets.DOCKER_USER }}/${{ secrets.IMAGES }}
-            docker run -d -p 80:8082 -e JWT_KEY=${{ secrets.JWT_KEY }} -e DBUSER=${{ secrets.DBUSER }} -e DBPASS=${{ secrets.DBPASS }} -e DBHOST=${{ secrets.DBHOST }} -e DBPORT=${{ secrets.DBPORT }} -e DBNAME=${{ secrets.DBNAME }} --name ${{ secrets.CONTAINER }} ${{ secrets.DOCKER_USER }}/${{ secrets.IMAGES }}:latest
+            docker run -d -p 8081:8082 -e JWT_KEY=${{ secrets.JWT_KEY }} -e DBUSER=${{ secrets.DBUSER }} -e DBPASS=${{ secrets.DBPASS }} -e DBHOST=${{ secrets.DBHOST }} -e DBPORT=${{ secrets.DBPORT }} -e DBNAME=${{ secrets.DBNAME }} --name ${{ secrets.CONTAINER }} ${{ secrets.DOCKER_USER }}/${{ secrets.IMAGES }}:latest
