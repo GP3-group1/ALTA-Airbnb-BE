@@ -34,9 +34,12 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 	diff := input.CheckOutDate.Sub(input.CheckInDate)
 	input.TotalNight = int(diff.Hours() / 24)
 
-	// reservationService.roomData.SelectRoomByRoomId()
+	reservationEntity, errSelect := reservationService.reservationData.SelectRoomPrice(input.RoomID)
+	if errSelect != nil {
+		return errSelect
+	}
 
-	// input.TotalPrice = roomModel.Price * input.TotalNight
+	input.TotalPrice = int(reservationEntity.Price) * input.TotalNight
 
 	errInsert := reservationService.reservationData.Insert(input)
 	if errInsert != nil {
