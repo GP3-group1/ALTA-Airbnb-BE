@@ -32,6 +32,9 @@ const (
 	// Update
 	USER_SuccessUpdateUserData string = "succesfully update user data"
 
+	// Update
+	USER_SuccessUpdateBalance string = "succesfully update user balance data"
+
 	// Update Password
 	USER_SuccessUpdatePasswordUserData string = "succesfully update user's password"
 

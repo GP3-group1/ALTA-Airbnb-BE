@@ -15,6 +15,11 @@ type userService struct {
 	validate *validator.Validate
 }
 
+// UpdateBalance implements users.UserService_
+func (*userService) UpdateBalance(userID uint, input users.UserEntity) error {
+	panic("unimplemented")
+}
+
 // Create implements users.UserServiceInterface_
 func (userService *userService) Create(input users.UserEntity) error {
 	errValidate := userService.validate.Struct(input)

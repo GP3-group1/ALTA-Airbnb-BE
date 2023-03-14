@@ -37,7 +37,7 @@ type UserUpdate struct {
 	Sex         string  `json:"sex" form:"sex"`
 	Address     string  `json:"address" form:"address"`
 	PhoneNumber string  `json:"phone_number" form:"phone_number"`
-	Balance     float64 `json:"balance" form:"balance"`
+	Balance     float64 `json:"amount" form:"amount"`
 }
 
 type UserUpdatePassword struct {
@@ -63,6 +63,7 @@ type UserService_ interface {
 	ModifyData(userID uint, input UserEntity) error
 	ModifyPassword(userID uint, input UserEntity) error
 	Remove(userID uint) error
+	UpdateBalance(userID uint, input UserEntity) error
 }
 
 //go:generate mockery --name UserData_ --output ../../mocks
@@ -83,4 +84,5 @@ type UserDelivery_ interface {
 	UpdatePassword(c echo.Context) error
 	RemoveAccount(c echo.Context) error
 	GetUserBalance(c echo.Context) error
+	UpdateBalance(c echo.Context) error
 }

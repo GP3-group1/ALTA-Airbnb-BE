@@ -14,6 +14,22 @@ type UserHandler struct {
 	userService users.UserService_
 }
 
+// UpdateBalance implements users.UserDelivery_
+func (userHandler *UserHandler) UpdateBalance(c echo.Context) error {
+	userID := middlewares.ExtractTokenUserId(c)
+	userInput := users.UserUpdate{}
+	errBind := c.Bind(&userInput)
+	if errBind != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
+	}
+	errUpdate := userHandler.userService.UpdateBalance(userID, requestUpdateToEntity(userInput))
+	if errUpdate != nil {
+		return c.JSON(helpers.ErrorResponse(errUpdate))
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateBalance))
+}
+
 // GetUserBalance implements users.UserDelivery_
 func (userHandler *UserHandler) GetUserBalance(c echo.Context) error {
 	userID := middlewares.ExtractTokenUserId(c)
