@@ -43,12 +43,12 @@ func initRoomRouter(db *gorm.DB, e *echo.Echo) {
 	roomService := _roomService.New(roomData)
 	roomHandler := _roomDelivery.New(roomService)
 
-	e.POST("/rooms", roomHandler.AddRoom)
-	e.DELETE("/rooms/:id", roomHandler.RemoveRoom)
+	e.POST("/rooms", roomHandler.AddRoom, middlewares.JWTMiddleware())
+	e.DELETE("/rooms/:id", roomHandler.RemoveRoom, middlewares.JWTMiddleware())
 	e.GET("/rooms", roomHandler.GetRooms)
-	e.GET("/rooms/users", roomHandler.GetRoomsByUserId)
+	e.GET("/rooms/users", roomHandler.GetRoomsByUserId, middlewares.JWTMiddleware())
 	e.GET("/rooms/:id", roomHandler.GetRoomByRoomId)
-	e.POST("/rooms/:id/reviews", roomHandler.AddReview)
+	e.POST("/rooms/:id/reviews", roomHandler.AddReview, middlewares.JWTMiddleware())
 	e.GET("/rooms/:id/reviews", roomHandler.GetReviewsByRoomId)
 }
 
