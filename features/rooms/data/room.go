@@ -45,6 +45,12 @@ func (roomData *RoomData) InsertRoom(roomEntity *rooms.RoomEntity) error {
 		return errors.New(consts.SERVER_InternalServerError)
 	}
 
+	// err := storage.GetStorageClient().UploadFile(roomEntity.Image, roomEntity.ImageName)
+	// if err != nil {
+	// 	tx.Rollback()
+	// 	return err
+	// }
+
 	tx = txTransaction.Commit()
 	if tx.Error != nil {
 		tx.Rollback()
@@ -59,7 +65,7 @@ func (roomData *RoomData) UpdateRoom(roomEntity *rooms.RoomEntity) error {
 
 	txTransaction := roomData.db.Begin()
 	if txTransaction.Error != nil {
-		// txTransaction.Rollback()
+		txTransaction.Rollback()
 		return errors.New(consts.SERVER_InternalServerError)
 	}
 
