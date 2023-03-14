@@ -12,12 +12,12 @@ type RoomService struct {
 	validate *validator.Validate
 }
 
-func New(roomData rooms.RoomData_) rooms.RoomService_ {
-	return &RoomService{
-		roomData: roomData,
-		validate: validator.New(),
-	}
-}
+// func New(roomData rooms.RoomData_) rooms.RoomService_ {
+// 	return &RoomService{
+// 		roomData: roomData,
+// 		validate: validator.New(),
+// 	}
+// }
 
 // func (roomService *RoomService) CreateRoom(roomEntity *rooms.RoomEntity) error {
 // 	err := roomService.validate.Struct(roomEntity)
@@ -57,13 +57,13 @@ func New(roomData rooms.RoomData_) rooms.RoomService_ {
 // 	return roomEntity, nil
 // }
 
-// func (roomService *RoomService) GetRoomsByUserId(roomEntity *rooms.RoomEntity) ([]*rooms.RoomEntity, error) {
-// 	roomEntities, err := roomService.roomData.SelectRoomsByUserId(roomEntity)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return roomEntities, nil
-// }
+func (roomService *RoomService) GetRoomsByUserId(roomEntity *rooms.RoomEntity) ([]*rooms.RoomEntity, error) {
+	roomEntities, err := roomService.roomData.SelectRoomsByUserId(roomEntity)
+	if err != nil {
+		return nil, err
+	}
+	return roomEntities, nil
+}
 
 func (roomService *RoomService) CreateReview(reviewEntity *reviews.ReviewEntity) error {
 	err := Validate(roomService, reviewEntity)

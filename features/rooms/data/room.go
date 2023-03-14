@@ -5,6 +5,7 @@ import (
 	_reviewData "alta-airbnb-be/features/reviews/data"
 	"alta-airbnb-be/features/reviews/models"
 	"alta-airbnb-be/features/rooms"
+	_roomModel "alta-airbnb-be/features/rooms/models"
 	"alta-airbnb-be/utils/consts"
 	"errors"
 	"strings"
@@ -114,25 +115,25 @@ func New(db *gorm.DB) rooms.RoomData_ {
 // 	return roomEntity, nil
 // }
 
-// func (roomData *RoomData) SelectRoomsByUserId(roomEntity *rooms.RoomEntity) ([]*rooms.RoomEntity, error) {
-// 	roomGorm := convertToGorm(roomEntity)
-// 	roomsGormOutput := []*_roomModel.Room{}
+func (roomData *RoomData) SelectRoomsByUserId(roomEntity *rooms.RoomEntity) ([]*rooms.RoomEntity, error) {
+	roomGorm := convertToGorm(roomEntity)
+	roomsGormOutput := []*_roomModel.Room{}
 
-// 	tx := roomData.db.Where(&roomGorm).Find(&roomsGormOutput)
-// 	if tx.Error != nil {
-// 		return nil, errors.New(consts.SERVER_InternalServerError)
-// 	}
+	tx := roomData.db.Where(&roomGorm).Find(&roomsGormOutput)
+	if tx.Error != nil {
+		return nil, errors.New(consts.SERVER_InternalServerError)
+	}
 
-// 	roomEntities := convertToEntities(roomsGormOutput)
-// 	for _, val := range roomEntities {
-// 		tx = roomData.db.Raw("SELECT COALESCE(AVG(rs.rating), 0) AS avg_ratings FROM rooms LEFT JOIN reviews rs on rs.room_id = rooms.id WHERE rooms.id = ? AND rooms.deleted_AT IS NULL", val.ID).Scan(&val.AVG_Ratings)
-// 		if tx.Error != nil {
-// 			return nil, errors.New(consts.SERVER_InternalServerError)
-// 		}
-// 	}
+	roomEntities := convertToEntities(roomsGormOutput)
+	for _, val := range roomEntities {
+		tx = roomData.db.Raw("SELECT COALESCE(AVG(rs.rating), 0) AS avg_ratings FROM rooms LEFT JOIN reviews rs on rs.room_id = rooms.id WHERE rooms.id = ? AND rooms.deleted_AT IS NULL", val.ID).Scan(&val.AVG_Ratings)
+		if tx.Error != nil {
+			return nil, errors.New(consts.SERVER_InternalServerError)
+		}
+	}
 
-// 	return roomEntities, nil
-// }
+	return roomEntities, nil
+}
 
 func (roomData *RoomData) InsertReview(reviewEntity *reviews.ReviewEntity) error {
 	reviewGorm := _reviewData.ConvertToGorm(reviewEntity)

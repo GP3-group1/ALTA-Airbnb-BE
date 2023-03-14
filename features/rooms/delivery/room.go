@@ -117,25 +117,25 @@ func New(roomService rooms.RoomService_) rooms.RoomDelivery_ {
 // 	return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.ROOM_SuccesReadRoomData, roomResponses))
 // }
 
-// func (roomDelivery *RoomDelivery) GetRoomsByUserId(c echo.Context) error {
-// 	userId := middlewares.ExtractTokenUserId(c)
-// 	roomRequest := rooms.RoomRequest{}
-// 	err := c.Bind(&roomRequest)
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, helpers.Response(consts.ROOM_ErrorBindRoomData))
-// 	}
-// 	roomRequest.UserID = userId
+func (roomDelivery *RoomDelivery) GetRoomsByUserId(c echo.Context) error {
+	userId := middlewares.ExtractTokenUserId(c)
+	roomRequest := rooms.RoomRequest{}
+	err := c.Bind(&roomRequest)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.Response(consts.ROOM_ErrorBindRoomData))
+	}
+	roomRequest.UserID = userId
 
-// 	roomEntity := convertToEntity(&roomRequest)
-// 	roomEntities, err := roomDelivery.roomService.GetRoomsByUserId(&roomEntity)
-// 	if err != nil {
-// 		codeStatus, message := helpers.ValidateRoomFailedResponse(c, err)
-// 		return c.JSON(codeStatus, helpers.Response(message))
-// 	}
+	roomEntity := convertToEntity(&roomRequest)
+	roomEntities, err := roomDelivery.roomService.GetRoomsByUserId(&roomEntity)
+	if err != nil {
+		codeStatus, message := helpers.ValidateRoomFailedResponse(c, err)
+		return c.JSON(codeStatus, helpers.Response(message))
+	}
 
-// 	roomResponses := convertsToResponses(roomEntities)
-// 	return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.ROOM_SuccesReadRoomData, roomResponses))
-// }
+	roomResponses := convertsToResponses(roomEntities)
+	return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.ROOM_SuccesReadRoomData, roomResponses))
+}
 
 func (roomDelivery *RoomDelivery) AddReview(c echo.Context) error {
 	userId := middlewares.ExtractTokenUserId(c)

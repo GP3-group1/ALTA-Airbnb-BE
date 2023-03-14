@@ -60,7 +60,7 @@ type RoomData_ interface {
 	// DeleteRoom(RoomEntity *RoomEntity) error
 	// SelectRooms(limit, offset int, extractedQueryParams map[string]any) ([]*RoomEntity, error)
 	// SelectRoomByRoomId(roomEntity *RoomEntity) (*RoomEntity, error)
-	// SelectRoomsByUserId(roomEntity *RoomEntity) ([]*RoomEntity, error)
+	SelectRoomsByUserId(roomEntity *RoomEntity) ([]*RoomEntity, error)
 	InsertReview(reviewEntity *reviews.ReviewEntity) error
 	SelectReviewsByRoomId(reviewEntity *reviews.ReviewEntity) ([]*reviews.ReviewEntity, error)
 }
@@ -72,7 +72,7 @@ type RoomService_ interface {
 	// RemoveRoom(RoomEntity *RoomEntity) error
 	// GetRooms(limit, offset int, queryParams url.Values) ([]*RoomEntity, error)
 	// GetRoomByRoomId(RoomEntity *RoomEntity) (*RoomEntity, error)
-	// GetRoomsByUserId(RoomEntity *RoomEntity) ([]*RoomEntity, error)
+	GetRoomsByUserId(RoomEntity *RoomEntity) ([]*RoomEntity, error)
 	CreateReview(reviewEntity *reviews.ReviewEntity) error
 	GetReviewsByRoomId(reviewEntity *reviews.ReviewEntity) ([]*reviews.ReviewEntity, error)
 }
@@ -84,7 +84,7 @@ type RoomDelivery_ interface {
 	// RemoveRoom(c echo.Context) error
 	// GetRooms(c echo.Context) error
 	// GetRoomByRoomId(c echo.Context) error
-	// GetRoomsByUserId(c echo.Context) error
+	GetRoomsByUserId(c echo.Context) error
 	AddReview(c echo.Context) error
 	GetReviewsByRoomId(c echo.Context) error
 }
