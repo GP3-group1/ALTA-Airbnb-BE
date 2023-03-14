@@ -9,8 +9,8 @@ import (
 
 type ReservationEntity struct {
 	ID           uint
-	CheckInDate  time.Time `validate:"required"`
-	CheckOutDate time.Time `validate:"required"`
+	CheckInDate  time.Time
+	CheckOutDate time.Time
 	TotalNight   int
 	TotalPrice   int
 	RoomID       uint
@@ -24,6 +24,15 @@ type ReservationEntity struct {
 type ReservationInsert struct {
 	CheckInDate  string `json:"check_in" form:"check_in"`
 	CheckOutDate string `json:"check_out" form:"check_out"`
+}
+
+type ReservationRequest struct {
+	CheckInDate  time.Time `json:"check_in_date" form:"check_in_date"`
+	CheckOutDate time.Time `json:"check_out_date" form:"check_out_date"`
+	TotalNight   int       `json:"total_night" form:"total_night"`
+	TotalPrice   int       `json:"total_price" form:"total_price"`
+	RoomID       uint      `json:"room_id" form:"room_id"`
+	UserID       uint      `json:"user_id" form:"user_id"`
 }
 
 type ReservationResponse struct {
