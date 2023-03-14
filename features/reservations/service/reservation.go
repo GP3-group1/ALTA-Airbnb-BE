@@ -2,12 +2,15 @@ package service
 
 import (
 	"alta-airbnb-be/features/reservations"
+	"alta-airbnb-be/features/users"
+	"alta-airbnb-be/utils/consts"
+	"errors"
 
 	"github.com/go-playground/validator/v10"
 )
 
 type reservationService struct {
-	reservationData reservations.ReservationDataInterface_
+	reservationData reservations.ReservationData_
 	validate        *validator.Validate
 }
 
@@ -22,26 +25,38 @@ func (reservationService *reservationService) GetAll(page, limit int, userID uin
 }
 
 // Create implements reservations.ReservationServiceInterface_
-func (reservationService *reservationService) Create(userID, idParam uint, input reservations.ReservationEntity) error {
-	errValidate := reservationService.validate.Struct(input)
+func (reservationService *reservationService) Create(userID, idParam uint, inputReservation reservations.ReservationEntity) error {
+	errValidate := reservationService.validate.Struct(inputReservation)
 	if errValidate != nil {
 		return errValidate
 	}
 
-	input.UserID = userID
-	input.RoomID = idParam
+	inputReservation.UserID = userID
+	inputReservation.RoomID = idParam
 
-	diff := input.CheckOutDate.Sub(input.CheckInDate)
-	input.TotalNight = int(diff.Hours() / 24)
+	diff := inputReservation.CheckOutDate.Sub(inputReservation.CheckInDate)
+	inputReservation.TotalNight = int(diff.Hours() / 24)
 
-	roomModel, errSelectRoom := reservationService.reservationData.SelectData(input.RoomID)
+	reservationEntity, errSelectRoom := reservationService.reservationData.SelectRoomPrice(inputReservation.RoomID)
 	if errSelectRoom != nil {
 		return errSelectRoom
 	}
 
-	input.TotalPrice = roomModel.Price * input.TotalNight
+	inputReservation.TotalPrice = reservationEntity.Price * inputReservation.TotalNight
 
-	errInsert := reservationService.reservationData.Insert(input)
+	reservationEntity, errSelectUser := reservationService.reservationData.SelectUserBalance(inputReservation.UserID)
+	if errSelectUser != nil {
+		return errSelectUser
+	}
+
+	if int(reservationEntity.Balance) < inputReservation.TotalPrice {
+		return errors.New(consts.RESERVATION_InsertFailed)
+	}
+
+	inputUser := users.UserEntity{}
+	inputUser.Balance = reservationEntity.Balance - inputReservation.TotalPrice
+
+	errInsert := reservationService.reservationData.Insert(inputReservation, inputUser, userID)
 	if errInsert != nil {
 		return errInsert
 	}
@@ -49,7 +64,7 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 	return nil
 }
 
-func New(reservationData reservations.ReservationDataInterface_) reservations.ReservationServiceInterface_ {
+func New(reservationData reservations.ReservationData_) reservations.ReservationService_ {
 	return &reservationService{
 		reservationData: reservationData,
 		validate:        validator.New(),

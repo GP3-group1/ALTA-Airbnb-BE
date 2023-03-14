@@ -1,7 +1,7 @@
 package reservations
 
 import (
-	_modelRoom "alta-airbnb-be/features/rooms/models"
+	"alta-airbnb-be/features/users"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -16,7 +16,8 @@ type ReservationEntity struct {
 	RoomID       uint
 	UserID       uint
 	RoomName     string
-	Price        float64
+	Price        int
+	Balance      int
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
@@ -36,30 +37,31 @@ type ReservationRequest struct {
 }
 
 type ReservationResponse struct {
-	ID           uint    `json:"id"`
-	RoomName     string  `json:"room_name"`
-	CheckInDate  string  `json:"check_in"`
-	CheckOutDate string  `json:"check_out"`
-	Price        float64 `json:"price"`
-	TotalNight   int     `json:"total_night"`
-	TotalPrice   int     `json:"total_price"`
+	ID           uint   `json:"id"`
+	RoomName     string `json:"room_name"`
+	CheckInDate  string `json:"check_in"`
+	CheckOutDate string `json:"check_out"`
+	Price        int    `json:"price"`
+	TotalNight   int    `json:"total_night"`
+	TotalPrice   int    `json:"total_price"`
 }
 
 //go:generate mockery --name ReservationService_ --output ../../mocks
-type ReservationServiceInterface_ interface {
-	Create(userID, idParam uint, input ReservationEntity) error
+type ReservationService_ interface {
+	Create(userID, idParam uint, inputReservation ReservationEntity) error
 	GetAll(page, limit int, userID uint) ([]ReservationEntity, error)
 }
 
 //go:generate mockery --name ReservationData_ --output ../../mocks
-type ReservationDataInterface_ interface {
-	SelectData(roomID uint) (_modelRoom.Room, error)
-	Insert(input ReservationEntity) error
+type ReservationData_ interface {
+	SelectRoomPrice(roomID uint) (ReservationEntity, error)
+	SelectUserBalance(userID uint) (ReservationEntity, error)
+	Insert(inputReservation ReservationEntity, inputUser users.UserEntity, userID uint) error
 	SelectAll(limit, offset int, userID uint) ([]ReservationEntity, error)
 }
 
 //go:generate mockery --name ReservationDelivery_ --output ../../mocks
-type ReservationDeliveryInterface_ interface {
+type ReservationDelivery_ interface {
 	AddReservation(c echo.Context) error
 	CheckReservation(c echo.Context) error
 	GetAllReservation(c echo.Context) error

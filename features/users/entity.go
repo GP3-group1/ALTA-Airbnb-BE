@@ -15,7 +15,7 @@ type UserEntity struct {
 	Sex         string
 	Address     string
 	PhoneNumber string
-	Balance     float64
+	Balance     int `validate:"gt=0"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -37,6 +37,7 @@ type UserUpdate struct {
 	Sex         string `json:"sex" form:"sex"`
 	Address     string `json:"address" form:"address"`
 	PhoneNumber string `json:"phone_number" form:"phone_number"`
+	Balance     int    `json:"amount" form:"amount"`
 }
 
 type UserUpdatePassword struct {
@@ -51,20 +52,22 @@ type UserResponse struct {
 	Sex         string `json:"sex"`
 	Address     string `json:"address"`
 	PhoneNumber string `json:"phone_number"`
+	Balance     int    `json:"balance"`
 }
 
 //go:generate mockery --name UserService_ --output ../../mocks
-type UserServiceInterface_ interface {
+type UserService_ interface {
 	Login(email string, password string) (UserEntity, string, error)
 	GetData(userID uint) (UserEntity, error)
 	Create(input UserEntity) error
 	ModifyData(userID uint, input UserEntity) error
 	ModifyPassword(userID uint, input UserEntity) error
 	Remove(userID uint) error
+	UpdateBalance(userID uint, input UserEntity) error
 }
 
 //go:generate mockery --name UserData_ --output ../../mocks
-type UserDataInterface_ interface {
+type UserData_ interface {
 	Login(email string) (UserEntity, error)
 	Insert(input UserEntity) error
 	SelectData(userID uint) (UserEntity, error)
@@ -73,11 +76,13 @@ type UserDataInterface_ interface {
 }
 
 //go:generate mockery --name UserDelivery_ --output ../../mocks
-type UserDeliveryInterface_ interface {
+type UserDelivery_ interface {
 	Login(c echo.Context) error
 	Register(c echo.Context) error
 	GetUserData(c echo.Context) error
 	UpdateAccount(c echo.Context) error
 	UpdatePassword(c echo.Context) error
 	RemoveAccount(c echo.Context) error
+	GetUserBalance(c echo.Context) error
+	UpdateBalance(c echo.Context) error
 }

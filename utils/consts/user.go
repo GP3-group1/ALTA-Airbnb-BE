@@ -26,8 +26,14 @@ const (
 	// Select
 	USER_SuccessReadUserData string = "succesfully read user data"
 
+	// Select
+	USER_SuccessReadBalance string = "succesfully read user's balance data"
+
 	// Update
 	USER_SuccessUpdateUserData string = "succesfully update user data"
+
+	// Update
+	USER_SuccessUpdateBalance string = "succesfully update user balance data"
 
 	// Update Password
 	USER_SuccessUpdatePasswordUserData string = "succesfully update user's password"
@@ -39,5 +45,6 @@ const (
 // Validation
 const (
 	USER_EmptyCredentialError     string = "email and password must be filled"
+	USER_InvalidInput             string = "invalid input amount"
 	USER_EmptyUpdatePasswordError string = "old password and new password must be filled"
 )

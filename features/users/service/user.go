@@ -11,8 +11,25 @@ import (
 )
 
 type userService struct {
-	userData users.UserDataInterface_
+	userData users.UserData_
 	validate *validator.Validate
+}
+
+// UpdateBalance implements users.UserService_
+func (userService *userService) UpdateBalance(userID uint, input users.UserEntity) error {
+	if input.Balance < 1 {
+		return errors.New(consts.USER_InvalidInput)
+	}
+	userEntity, errSelect := userService.userData.SelectData(userID)
+	if errSelect != nil {
+		return errSelect
+	}
+	input.Balance += userEntity.Balance
+	errUpdate := userService.userData.UpdateData(userID, input)
+	if errUpdate != nil {
+		return errUpdate
+	}
+	return nil
 }
 
 // Create implements users.UserServiceInterface_
@@ -27,6 +44,7 @@ func (userService *userService) Create(input users.UserEntity) error {
 		return errHash
 	}
 	input.Password = hashedPassword
+	input.Balance = 0
 
 	errInsert := userService.userData.Insert(input)
 	if errInsert != nil {
@@ -118,7 +136,7 @@ func (userService *userService) Remove(userID uint) error {
 	return nil
 }
 
-func New(userData users.UserDataInterface_) users.UserServiceInterface_ {
+func New(userData users.UserData_) users.UserService_ {
 	return &userService{
 		userData: userData,
 		validate: validator.New(),

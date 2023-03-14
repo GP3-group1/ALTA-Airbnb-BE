@@ -3,7 +3,8 @@ package data
 import (
 	"alta-airbnb-be/features/reservations"
 	"alta-airbnb-be/features/reservations/models"
-	_modelRoom "alta-airbnb-be/features/rooms/models"
+	"alta-airbnb-be/features/users"
+	_mapUser "alta-airbnb-be/features/users/data"
 	"alta-airbnb-be/utils/consts"
 	"errors"
 
@@ -12,6 +13,32 @@ import (
 
 type reservationQuery struct {
 	db *gorm.DB
+}
+
+// SelectUserBalance implements reservations.ReservationData_
+func (reservationQuery *reservationQuery) SelectUserBalance(userID uint) (reservations.ReservationEntity, error) {
+	reservationGorm := models.Reservation{}
+	txSelect := reservationQuery.db.Table("users").Where("id = ?", userID).Select("balance").First(&reservationGorm)
+	if txSelect.Error != nil {
+		return reservations.ReservationEntity{}, txSelect.Error
+	}
+	if txSelect.RowsAffected == 0 {
+		return reservations.ReservationEntity{}, errors.New(consts.SERVER_ZeroRowsAffected)
+	}
+	return GormToEntity(reservationGorm), nil
+}
+
+// SelectRoomPrice implements reservations.ReservationData_
+func (reservationQuery *reservationQuery) SelectRoomPrice(roomID uint) (reservations.ReservationEntity, error) {
+	reservationGorm := models.Reservation{}
+	txSelect := reservationQuery.db.Table("rooms").Where("id = ?", roomID).Select("price").First(&reservationGorm)
+	if txSelect.Error != nil {
+		return reservations.ReservationEntity{}, txSelect.Error
+	}
+	if txSelect.RowsAffected == 0 {
+		return reservations.ReservationEntity{}, errors.New(consts.SERVER_ZeroRowsAffected)
+	}
+	return GormToEntity(reservationGorm), nil
 }
 
 // SelectAll implements reservations.ReservationDataInterface_
@@ -24,33 +51,36 @@ func (reservationQuery *reservationQuery) SelectAll(limit, offset int, userID ui
 	return ListGormToEntity(reservationGorm), nil
 }
 
-// SelectRoom implements reservations.ReservationDataInterface_
-func (reservationQuery *reservationQuery) SelectData(roomID uint) (_modelRoom.Room, error) {
-	roomGorm := _modelRoom.Room{}
-	txSelect := reservationQuery.db.First(&roomGorm, roomID)
-	if txSelect.Error != nil {
-		return _modelRoom.Room{}, txSelect.Error
-	}
-	if txSelect.RowsAffected == 0 {
-		return _modelRoom.Room{}, errors.New(consts.SERVER_ZeroRowsAffected)
-	}
-	return roomGorm, nil
-}
-
 // Insert implements reservations.ReservationDataInterface_
-func (reservationQuery *reservationQuery) Insert(input reservations.ReservationEntity) error {
-	reservationGorm := EntityToGorm(input)
-	txInsert := reservationQuery.db.Create(&reservationGorm)
-	if txInsert.Error != nil {
-		return txInsert.Error
+func (reservationQuery *reservationQuery) Insert(inputReservation reservations.ReservationEntity, inputUser users.UserEntity, userID uint) error {
+	reservationGorm := EntityToGorm(inputReservation)
+	userGorm := _mapUser.EntityToGorm(inputUser)
+
+	tx := reservationQuery.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Error; err != nil {
+		return err
 	}
-	if txInsert.RowsAffected == 0 {
-		return errors.New(consts.SERVER_ZeroRowsAffected)
+
+	if err := tx.Create(&reservationGorm).Error; err != nil {
+		tx.Rollback()
+		return err
 	}
-	return nil
+
+	if err := tx.Where("id = ?", userID).Updates(&userGorm).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
-func New(db *gorm.DB) reservations.ReservationDataInterface_ {
+func New(db *gorm.DB) reservations.ReservationData_ {
 	return &reservationQuery{
 		db: db,
 	}
