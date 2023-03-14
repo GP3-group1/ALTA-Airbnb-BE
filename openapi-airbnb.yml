@@ -665,7 +665,7 @@ components:
                 email: user@mail.com
                 phone: "08123456789"
                 sex: Female
-                Address: Bandar Lampung
+                address: Bandar Lampung
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/requestDataUser"
