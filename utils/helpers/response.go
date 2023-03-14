@@ -37,6 +37,8 @@ func ErrorResponse(err error) (int, interface{}) {
 		code = http.StatusBadRequest
 	case strings.Contains(msg, "you have insufficient balance"):
 		code = http.StatusBadRequest
+	case strings.Contains(msg, "invalid input amount"):
+		code = http.StatusBadRequest
 	case strings.Contains(msg, "not found"):
 		resp["message"] = "data not found"
 		code = http.StatusNotFound

@@ -17,6 +17,7 @@ func requestUpdateToEntity(userUpdate users.UserUpdate) users.UserEntity {
 		Sex:         userUpdate.Sex,
 		Address:     userUpdate.Address,
 		PhoneNumber: userUpdate.PhoneNumber,
+		Balance:     userUpdate.Balance,
 	}
 }
 
