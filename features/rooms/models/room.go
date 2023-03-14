@@ -1,4 +1,4 @@
-package room
+package models
 
 import (
 	_facilityModel "alta-airbnb-be/features/facilities/models"
@@ -17,7 +17,7 @@ type Room struct {
 	Location     string                          `gorm:"not null;type:text"`
 	Price        int                             `gorm:"not null"`
 	Reservations []_reservationModel.Reservation `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Ratings      []_reviewModel.Review           `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Reviews      []_reviewModel.Review           `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Images       []_imageModel.Image             `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Facilities   []_facilityModel.Facility       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	UserID       uint
