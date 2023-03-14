@@ -10,6 +10,8 @@ servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/JURRASIC_1/ALTA-Airbnb-API/1.0
+  - description: ALTA Airbnb Base Server
+    url: http://104.198.56.90:8081
 tags:
   - name: Authentication
     description: Endpoint for verifying who a user is
@@ -36,6 +38,7 @@ paths:
           $ref: "#/components/responses/loginSuccess"
         "400":
           $ref: "#/components/responses/loginFailed"
+          
   ####################################
   #  USERS
   ####################################
@@ -100,6 +103,21 @@ paths:
           $ref: "#/components/responses/successUpdatePassword"
         "400":
           $ref: "#/components/responses/failedUpdatePassword"
+  /users/balances:
+    put:
+      tags:
+        - Users
+      summary: Update user's balance by id
+      security:
+        - JWTAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyUpdateBalance"
+      responses:
+        "200":
+          $ref: "#/components/responses/successUpdateBalance"
+        "400":
+          $ref: "#/components/responses/failedUpdateBalance"
+
   ####################################
   #  ROOMS
   ####################################
@@ -210,7 +228,7 @@ paths:
       responses:
         "201":
           $ref: "#/components/responses/successGetAllReview"
-      
+
   ####################################
   #  RESERVATIONS
   ####################################
@@ -306,6 +324,13 @@ components:
           type: string
         new_password:
           type: string
+    requestUpdateBalanceUser:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          type: integer
     requestDataRoom:
       type: object
       required:
@@ -326,9 +351,7 @@ components:
         location:
           type: string
         facilities:
-          type: array
-          items:
-            type: string
+          type: string
         price:
           type: integer
         image:
@@ -641,6 +664,19 @@ components:
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/requestUpdatePasswordUser"
+    requestBodyUpdateBalance:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/requestUpdateBalanceUser"
+          examples:
+            newData1:
+              value:
+                amount: 1000
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestUpdateBalanceUser"
     requestBodyRoom:
       required: true
       content:
@@ -653,7 +689,7 @@ components:
                 name: Villa Lautan Biru
                 overview: "Villa murah tapi bagus"
                 description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
-                facilities: ["Gym, Pool"]
+                facilities: "Gym, Pool"
                 location: Bali, Indonesia
                 price: 400
                 image: urlimage
@@ -662,7 +698,7 @@ components:
                 name: Penginapan Romantis - Private Sunset Pool
                 overview: "Villa biasa tapi mahal"
                 description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi
-                facilities: ["Gym, Pool"]
+                facilities: "Gym, Pool"
                 location: Bali, Indonesia
                 price: 325
                 image: urlimage
@@ -671,7 +707,7 @@ components:
                 name: Kubu d'Ume
                 overview: "Villa murah tapi angker"
                 description: 2 tamu - 1 kamar tidur - 1 tempat tidur - 1 kamar mandi pribadi
-                facilities: ["Gym, Pool"]
+                facilities: "Gym, Pool"
                 location: Bali, Indonesia
                 price: 50
                 image: urlimage
@@ -690,7 +726,7 @@ components:
                 name: Villa Lautan Biru
                 overview: "Villa mahal tapi pasti puas"
                 description: 7 tamu - 3 kamar tidur - 4 tempat tidur - 3 kamar mandi + ruang toilet
-                facilities: ["Gym", "Pool"]
+                facilities: "Gym, Pool"
                 location: "Bali, Indonesia"
                 price: 400
         multipart/form-data:
@@ -889,6 +925,22 @@ components:
           examples:
             Invalid Password:
               $ref: "#/components/examples/invalidPassword"
+    successUpdateBalance:
+      description: Success Response Update User
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Success Update User's Balance
+    failedUpdateBalance:
+      description: Bad Request Response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseNonData"
+          example:
+            message: Failed Update User's Balance
     successCreateRoom:
       description: Success Response Create User
       content:
