@@ -9,8 +9,8 @@ import (
 
 type ReservationEntity struct {
 	ID           uint
-	CheckInDate  time.Time
-	CheckOutDate time.Time
+	CheckInDate  time.Time `validate:"required"`
+	CheckOutDate time.Time `validate:"required"`
 	TotalNight   int
 	TotalPrice   int
 	RoomID       uint
@@ -50,7 +50,7 @@ type ReservationResponse struct {
 type ReservationService_ interface {
 	Create(userID, idParam uint, inputReservation ReservationEntity) error
 	GetAll(page, limit int, userID uint) ([]ReservationEntity, error)
-	CheckReservation(CheckInDate, CheckOutDate time.Time, roomID uint) error
+	CheckReservation(input ReservationEntity, roomID uint) ([]ReservationEntity, error)
 }
 
 //go:generate mockery --name ReservationData_ --output ../../mocks
@@ -59,7 +59,7 @@ type ReservationData_ interface {
 	SelectUserBalance(userID uint) (ReservationEntity, error)
 	Insert(inputReservation ReservationEntity, inputUser users.UserEntity, userID uint) error
 	SelectAll(limit, offset int, userID uint) ([]ReservationEntity, error)
-	CheckReservation(CheckInDate, CheckOutDate time.Time, roomID uint) ([]ReservationEntity, error)
+	CheckReservation(input ReservationEntity, roomID uint) ([]ReservationEntity, error)
 }
 
 //go:generate mockery --name ReservationDelivery_ --output ../../mocks

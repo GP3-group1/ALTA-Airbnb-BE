@@ -43,7 +43,33 @@ func (reservationHandler *ReservationHandler) AddReservation(c echo.Context) err
 
 // CheckReservation implements reservations.ReservationDeliveryInterface_
 func (reservationHandler *ReservationHandler) CheckReservation(c echo.Context) error {
-	panic("unimplemented")
+	idParam, errParam := helpers.ExtractIDParam(c)
+	if errParam != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(errParam.Error()))
+	}
+
+	input := reservations.ReservationInsert{}
+	errBind := c.Bind(&input)
+	if errBind != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_ErrorBindReservationData))
+	}
+
+	inputReservationEntity, errMapping := insertToEntity(input)
+	if errMapping != nil {
+		return c.JSON(http.StatusBadRequest, helpers.Response(errMapping.Error()))
+	}
+
+	reservationEntity, errSelect := reservationHandler.reservationService.CheckReservation(inputReservationEntity, idParam)
+	if errSelect != nil {
+		return c.JSON(helpers.ErrorResponse(errSelect))
+	}
+
+	listReservation := entityToResponseList(reservationEntity)
+	if len(listReservation) != 0 {
+		return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_RoomNotAvailable))
+	}
+
+	return c.JSON(http.StatusOK, helpers.Response(consts.RESERVATION_RoomAvailable))
 }
 
 // GetAllReservation implements reservations.ReservationDeliveryInterface_
