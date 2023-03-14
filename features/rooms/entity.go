@@ -5,6 +5,7 @@ import (
 	"alta-airbnb-be/features/images"
 	"alta-airbnb-be/features/reservations"
 	"alta-airbnb-be/features/reviews"
+	"net/url"
 
 	"github.com/labstack/echo/v4"
 )
@@ -55,11 +56,11 @@ type RoomResponse struct {
 
 //go:generate mockery --name MenteeData_ --output ../../mocks
 type RoomData_ interface {
-	// InsertRoom(roomEntity *RoomEntity) error
+	InsertRoom(roomEntity *RoomEntity) error
 	// UpdateRoom(roomEntity *RoomEntity) error
-	// DeleteRoom(RoomEntity *RoomEntity) error
-	// SelectRooms(limit, offset int, extractedQueryParams map[string]any) ([]*RoomEntity, error)
-	// SelectRoomByRoomId(roomEntity *RoomEntity) (*RoomEntity, error)
+	DeleteRoom(RoomEntity *RoomEntity) error
+	SelectRooms(limit, offset int, extractedQueryParams map[string]any) ([]*RoomEntity, error)
+	SelectRoomByRoomId(roomEntity *RoomEntity) (*RoomEntity, error)
 	SelectRoomsByUserId(roomEntity *RoomEntity) ([]*RoomEntity, error)
 	InsertReview(reviewEntity *reviews.ReviewEntity) error
 	SelectReviewsByRoomId(reviewEntity *reviews.ReviewEntity) ([]*reviews.ReviewEntity, error)
@@ -67,11 +68,11 @@ type RoomData_ interface {
 
 //go:generate mockery --name MenteeService_ --output ../../mocks
 type RoomService_ interface {
-	// CreateRoom(roomEntity *RoomEntity) error
+	CreateRoom(roomEntity *RoomEntity) error
 	// ChangeRoom(roomEntity *RoomEntity) error
-	// RemoveRoom(RoomEntity *RoomEntity) error
-	// GetRooms(limit, offset int, queryParams url.Values) ([]*RoomEntity, error)
-	// GetRoomByRoomId(RoomEntity *RoomEntity) (*RoomEntity, error)
+	RemoveRoom(RoomEntity *RoomEntity) error
+	GetRooms(limit, offset int, queryParams url.Values) ([]*RoomEntity, error)
+	GetRoomByRoomId(RoomEntity *RoomEntity) (*RoomEntity, error)
 	GetRoomsByUserId(RoomEntity *RoomEntity) ([]*RoomEntity, error)
 	CreateReview(reviewEntity *reviews.ReviewEntity) error
 	GetReviewsByRoomId(reviewEntity *reviews.ReviewEntity) ([]*reviews.ReviewEntity, error)
@@ -79,11 +80,11 @@ type RoomService_ interface {
 
 //go:generate mockery --name MenteeDelivery_ --output ../../mocks
 type RoomDelivery_ interface {
-	// AddRoom(c echo.Context) error
+	AddRoom(c echo.Context) error
 	// ModifyRoom(c echo.Context) error
-	// RemoveRoom(c echo.Context) error
-	// GetRooms(c echo.Context) error
-	// GetRoomByRoomId(c echo.Context) error
+	RemoveRoom(c echo.Context) error
+	GetRooms(c echo.Context) error
+	GetRoomByRoomId(c echo.Context) error
 	GetRoomsByUserId(c echo.Context) error
 	AddReview(c echo.Context) error
 	GetReviewsByRoomId(c echo.Context) error
