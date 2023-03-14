@@ -46,7 +46,7 @@ func initRoomRouter(db *gorm.DB, e *echo.Echo) {
 	roomService := _roomService.New(roomData)
 	roomHandler := _roomDelivery.New(roomService)
 
-	e.POST("/rooms", roomHandler.AddRoom)
+	e.POST("/rooms", roomHandler.AddRoom, middlewares.JWTMiddleware())
 	e.PUT("/rooms/:id", roomHandler.ModifyRoom, middlewares.JWTMiddleware())
 	e.DELETE("/rooms/:id", roomHandler.RemoveRoom, middlewares.JWTMiddleware())
 	e.GET("/rooms", roomHandler.GetRooms)
