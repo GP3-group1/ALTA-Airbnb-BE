@@ -24,7 +24,7 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /home/linux-pc/ALTA-Dashboard-BE
+            cd /home/linux-pc/ALTA-Airbnb-BE
             sudo chmod 777 /var/run/docker.sock
             git pull origin main
             docker stop ${{ secrets.CONTAINER }}
