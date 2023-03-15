@@ -538,6 +538,18 @@ components:
                 type: integer
         message:
           type: string
+    responseReservationsWithData:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            redirect_url:
+              type: string
+            token:
+              type: string
+        message:
+          type: string
 
   parameters:
     pageParam:
@@ -1124,8 +1136,11 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/responseNonData"
+            $ref: "#/components/schemas/responseReservationsWithData"
           example:
+            data:
+              redirect_url: "https://app.sandbox.midtrans.com/snap/v3/redirection/736f3aa6-87ab-4ab0-ad6e-da57a6cdc378"
+              token: "736f3aa6-87ab-4ab0-ad6e-da57a6cdc378"
             message: Success Add Reservation
     failedReservation:
       description: Bad Request Response
