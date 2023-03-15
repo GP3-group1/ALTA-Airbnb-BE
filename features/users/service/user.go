@@ -20,15 +20,19 @@ func (userService *userService) UpdateBalance(userID uint, input users.UserEntit
 	if input.Balance < 1 {
 		return errors.New(consts.USER_InvalidInput)
 	}
+
+	// get user balance
 	userEntity, errSelect := userService.userData.SelectData(userID)
 	if errSelect != nil {
 		return errSelect
 	}
+
 	input.Balance += userEntity.Balance
 	errUpdate := userService.userData.UpdateData(userID, input)
 	if errUpdate != nil {
 		return errUpdate
 	}
+
 	return nil
 }
 
@@ -43,6 +47,7 @@ func (userService *userService) Create(input users.UserEntity) error {
 	if errHash != nil {
 		return errHash
 	}
+
 	input.Password = hashedPassword
 	input.Balance = 0
 
@@ -92,10 +97,12 @@ func (userService *userService) ModifyData(userID uint, input users.UserEntity) 
 	if errValidate != nil {
 		return errValidate
 	}
+
 	errUpdate := userService.userData.UpdateData(userID, input)
 	if errUpdate != nil {
 		return errUpdate
 	}
+
 	return nil
 }
 
@@ -118,6 +125,7 @@ func (userService *userService) ModifyPassword(userID uint, input users.UserEnti
 	if errHash != nil {
 		return errHash
 	}
+
 	input.Password = hashedPassword
 
 	errUpdatePassword := userService.userData.UpdateData(userID, input)
@@ -130,9 +138,11 @@ func (userService *userService) ModifyPassword(userID uint, input users.UserEnti
 // Remove implements users.UserServiceInterface_
 func (userService *userService) Remove(userID uint) error {
 	errDelete := userService.userData.Delete(userID)
+
 	if errDelete != nil {
 		return errDelete
 	}
+
 	return nil
 }
 
