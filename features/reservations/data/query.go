@@ -30,7 +30,7 @@ func (reservationQuery *reservationQuery) CheckReservation(input reservations.Re
 // SelectUserBalance implements reservations.ReservationData_
 func (reservationQuery *reservationQuery) SelectUserBalance(userID uint) (reservations.ReservationEntity, error) {
 	reservationGorm := models.Reservation{}
-	txSelect := reservationQuery.db.Table("users").Where("id = ?", userID).Select("balance").First(&reservationGorm)
+	txSelect := reservationQuery.db.Preload("User").Where("user_id = ?", userID).First(&reservationGorm)
 	if txSelect.Error != nil {
 		return reservations.ReservationEntity{}, txSelect.Error
 	}
@@ -43,7 +43,7 @@ func (reservationQuery *reservationQuery) SelectUserBalance(userID uint) (reserv
 // SelectRoomPrice implements reservations.ReservationData_
 func (reservationQuery *reservationQuery) SelectRoomPrice(roomID uint) (reservations.ReservationEntity, error) {
 	reservationGorm := models.Reservation{}
-	txSelect := reservationQuery.db.Table("rooms").Where("id = ?", roomID).Select("price").First(&reservationGorm)
+	txSelect := reservationQuery.db.Preload("Room").Where("room_id = ?", roomID).First(&reservationGorm)
 	if txSelect.Error != nil {
 		return reservations.ReservationEntity{}, txSelect.Error
 	}
@@ -56,7 +56,7 @@ func (reservationQuery *reservationQuery) SelectRoomPrice(roomID uint) (reservat
 // SelectAll implements reservations.ReservationDataInterface_
 func (reservationQuery *reservationQuery) SelectAll(limit, offset int, userID uint) ([]reservations.ReservationEntity, error) {
 	reservationGorm := []models.Reservation{}
-	txSelect := reservationQuery.db.Limit(limit).Offset(offset).Order("reservations.created_at DESC").Where("reservations.user_id = ?", userID).Select("reservations.id, rooms.name AS room_name, reservations.check_in_date, reservations.check_out_date, rooms.price, reservations.total_night, reservations.total_price").Joins("JOIN rooms ON reservations.room_id = rooms.id").Find(&reservationGorm)
+	txSelect := reservationQuery.db.Preload("Room").Limit(limit).Offset(offset).Order("created_at DESC").Where("user_id = ?", userID).Find(&reservationGorm)
 	if txSelect.Error != nil {
 		return nil, txSelect.Error
 	}
