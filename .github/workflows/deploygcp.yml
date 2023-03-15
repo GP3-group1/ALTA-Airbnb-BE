@@ -36,9 +36,6 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /home/linux-pc/ALTA-Airbnb-BE
-            sudo chmod 777 /var/run/docker.sock
-            git pull origin main
             docker stop ${{ secrets.CONTAINER }}
             docker rm ${{ secrets.CONTAINER }}
             docker rmi ${{ secrets.DOCKER_USER }}/${{ secrets.IMAGES }}
