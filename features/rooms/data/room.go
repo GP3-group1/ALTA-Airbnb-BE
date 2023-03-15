@@ -1,14 +1,14 @@
 package data
 
 import (
+	"alta-airbnb-be/app/storage"
+	_imageModel "alta-airbnb-be/features/images/models"
 	"alta-airbnb-be/features/reviews"
 	_reviewData "alta-airbnb-be/features/reviews/data"
 	"alta-airbnb-be/features/reviews/models"
 	"alta-airbnb-be/features/rooms"
 	_roomModel "alta-airbnb-be/features/rooms/models"
-	_imageModel "alta-airbnb-be/features/images/models"
 	"alta-airbnb-be/utils/consts"
-	"alta-airbnb-be/app/storage"
 	"errors"
 	"fmt"
 	"strings"
@@ -109,20 +109,22 @@ func (roomData *RoomData) DeleteRoom(roomEntity *rooms.RoomEntity) error {
 func (roomData *RoomData) SelectRooms(limit, offset int, queryParams map[string]any) ([]*rooms.RoomEntity, error) {
 	roomsGormOutput := []*_roomModel.Room{}
 
-	query := ""
+	queryNormal, queryRating := "", ""
 	for key, val := range queryParams {
-		if query != "" {
-			query += " AND "
+		if queryNormal != "" && key != "rating" {
+			queryNormal += " AND "
 		}
-		if key != "price" {
-			query += fmt.Sprintf("%s LIKE %s%s%s ", key, "'%", val, "%'")
-		} else {
+		if key == "rating" {
+			queryRating += fmt.Sprintf("%s >= %s", key, val)
+		} else if key == "price" {
 			priceRange := strings.Split(val.(string), " - ")
-			query += fmt.Sprintf("%s BETWEEN %s AND %s ", key, priceRange[0], priceRange[1])
+			queryNormal += fmt.Sprintf("%s BETWEEN %s AND %s ", key, priceRange[0], priceRange[1])
+		} else {
+			queryNormal += fmt.Sprintf("%s LIKE %s%s%s ", key, "'%", val, "%'")
 		}
 	}
 
-	tx := roomData.db.Where(query).Preload("Images").Find(&roomsGormOutput)
+	tx := roomData.db.Select("*, rooms.id AS id, COALESCE(AVG(rs.rating), 0) AS rating").Joins("left join reviews rs on rs.room_id = rooms.id").Where(queryNormal).Group("rooms.id, rs.id").Having(queryRating).Preload("Images").Find(&roomsGormOutput)
 	if tx.Error != nil {
 		return nil, errors.New(consts.SERVER_InternalServerError)
 	}
