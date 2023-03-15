@@ -96,7 +96,12 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 	// user id
 	user_id := strconv.Itoa(int(userID))
 
-	item_id := strconv.Itoa(int(inputReservation.ID))
+	selectReservation, errSelectReservation := reservationService.reservationData.SelectReservation()
+	if errSelectReservation != nil {
+		return reservations.MidtransResponse{}, errSelectReservation
+	}
+
+	item_id := strconv.Itoa(int(selectReservation.ID))
 
 	// customer
 	custAddress := &midtrans.CustomerAddress{
