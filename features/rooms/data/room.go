@@ -109,14 +109,12 @@ func (roomData *RoomData) DeleteRoom(roomEntity *rooms.RoomEntity) error {
 func (roomData *RoomData) SelectRooms(limit, offset int, queryParams map[string]any) ([]*rooms.RoomEntity, error) {
 	roomsGormOutput := []*_roomModel.Room{}
 
-	queryNormal, queryRating := "", ""
+	queryNormal := ""
 	for key, val := range queryParams {
 		if queryNormal != "" && key != "rating" {
 			queryNormal += " AND "
 		}
-		if key == "rating" {
-			queryRating += fmt.Sprintf("%s >= %s", key, val)
-		} else if key == "price" {
+		if key == "price" {
 			priceRange := strings.Split(val.(string), " - ")
 			queryNormal += fmt.Sprintf("%s BETWEEN %s AND %s ", key, priceRange[0], priceRange[1])
 		} else {
@@ -124,7 +122,7 @@ func (roomData *RoomData) SelectRooms(limit, offset int, queryParams map[string]
 		}
 	}
 
-	tx := roomData.db.Select("*, rooms.id AS id, COALESCE(AVG(rs.rating), 0) AS rating").Joins("left join reviews rs on rs.room_id = rooms.id").Where(queryNormal).Group("rooms.id, rs.id").Having(queryRating).Preload("Images").Find(&roomsGormOutput)
+	tx := roomData.db.Where(queryNormal).Preload("Images").Find(&roomsGormOutput)
 	if tx.Error != nil {
 		return nil, errors.New(consts.SERVER_InternalServerError)
 	}
