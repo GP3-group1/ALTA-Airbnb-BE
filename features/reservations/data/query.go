@@ -15,6 +15,16 @@ type reservationQuery struct {
 	db *gorm.DB
 }
 
+// SelectReservation implements reservations.ReservationData_
+func (reservationQuery *reservationQuery) SelectReservation() (reservations.ReservationEntity, error) {
+	reservationGorm := models.Reservation{}
+	txSelect := reservationQuery.db.Last(&reservationGorm)
+	if txSelect.Error != nil {
+		return reservations.ReservationEntity{}, txSelect.Error
+	}
+	return GormToEntity(reservationGorm), nil
+}
+
 // CheckReservation implements reservations.ReservationData_
 func (reservationQuery *reservationQuery) CheckReservation(input reservations.ReservationEntity, roomID uint) ([]reservations.ReservationEntity, error) {
 	CheckInDate := input.CheckInDate.Format("2006-01-02")
