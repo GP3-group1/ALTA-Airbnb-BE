@@ -89,7 +89,7 @@ func (reservationQuery *reservationQuery) Insert(inputReservation reservations.R
 	tx = txTransaction.Commit()
 	if tx.Error != nil {
 		tx.Rollback()
-		return errors.New(consts.SERVER_InternalServerError)
+		return txTransaction.Error
 	}
 
 	return nil
