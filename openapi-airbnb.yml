@@ -597,8 +597,8 @@ components:
       description: Filter room by price
       required: false
       schema:
-        type: integer
-        example: 100
+        type: string
+        example: 1 - 100
     idRoomParam:
       name: id_room
       in: path
