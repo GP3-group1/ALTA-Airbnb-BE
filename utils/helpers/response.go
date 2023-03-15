@@ -1,8 +1,12 @@
 package helpers
 
 import (
+	"alta-airbnb-be/utils/consts"
 	"net/http"
 	"strings"
+
+	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 func Response(message string) map[string]any {
@@ -16,6 +20,55 @@ func ResponseWithData(message string, data any) map[string]any {
 		"message": message,
 		"data":    data,
 	}
+}
+
+func ValidateRoomFailedResponse(c echo.Context, err error) (codeStatus int, failedMessage string) {
+	if err.Error() == consts.ECHO_InvaildIdParam {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.ROOM_InvalidInput {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.ROOM_UserNotExisted {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.ROOM_RoomNameAlreadyExisted {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == gorm.ErrRecordNotFound.Error() {
+		return http.StatusBadRequest, err.Error()
+	}
+	return http.StatusInternalServerError, err.Error()
+}
+
+func ValidateReviewFailedResponse(c echo.Context, err error) (codeStatus int, failedMessage string) {
+	if err.Error() == consts.ECHO_InvaildIdParam {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.REVIEW_InvalidInput {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.REVIEW_InvalidRatingInputRange {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.REVIEW_UserNotExisted {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.REVIEW_RoomNotExisted {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == gorm.ErrRecordNotFound.Error() {
+		return http.StatusBadRequest, err.Error()
+	}
+	return http.StatusInternalServerError, err.Error()
+}
+
+func ValidateImageFailedResponse(c echo.Context, err error) (codeStatus int, failedMessage string) {
+	if err.Error() == consts.ECHO_InvaildIdParam {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.REVIEW_InvalidInput {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.REVIEW_InvalidRatingInputRange {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.REVIEW_UserNotExisted {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == consts.REVIEW_RoomNotExisted {
+		return http.StatusBadRequest, err.Error()
+	} else if err.Error() == gorm.ErrRecordNotFound.Error() {
+		return http.StatusBadRequest, err.Error()
+	}
+	return http.StatusInternalServerError, err.Error()
 }
 
 func ErrorResponse(err error) (int, interface{}) {
