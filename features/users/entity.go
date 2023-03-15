@@ -15,7 +15,7 @@ type UserEntity struct {
 	Sex         string
 	Address     string
 	PhoneNumber string
-	Balance     int
+	Balance     float64
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -32,12 +32,12 @@ type UserLogin struct {
 }
 
 type UserUpdate struct {
-	Name        string `json:"name" form:"name"`
-	Email       string `json:"email" form:"email"`
-	Sex         string `json:"sex" form:"sex"`
-	Address     string `json:"address" form:"address"`
-	PhoneNumber string `json:"phone_number" form:"phone_number"`
-	Balance     int    `json:"amount" form:"amount"`
+	Name        string  `json:"name" form:"name"`
+	Email       string  `json:"email" form:"email"`
+	Sex         string  `json:"sex" form:"sex"`
+	Address     string  `json:"address" form:"address"`
+	PhoneNumber string  `json:"phone_number" form:"phone_number"`
+	Balance     float64 `json:"amount" form:"amount"`
 }
 
 type UserUpdatePassword struct {
@@ -47,12 +47,12 @@ type UserUpdatePassword struct {
 
 type UserResponse struct {
 	ID          uint
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	Sex         string `json:"sex"`
-	Address     string `json:"address"`
-	PhoneNumber string `json:"phone_number"`
-	Balance     int    `json:"balance"`
+	Name        string  `json:"name"`
+	Email       string  `json:"email"`
+	Sex         string  `json:"sex"`
+	Address     string  `json:"address"`
+	PhoneNumber string  `json:"phone_number"`
+	Balance     float64 `json:"balance"`
 }
 
 //go:generate mockery --name UserService_ --output ../../mocks

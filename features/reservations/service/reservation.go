@@ -20,6 +20,13 @@ func (reservationService *reservationService) CheckReservation(input reservation
 	if errValidate != nil {
 		return nil, errValidate
 	}
+
+	diff := input.CheckOutDate.Sub(input.CheckInDate)
+	totalNight := int(diff.Hours() / 24)
+	if totalNight < 1 {
+		return nil, errors.New(consts.RESERVATION_InvalidInput)
+	}
+
 	reservationEntity, errSelect := reservationService.reservationData.CheckReservation(input, roomID)
 	if errSelect != nil {
 		return nil, errSelect
@@ -50,19 +57,23 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 	diff := inputReservation.CheckOutDate.Sub(inputReservation.CheckInDate)
 	inputReservation.TotalNight = int(diff.Hours() / 24)
 
+	if inputReservation.TotalNight < 1 {
+		return errors.New(consts.RESERVATION_InvalidInput)
+	}
+
 	reservationEntity, errSelectRoom := reservationService.reservationData.SelectRoomPrice(inputReservation.RoomID)
 	if errSelectRoom != nil {
 		return errSelectRoom
 	}
 
-	inputReservation.TotalPrice = reservationEntity.Price * inputReservation.TotalNight
+	inputReservation.TotalPrice = reservationEntity.Price * float64(inputReservation.TotalNight)
 
 	reservationEntity, errSelectUser := reservationService.reservationData.SelectUserBalance(inputReservation.UserID)
 	if errSelectUser != nil {
 		return errSelectUser
 	}
 
-	if int(reservationEntity.Balance) < inputReservation.TotalPrice {
+	if reservationEntity.Balance < inputReservation.TotalPrice {
 		return errors.New(consts.RESERVATION_InsertFailed)
 	}
 
