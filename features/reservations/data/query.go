@@ -27,8 +27,10 @@ func (reservationQuery *reservationQuery) SelectReservation() (reservations.Rese
 
 // CheckReservation implements reservations.ReservationData_
 func (reservationQuery *reservationQuery) CheckReservation(input reservations.ReservationEntity, roomID uint) ([]reservations.ReservationEntity, error) {
+	// parsing date
 	CheckInDate := input.CheckInDate.Format("2006-01-02")
 	CheckOutDate := input.CheckOutDate.Format("2006-01-02")
+
 	reservationGorm := []models.Reservation{}
 	txSelect := reservationQuery.db.Raw("SELECT * FROM reservations WHERE room_id = ? AND ? BETWEEN check_in_date AND check_out_date OR ? BETWEEN check_in_date AND check_out_date UNION ALL SELECT * FROM reservations r WHERE room_id = ? AND check_in_date BETWEEN ? AND ? OR check_out_date BETWEEN ? AND ?", roomID, CheckInDate, CheckOutDate, roomID, CheckInDate, CheckOutDate, CheckInDate, CheckOutDate).Find(&reservationGorm)
 	if txSelect.Error != nil {
@@ -38,7 +40,7 @@ func (reservationQuery *reservationQuery) CheckReservation(input reservations.Re
 }
 
 // SelectUserBalance implements reservations.ReservationData_
-func (reservationQuery *reservationQuery) SelectUserBalance(userID uint) (reservations.ReservationEntity, error) {
+func (reservationQuery *reservationQuery) SelectUser(userID uint) (reservations.ReservationEntity, error) {
 	reservationGorm := models.Reservation{}
 	txSelect := reservationQuery.db.Where("id = ?", userID).First(&reservationGorm.User)
 	if txSelect.Error != nil {
@@ -51,7 +53,7 @@ func (reservationQuery *reservationQuery) SelectUserBalance(userID uint) (reserv
 }
 
 // SelectRoomPrice implements reservations.ReservationData_
-func (reservationQuery *reservationQuery) SelectRoomPrice(roomID uint) (reservations.ReservationEntity, error) {
+func (reservationQuery *reservationQuery) SelectRoom(roomID uint) (reservations.ReservationEntity, error) {
 	reservationGorm := models.Reservation{}
 	txSelect := reservationQuery.db.Where("id = ?", roomID).First(&reservationGorm.Room)
 	if txSelect.Error != nil {
