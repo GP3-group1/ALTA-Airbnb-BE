@@ -60,9 +60,14 @@ type ReservationResponse struct {
 	TotalPrice   float64 `json:"total_price"`
 }
 
+type MidtransResponse struct {
+	Token       string `json:"token"`
+	RedirectUrl string `json:"redirect_url"`
+}
+
 //go:generate mockery --name ReservationService_ --output ../../mocks
 type ReservationService_ interface {
-	Create(userID, idParam uint, inputReservation ReservationEntity) error
+	Create(userID, idParam uint, inputReservation ReservationEntity) (MidtransResponse, error)
 	GetAll(page, limit int, userID uint) ([]ReservationEntity, error)
 	CheckReservation(input ReservationEntity, roomID uint) ([]ReservationEntity, error)
 }
@@ -74,6 +79,7 @@ type ReservationData_ interface {
 	Insert(inputReservation ReservationEntity, inputUser users.UserEntity, userID uint) error
 	SelectAll(limit, offset int, userID uint) ([]ReservationEntity, error)
 	CheckReservation(input ReservationEntity, roomID uint) ([]ReservationEntity, error)
+	SelectReservation() (ReservationEntity, error)
 }
 
 //go:generate mockery --name ReservationDelivery_ --output ../../mocks
