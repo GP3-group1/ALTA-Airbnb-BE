@@ -34,11 +34,16 @@ func (reservationHandler *ReservationHandler) AddReservation(c echo.Context) err
 		return c.JSON(http.StatusBadRequest, helpers.Response(errMapping.Error()))
 	}
 
-	errInsert := reservationHandler.reservationService.Create(userID, uint(idParam), reservationEntity)
+	midTransResponse, errInsert := reservationHandler.reservationService.Create(userID, uint(idParam), reservationEntity)
 	if errInsert != nil {
 		return c.JSON(helpers.ErrorResponse(errInsert))
 	}
-	return c.JSON(http.StatusCreated, helpers.Response(consts.RESERVATION_InsertSuccess))
+
+	dataResponse := map[string]any{
+		"token":        midTransResponse.Token,
+		"redirect_url": midTransResponse.RedirectUrl,
+	}
+	return c.JSON(http.StatusCreated, helpers.ResponseWithData(consts.RESERVATION_InsertSuccess, dataResponse))
 }
 
 // CheckReservation implements reservations.ReservationDeliveryInterface_
