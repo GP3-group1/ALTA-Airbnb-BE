@@ -16,7 +16,9 @@ func convertToGorm(roomEntity *rooms.RoomEntity) _roomModel.Room {
 		Price:       roomEntity.Price,
 		Facilities:  roomEntity.Facilities,
 	}
-	roomModel.ID = roomEntity.ID
+	if roomEntity.ID != 0 {
+		roomModel.ID = roomEntity.ID
+	}
 	return roomModel
 }
 

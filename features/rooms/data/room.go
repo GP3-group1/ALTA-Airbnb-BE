@@ -164,6 +164,7 @@ func (roomData *RoomData) SelectRoomByRoomId(roomEntity *rooms.RoomEntity) (*roo
 
 func (roomData *RoomData) SelectRoomsByUserId(roomEntity *rooms.RoomEntity) ([]*rooms.RoomEntity, error) {
 	roomGorm := convertToGorm(roomEntity)
+	fmt.Println(roomGorm)
 	roomsGormOutput := []*_roomModel.Room{}
 
 	tx := roomData.db.Where(&roomGorm).Preload("Images").Find(&roomsGormOutput)
