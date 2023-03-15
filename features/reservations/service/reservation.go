@@ -16,7 +16,7 @@ type reservationService struct {
 
 // CheckReservation implements reservations.ReservationService_
 func (reservationService *reservationService) CheckReservation(input reservations.ReservationEntity, roomID uint) ([]reservations.ReservationEntity, error) {
-	errValidate := reservationService.validate.Struct(input)
+	errValidate := reservationService.validate.StructExcept(input, "Room", "User")
 	if errValidate != nil {
 		return nil, errValidate
 	}
@@ -46,7 +46,7 @@ func (reservationService *reservationService) GetAll(page, limit int, userID uin
 
 // Create implements reservations.ReservationServiceInterface_
 func (reservationService *reservationService) Create(userID, idParam uint, inputReservation reservations.ReservationEntity) error {
-	errValidate := reservationService.validate.Struct(inputReservation)
+	errValidate := reservationService.validate.StructExcept(inputReservation, "Room", "User")
 	if errValidate != nil {
 		return errValidate
 	}
@@ -61,24 +61,24 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 		return errors.New(consts.RESERVATION_InvalidInput)
 	}
 
-	reservationEntity, errSelectRoom := reservationService.reservationData.SelectRoomPrice(inputReservation.RoomID)
+	selectRoom, errSelectRoom := reservationService.reservationData.SelectRoomPrice(idParam)
 	if errSelectRoom != nil {
 		return errSelectRoom
 	}
 
-	inputReservation.TotalPrice = reservationEntity.Price * float64(inputReservation.TotalNight)
+	inputReservation.TotalPrice = float64(selectRoom.Room.Price) * float64(inputReservation.TotalNight)
 
-	reservationEntity, errSelectUser := reservationService.reservationData.SelectUserBalance(inputReservation.UserID)
+	selectUser, errSelectUser := reservationService.reservationData.SelectUserBalance(inputReservation.UserID)
 	if errSelectUser != nil {
 		return errSelectUser
 	}
 
-	if reservationEntity.Balance < inputReservation.TotalPrice {
+	if selectUser.User.Balance < inputReservation.TotalPrice {
 		return errors.New(consts.RESERVATION_InsertFailed)
 	}
 
 	inputUser := users.UserEntity{}
-	inputUser.Balance = reservationEntity.Balance - inputReservation.TotalPrice
+	inputUser.Balance = selectUser.User.Balance - inputReservation.TotalPrice
 
 	errInsert := reservationService.reservationData.Insert(inputReservation, inputUser, userID)
 	if errInsert != nil {

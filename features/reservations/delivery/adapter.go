@@ -26,10 +26,10 @@ func entityToResponse(reservationEntity reservations.ReservationEntity) reservat
 	CheckOutDate := reservationEntity.CheckOutDate.Format("2006-01-02")
 	return reservations.ReservationResponse{
 		ID:           reservationEntity.ID,
-		RoomName:     reservationEntity.RoomName,
+		RoomName:     reservationEntity.Room.Name,
 		CheckInDate:  CheckInDate,
 		CheckOutDate: CheckOutDate,
-		Price:        reservationEntity.Price,
+		Price:        float64(reservationEntity.Room.Price),
 		TotalNight:   reservationEntity.TotalNight,
 		TotalPrice:   reservationEntity.TotalPrice,
 	}

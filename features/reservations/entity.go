@@ -15,11 +15,25 @@ type ReservationEntity struct {
 	TotalPrice   float64
 	RoomID       uint
 	UserID       uint
-	RoomName     string
-	Price        float64
-	Balance      float64
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+	Room         RoomEntity
+	User         UserEntity
+}
+
+type UserEntity struct {
+	ID          uint
+	Name        string `validate:"required"`
+	Email       string `validate:"required,email"`
+	Address     string
+	PhoneNumber string
+	Balance     float64
+}
+
+type RoomEntity struct {
+	ID    uint
+	Name  string `validate:"required"`
+	Price int    `validate:"required"`
 }
 
 type ReservationInsert struct {
