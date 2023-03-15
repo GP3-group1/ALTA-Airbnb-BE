@@ -514,16 +514,6 @@ components:
                 type: integer
         message:
           type: string
-    responseReservationWithData:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            balance:
-              type: integer
-        message:
-          type: string
     responseReservationsWithDataArray:
       type: object
       properties:
@@ -773,16 +763,16 @@ components:
           examples:
             checkReservation1:
               value:
-                check_in: 2023-12-03
-                check_out: 2023-14-03
+                check_in: 2023-03-23
+                check_out: 2023-03-24
             checkReservation2:
               value:
-                check_in: 2023-12-04
-                check_out: 2023-14-04
+                check_in: 2023-04-11
+                check_out: 2023-04-12
             checkReservation3:
               value:
-                check_in: 2023-01-03
-                check_out: 2023-02-03
+                check_in: 2023-03-02
+                check_out: 2023-03-03
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/requestDataReservationCheck"
@@ -795,16 +785,16 @@ components:
           examples:
             addReservation1:
               value:
-                check_in: 2023-12-03
-                check_out: 2023-14-03
+                check_in: 2023-03-23
+                check_out: 2023-03-24
             addReservation2:
               value:
-                check_in: 2023-12-04
-                check_out: 2023-14-04
+                check_in: 2023-04-11
+                check_out: 2023-04-12
             addReservation3:
               value:
-                check_in: 2023-01-03
-                check_out: 2023-02-03
+                check_in: 2023-03-02
+                check_out: 2023-03-03
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/requestDataReservation"
@@ -1134,11 +1124,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/responseReservationWithData"
+            $ref: "#/components/schemas/responseNonData"
           example:
-            data:
-              balance: 600
-            message: Success
+            message: Success Add Reservation
     failedReservation:
       description: Bad Request Response
       content:
@@ -1146,7 +1134,7 @@ components:
           schema:
             $ref: "#/components/schemas/responseNonData"
           example:
-            message: Failed Reservation
+            message: Failed Add Reservation
     successGetAllReservations:
       description: Success Response Data
       content:
