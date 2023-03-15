@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	SECRET_JWT string = ""
+	SECRET_JWT          string = ""
+	MIDTRANS_SERVER_KEY string = ""
 )
 
 type AppConfig struct {
@@ -19,6 +20,7 @@ type AppConfig struct {
 	DB_PORT     int
 	DB_NAME     string
 	JWT_KEY     string
+	SERVER_KEY  string
 }
 
 func InitConfig() *AppConfig {
@@ -54,6 +56,10 @@ func ReadEnv() *AppConfig {
 		app.DB_NAME = val
 		isRead = false
 	}
+	if val, found := os.LookupEnv("MIDTRANS_SERVER_KEY"); found {
+		app.SERVER_KEY = val
+		isRead = false
+	}
 
 	if isRead {
 		viper.AddConfigPath(".")
@@ -71,9 +77,11 @@ func ReadEnv() *AppConfig {
 		app.DB_HOSTNAME = viper.Get("DB_HOSTNAME").(string)
 		app.DB_PORT, _ = strconv.Atoi(viper.Get("DB_PORT").(string))
 		app.DB_NAME = viper.Get("DB_NAME").(string)
+		app.SERVER_KEY = viper.Get("MIDTRANS_SERVER_KEY").(string)
 
 	}
 
 	SECRET_JWT = app.JWT_KEY
+	MIDTRANS_SERVER_KEY = app.SERVER_KEY
 	return &app
 }
