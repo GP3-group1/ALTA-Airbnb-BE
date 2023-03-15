@@ -10,6 +10,9 @@ import (
 	_userData "alta-airbnb-be/features/users/data"
 	_userDelivery "alta-airbnb-be/features/users/delivery"
 	_userService "alta-airbnb-be/features/users/service"
+	_imageData "alta-airbnb-be/features/images/data"
+	_imageDelivery "alta-airbnb-be/features/images/delivery"
+	_imageService "alta-airbnb-be/features/images/service"
 	"alta-airbnb-be/middlewares"
 
 	"github.com/labstack/echo/v4"
@@ -56,8 +59,20 @@ func initRoomRouter(db *gorm.DB, e *echo.Echo) {
 	e.GET("/rooms/:id/reviews", roomHandler.GetReviewsByRoomId)
 }
 
+func initImageRouter(db *gorm.DB, e *echo.Echo) {
+	imageData := _imageData.New(db)
+	roomData := _roomData.New(db)
+	imageService := _imageService.New(imageData, roomData)
+	imageHandler := _imageDelivery.New(imageService)
+
+	e.POST("/images", imageHandler.AddImage, middlewares.JWTMiddleware())
+	e.PUT("/images/:id", imageHandler.ModifyImage, middlewares.JWTMiddleware())
+	e.DELETE("/images/:id", imageHandler.RemoveImage, middlewares.JWTMiddleware())
+}
+
 func InitRouter(db *gorm.DB, e *echo.Echo) {
 	initUserRouter(db, e)
 	initReservationRouter(db, e)
 	initRoomRouter(db, e)
+	initImageRouter(db, e)
 }
