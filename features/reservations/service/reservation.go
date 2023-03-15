@@ -25,6 +25,7 @@ func (reservationService *reservationService) CheckReservation(input reservation
 		return nil, errValidate
 	}
 
+	// date validation: check in date must lower than check out date
 	diff := input.CheckOutDate.Sub(input.CheckInDate)
 	totalNight := int(diff.Hours() / 24)
 	if totalNight < 1 {
@@ -55,52 +56,61 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 		return reservations.MidtransResponse{}, errValidate
 	}
 
+	// input user id and room id
 	inputReservation.UserID = userID
 	inputReservation.RoomID = idParam
 
+	// count total night
 	diff := inputReservation.CheckOutDate.Sub(inputReservation.CheckInDate)
 	inputReservation.TotalNight = int(diff.Hours() / 24)
 
+	// input date validation
 	if inputReservation.TotalNight < 1 {
 		return reservations.MidtransResponse{}, errors.New(consts.RESERVATION_InvalidInput)
 	}
 
-	selectRoom, errSelectRoom := reservationService.reservationData.SelectRoomPrice(idParam)
+	// get room data by id
+	selectRoom, errSelectRoom := reservationService.reservationData.SelectRoom(idParam)
 	if errSelectRoom != nil {
 		return reservations.MidtransResponse{}, errSelectRoom
 	}
 
+	// count total price
 	inputReservation.TotalPrice = float64(selectRoom.Room.Price) * float64(inputReservation.TotalNight)
 
-	selectUser, errSelectUser := reservationService.reservationData.SelectUserBalance(inputReservation.UserID)
+	// get user data by id
+	selectUser, errSelectUser := reservationService.reservationData.SelectUser(inputReservation.UserID)
 	if errSelectUser != nil {
 		return reservations.MidtransResponse{}, errSelectUser
 	}
 
+	// balance validation
 	if selectUser.User.Balance < inputReservation.TotalPrice {
 		return reservations.MidtransResponse{}, errors.New(consts.RESERVATION_InsertFailed)
 	}
 
+	// decrease user balance
 	inputUser := users.UserEntity{}
 	inputUser.Balance = selectUser.User.Balance - inputReservation.TotalPrice
 
+	// insert to reservations and update user balance
 	errInsert := reservationService.reservationData.Insert(inputReservation, inputUser, userID)
 	if errInsert != nil {
 		return reservations.MidtransResponse{}, errInsert
 	}
 
-	// request midtrans
-	var snapClient = snap.Client{}
-	snapClient.New(config.MIDTRANS_SERVER_KEY, midtrans.Sandbox)
-
-	// user id
-	user_id := strconv.Itoa(int(userID))
-
+	// get reservation id
 	selectReservation, errSelectReservation := reservationService.reservationData.SelectReservation()
 	if errSelectReservation != nil {
 		return reservations.MidtransResponse{}, errSelectReservation
 	}
 
+	// request midtrans snap
+	var snapClient = snap.Client{}
+	snapClient.New(config.MIDTRANS_SERVER_KEY, midtrans.Sandbox)
+
+	// parsing user id and item id
+	user_id := strconv.Itoa(int(userID))
 	item_id := strconv.Itoa(int(selectReservation.ID))
 
 	// customer

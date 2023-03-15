@@ -80,6 +80,7 @@ func (reservationHandler *ReservationHandler) CheckReservation(c echo.Context) e
 // GetAllReservation implements reservations.ReservationDeliveryInterface_
 func (reservationHandler *ReservationHandler) GetAllReservation(c echo.Context) error {
 	userID := middlewares.ExtractTokenUserId(c)
+
 	var page int = 1
 	pageParam := c.QueryParam("page")
 	if pageParam != "" {
@@ -90,6 +91,7 @@ func (reservationHandler *ReservationHandler) GetAllReservation(c echo.Context) 
 			page = pageConv
 		}
 	}
+
 	var limit int = 8
 	limitParam := c.QueryParam("limit")
 	if limitParam != "" {
