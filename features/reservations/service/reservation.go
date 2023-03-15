@@ -123,7 +123,7 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
-			OrderID:  "MID-Airbnb-" + user_id + "-" + item_id,
+			OrderID:  "ALTA-Airbnb-" + user_id + "-" + item_id,
 			GrossAmt: int64(inputReservation.TotalPrice),
 		},
 		CreditCard: &snap.CreditCardDetails{
@@ -139,7 +139,7 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 		EnabledPayments: snap.AllSnapPaymentType,
 		Items: &[]midtrans.ItemDetails{
 			{
-				ID:    "Property-" + item_id,
+				ID:    "Room-" + item_id,
 				Qty:   int32(inputReservation.TotalNight),
 				Price: int64(selectRoom.Room.Price),
 				Name:  selectRoom.Room.Name,
