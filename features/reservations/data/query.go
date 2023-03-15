@@ -30,7 +30,7 @@ func (reservationQuery *reservationQuery) CheckReservation(input reservations.Re
 // SelectUserBalance implements reservations.ReservationData_
 func (reservationQuery *reservationQuery) SelectUserBalance(userID uint) (reservations.ReservationEntity, error) {
 	reservationGorm := models.Reservation{}
-	txSelect := reservationQuery.db.Preload("User").Where("user_id = ?", userID).First(&reservationGorm)
+	txSelect := reservationQuery.db.Where("id = ?", userID).First(&reservationGorm.User)
 	if txSelect.Error != nil {
 		return reservations.ReservationEntity{}, txSelect.Error
 	}
@@ -43,7 +43,7 @@ func (reservationQuery *reservationQuery) SelectUserBalance(userID uint) (reserv
 // SelectRoomPrice implements reservations.ReservationData_
 func (reservationQuery *reservationQuery) SelectRoomPrice(roomID uint) (reservations.ReservationEntity, error) {
 	reservationGorm := models.Reservation{}
-	txSelect := reservationQuery.db.Preload("Room").Where("room_id = ?", roomID).First(&reservationGorm)
+	txSelect := reservationQuery.db.Where("id = ?", roomID).First(&reservationGorm.Room)
 	if txSelect.Error != nil {
 		return reservations.ReservationEntity{}, txSelect.Error
 	}
