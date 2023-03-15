@@ -1,7 +1,6 @@
 package service
 
 import (
-	"alta-airbnb-be/app/config"
 	"alta-airbnb-be/features/reservations"
 	"alta-airbnb-be/features/users"
 	"alta-airbnb-be/utils/consts"
@@ -91,7 +90,7 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 
 	// request midtrans
 	var snapClient = snap.Client{}
-	snapClient.New(config.MIDTRANS_SERVER_KEY, midtrans.Sandbox)
+	snapClient.New("SB-Mid-server-acUFadVGU7lFeEqSHBoN3wIt", midtrans.Sandbox)
 
 	// user id
 	user_id := strconv.Itoa(int(userID))
