@@ -12,12 +12,12 @@ type ReservationEntity struct {
 	CheckInDate  time.Time `validate:"required"`
 	CheckOutDate time.Time `validate:"required"`
 	TotalNight   int
-	TotalPrice   int
+	TotalPrice   float64
 	RoomID       uint
 	UserID       uint
 	RoomName     string
-	Price        int
-	Balance      int
+	Price        float64
+	Balance      float64
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
@@ -31,19 +31,19 @@ type ReservationRequest struct {
 	CheckInDate  time.Time `json:"check_in_date" form:"check_in_date"`
 	CheckOutDate time.Time `json:"check_out_date" form:"check_out_date"`
 	TotalNight   int       `json:"total_night" form:"total_night"`
-	TotalPrice   int       `json:"total_price" form:"total_price"`
+	TotalPrice   float64   `json:"total_price" form:"total_price"`
 	RoomID       uint      `json:"room_id" form:"room_id"`
 	UserID       uint      `json:"user_id" form:"user_id"`
 }
 
 type ReservationResponse struct {
-	ID           uint   `json:"id"`
-	RoomName     string `json:"room_name"`
-	CheckInDate  string `json:"check_in"`
-	CheckOutDate string `json:"check_out"`
-	Price        int    `json:"price"`
-	TotalNight   int    `json:"total_night"`
-	TotalPrice   int    `json:"total_price"`
+	ID           uint    `json:"id"`
+	RoomName     string  `json:"room_name"`
+	CheckInDate  string  `json:"check_in"`
+	CheckOutDate string  `json:"check_out"`
+	Price        float64 `json:"price"`
+	TotalNight   int     `json:"total_night"`
+	TotalPrice   float64 `json:"total_price"`
 }
 
 //go:generate mockery --name ReservationService_ --output ../../mocks

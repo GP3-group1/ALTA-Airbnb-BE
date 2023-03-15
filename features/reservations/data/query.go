@@ -68,28 +68,31 @@ func (reservationQuery *reservationQuery) Insert(inputReservation reservations.R
 	reservationGorm := EntityToGorm(inputReservation)
 	userGorm := _mapUser.EntityToGorm(inputUser)
 
-	tx := reservationQuery.db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
-	if err := tx.Error; err != nil {
-		return err
+	txTransaction := reservationQuery.db.Begin()
+	if txTransaction.Error != nil {
+		txTransaction.Rollback()
+		return txTransaction.Error
 	}
 
-	if err := tx.Create(&reservationGorm).Error; err != nil {
+	tx := txTransaction.Model(&userGorm).Where("id = ?", userID).Update("balance", userGorm.Balance)
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		txTransaction.Rollback()
+		return txTransaction.Error
+	}
+
+	tx = txTransaction.Create(&reservationGorm)
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		txTransaction.Rollback()
+		return txTransaction.Error
+	}
+
+	tx = txTransaction.Commit()
+	if tx.Error != nil {
 		tx.Rollback()
-		return err
+		return errors.New(consts.SERVER_InternalServerError)
 	}
 
-	if err := tx.Where("id = ?", userID).Updates(&userGorm).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	return tx.Commit().Error
+	return nil
 }
 
 func New(db *gorm.DB) reservations.ReservationData_ {

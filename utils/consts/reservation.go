@@ -16,7 +16,7 @@ const (
 // Response Error
 const (
 	// Insert
-	RESERVATION_InsertFailed string = "you have insufficient balance"
-
+	RESERVATION_InsertFailed     string = "you have insufficient balance"
 	RESERVATION_RoomNotAvailable string = "room not available on inputed date"
+	RESERVATION_InvalidInput     string = "invalid inputed date"
 )
