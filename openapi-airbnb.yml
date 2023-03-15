@@ -161,7 +161,7 @@ paths:
           $ref: "#/components/responses/successGetAllRooms"
         "400":
           $ref: "#/components/responses/getDataFailed"
-  /users/rooms/:
+  /rooms/users/:
     get:
       tags:
         - Rooms
