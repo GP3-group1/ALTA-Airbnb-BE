@@ -20,7 +20,7 @@ func (reservationQuery *reservationQuery) CheckReservation(input reservations.Re
 	CheckInDate := input.CheckInDate.Format("2006-01-02")
 	CheckOutDate := input.CheckOutDate.Format("2006-01-02")
 	reservationGorm := []models.Reservation{}
-	txSelect := reservationQuery.db.Where("room_id = ? AND check_in_date BETWEEN ? AND ? AND check_out_date BETWEEN ? AND ?", roomID, CheckInDate, CheckOutDate, CheckInDate, CheckOutDate).Find(&reservationGorm)
+	txSelect := reservationQuery.db.Raw("SELECT * FROM reservations WHERE room_id = ? AND ? BETWEEN check_in_date AND check_out_date OR ? BETWEEN check_in_date AND check_out_date UNION ALL SELECT * FROM reservations r WHERE room_id = ? AND check_in_date BETWEEN ? AND ? OR check_out_date BETWEEN ? AND ?", roomID, CheckInDate, CheckOutDate, roomID, CheckInDate, CheckOutDate, CheckInDate, CheckOutDate).Find(&reservationGorm)
 	if txSelect.Error != nil {
 		return nil, txSelect.Error
 	}
