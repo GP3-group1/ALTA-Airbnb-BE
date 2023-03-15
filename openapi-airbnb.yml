@@ -283,6 +283,49 @@ paths:
           $ref: "#/components/responses/successCheckReservation"
         "400":
           $ref: "#/components/responses/failedCheckReservation"
+          
+  ####################################
+  #  IMAGES
+  ####################################
+  /images:
+    post:
+      tags:
+        - Images
+      summary: Insert a new image
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyImage"
+      security:
+        - JWTAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/successInsertImage"
+        
+  /images/{id_image}:
+    put:
+      tags:
+        - Images
+      summary: Update image
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idImageParam"
+      requestBody:
+        $ref: "#/components/requestBodies/requestBodyImage"
+      responses:
+        "201":
+          $ref: "#/components/responses/successUpdateImage"
+          
+    delete:
+      tags:
+        - Images
+      summary: Delete image
+      security:
+        - JWTAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idImageParam"
+      responses:
+        "201":
+          $ref: "#/components/responses/successDeleteImage"
 
 ####################################
 #  COMPONENTS
@@ -391,6 +434,16 @@ components:
           type: string
         check_out:
           type: string
+    requestDataImage:
+      type: object
+      required:
+        - room_id
+        - image
+      properties:
+        room_id:
+          type: string
+        image:
+          type: object
     responseLoginWithData:
       type: object
       properties:
@@ -550,6 +603,20 @@ components:
               type: string
         message:
           type: string
+    responseImagesWithData:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+            room_id:
+              type: integer
+            url_image:
+              type: string
+        message:
+          type: string
 
   parameters:
     pageParam:
@@ -594,6 +661,13 @@ components:
         example: 1 - 100
     idRoomParam:
       name: id_room
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 1
+    idImageParam:
+      name: id_image
       in: path
       required: true
       schema:
@@ -810,6 +884,12 @@ components:
         multipart/form-data:
           schema:
             $ref: "#/components/schemas/requestDataReservation"
+    requestBodyImage:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "#/components/schemas/requestDataImage"
 
   responses:
     loginSuccess:
@@ -1188,6 +1268,38 @@ components:
                 },
               ]
             message: Success
+    successInsertImage:
+      description: Success Response Insert Image
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseImagesWithData"
+          example:
+            data:
+              id: 1
+              room_id: 1
+              url_image: static/images/Villa Cemara.jpg
+            message: succesfully insert image data
+    successUpdateImage:
+      description: Success Response Update Image
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseImagesWithData"
+          example:
+            data:
+              id: 1
+              room_id: 1
+              url_image: static/images/Villa Cemara.jpg
+            message: succesfully update image data
+    successDeleteImage:
+      description: Success Response Delete Image
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/responseImagesWithData"
+          example:
+            message: succesfully delete image data
             
   examples:
     accessIsDenied:
