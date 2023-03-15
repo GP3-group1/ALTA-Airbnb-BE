@@ -5,6 +5,17 @@ import (
 	_imageModel "alta-airbnb-be/features/images/models"
 )
 
+func convertToGorm(imageEntity *images.ImageEntity) _imageModel.Image {
+	imageModel := _imageModel.Image{
+		RoomID: imageEntity.ID,
+		Url:    imageEntity.Url,
+	}
+	if imageEntity.ID != 0 {
+		imageModel.ID = imageEntity.ID
+	}
+	return imageModel
+}
+
 func ConvertToEntity(imageModel _imageModel.Image) images.ImageEntity {
 	imageEntity := images.ImageEntity{
 		ID:     imageModel.ID,
