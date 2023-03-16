@@ -12,11 +12,25 @@ import (
 )
 
 var (
-	mock_data_user = users.UserEntity{
+	mock_insert_user = users.UserEntity{
 		ID:          1,
 		Name:        "Muhammad Ali",
 		Email:       "ali@mail.com",
 		Password:    "thegreatest",
+		NewPassword: "",
+		Sex:         "",
+		Address:     "",
+		PhoneNumber: "",
+		Balance:     0,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+
+	mock_data_user = users.UserEntity{
+		ID:          1,
+		Name:        "Muhammad Ali",
+		Email:       "ali@mail.com",
+		Password:    "$2a$14$J4AF0twBNp2Pxx/LY5McIu/0v0FEvP.T7TOU/ozo.afMSDA03aBZ6",
 		NewPassword: "",
 		Sex:         "",
 		Address:     "",
@@ -59,7 +73,7 @@ func TestInsert(t *testing.T) {
 		repo.On("Insert", mock.Anything).Return(nil).Once()
 
 		srv := New(repo)
-		err := srv.Create(mock_data_user)
+		err := srv.Create(mock_insert_user)
 		assert.Nil(t, err)
 		repo.AssertExpectations(t)
 	})
@@ -79,9 +93,27 @@ func TestInsert(t *testing.T) {
 		repo.On("Insert", mock.Anything).Return(errors.New("error insert data")).Once()
 
 		srv := New(repo)
-		err := srv.Create(mock_data_user)
+		err := srv.Create(mock_insert_user)
 		assert.NotNil(t, err)
 		assert.Equal(t, "error insert data", err.Error())
+		repo.AssertExpectations(t)
+	})
+}
+
+func TestLogin(t *testing.T) {
+	repo := new(mocks.UserData)
+	returnCore := mock_data_user
+	email := mock_data_user.Email
+	password := "thegreatest"
+
+	t.Run("Success", func(t *testing.T) {
+		repo.On("Login", mock.Anything).Return(returnCore, nil).Once()
+
+		srv := New(repo)
+		core, token, err := srv.Login(email, password)
+		assert.Nil(t, err)
+		assert.Equal(t, returnCore.Name, core.Name)
+		assert.Equal(t, token, token)
 		repo.AssertExpectations(t)
 	})
 }
