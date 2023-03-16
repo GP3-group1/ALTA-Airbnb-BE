@@ -7,7 +7,7 @@ import (
 
 func convertToGorm(imageEntity *images.ImageEntity) _imageModel.Image {
 	imageModel := _imageModel.Image{
-		RoomID: imageEntity.ID,
+		RoomID: imageEntity.RoomID,
 		Url:    imageEntity.Url,
 	}
 	if imageEntity.ID != 0 {
