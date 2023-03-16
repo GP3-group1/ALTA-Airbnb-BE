@@ -198,7 +198,7 @@ func TestCheckReservation(t *testing.T) {
 
 		srv := New(usecase)
 
-		req := httptest.NewRequest(http.MethodPut, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBody))
 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
@@ -231,7 +231,7 @@ func TestCheckReservation(t *testing.T) {
 
 		srv := New(usecase)
 
-		req := httptest.NewRequest(http.MethodPut, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBody))
 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
@@ -267,7 +267,7 @@ func TestCheckReservation(t *testing.T) {
 		reqBodyFail, _ := json.Marshal(dataFail)
 		srv := New(usecase)
 
-		req := httptest.NewRequest(http.MethodPut, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBodyFail))
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBodyFail))
 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
@@ -298,7 +298,7 @@ func TestCheckReservation(t *testing.T) {
 
 		srv := New(usecase)
 
-		req := httptest.NewRequest(http.MethodPut, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBody))
 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
@@ -338,7 +338,7 @@ func TestCheckReservation(t *testing.T) {
 
 		srv := New(usecase)
 
-		req := httptest.NewRequest(http.MethodPut, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBody))
 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
@@ -370,7 +370,7 @@ func TestCheckReservation(t *testing.T) {
 
 		srv := New(usecase)
 
-		req := httptest.NewRequest(http.MethodPut, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations/check", bytes.NewBuffer(reqBody))
 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
@@ -392,5 +392,233 @@ func TestCheckReservation(t *testing.T) {
 		}
 		usecase.AssertExpectations(t)
 	})
+}
 
+func TestAddReservation(t *testing.T) {
+	e := echo.New()
+	usecase := new(mocks.ReservationService)
+	userData := mock_data_user
+	input := reservations.ReservationInsert{
+		CheckInDate:  "2023-03-16",
+		CheckOutDate: "2023-03-07",
+	}
+	reqBody, err := json.Marshal(input)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+	returnData := reservations.MidtransResponse{
+		Token:       "",
+		RedirectUrl: "",
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		usecase.On("Create", mock.Anything, mock.Anything, mock.Anything).Return(returnData, nil).Once()
+		token, errToken := middlewares.CreateToken(userData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/rooms/:id/reservations")
+		echoContext.SetParamNames("id")
+		echoContext.SetParamValues("1")
+
+		responseData := reservations.MidtransResponse{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.AddReservation))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusCreated, rec.Code)
+			assert.Equal(t, returnData.RedirectUrl, responseData.RedirectUrl)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed when param error", func(t *testing.T) {
+		token, errToken := middlewares.CreateToken(userData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/rooms/:id/reservations")
+		echoContext.SetParamNames("id")
+		echoContext.SetParamValues("assdas")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.AddReservation))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "invaild id parameter", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed check reservation when bind error", func(t *testing.T) {
+		token, errToken := middlewares.CreateToken(userData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		var dataFail = map[string]int{
+			"check_in": 134,
+		}
+		reqBodyFail, _ := json.Marshal(dataFail)
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations", bytes.NewBuffer(reqBodyFail))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/rooms/:id/reservations")
+		echoContext.SetParamNames("id")
+		echoContext.SetParamValues("1")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.AddReservation))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "error bind reservation data", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed when check in date mapping to entity", func(t *testing.T) {
+		input := reservations.ReservationInsert{
+			CheckInDate:  "2023-3-6",
+			CheckOutDate: "2023-03-07",
+		}
+		reqBody, err := json.Marshal(input)
+		if err != nil {
+			t.Error(t, err, "error")
+		}
+
+		token, errToken := middlewares.CreateToken(userData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/rooms/:id/reservations")
+		echoContext.SetParamNames("id")
+		echoContext.SetParamValues("1")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.AddReservation))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "invalid check in date format must YYYY-MM-DD", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed when check out date mapping to entity", func(t *testing.T) {
+		input := reservations.ReservationInsert{
+			CheckInDate:  "2023-03-06",
+			CheckOutDate: "2023-3-7",
+		}
+		reqBody, err := json.Marshal(input)
+		if err != nil {
+			t.Error(t, err, "error")
+		}
+
+		token, errToken := middlewares.CreateToken(userData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/rooms/:id/reservations")
+		echoContext.SetParamNames("id")
+		echoContext.SetParamValues("1")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.AddReservation))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "invalid check out date format must YYYY-MM-DD", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed when func error", func(t *testing.T) {
+		usecase.On("Create", mock.Anything, mock.Anything, mock.Anything).Return(reservations.MidtransResponse{}, errors.New("error insert")).Once()
+		token, errToken := middlewares.CreateToken(userData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/rooms/:id/reservations", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/rooms/:id/reservations")
+		echoContext.SetParamNames("id")
+		echoContext.SetParamValues("1")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.AddReservation))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "error insert", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
 }
