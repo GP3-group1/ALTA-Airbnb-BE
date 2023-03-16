@@ -16,15 +16,15 @@ type reservationQuery struct {
 }
 
 // CheckReservation implements reservations.ReservationData_
-func (reservationQuery *reservationQuery) CheckReservation(input reservations.ReservationEntity, roomID uint) (int, error) {
+func (reservationQuery *reservationQuery) CheckReservation(input reservations.ReservationEntity, roomID uint) (int64, error) {
 	// parsing date
 	CheckInDate := input.CheckInDate.Format("2006-01-02")
 	CheckOutDate := input.CheckOutDate.Format("2006-01-02")
 
-	var row int
-	txSelect := reservationQuery.db.Model(&models.Reservation{}).Where("room_id = ?", roomID).Where("(start_date <= ? AND end_date >= ?) OR (start_date >= ? AND end_date <= ?) OR (start_date <= ? AND end_date >= ?)", endDate, startDate, startDate, endDate, startDate, endDate).Count(&row)
+	var row int64
+	txSelect := reservationQuery.db.Model(&models.Reservation{}).Where("room_id = ?", roomID).Where("(start_date <= ? AND end_date >= ?) OR (start_date >= ? AND end_date <= ?) OR (start_date <= ? AND end_date >= ?)", CheckOutDate, CheckInDate, CheckInDate, CheckOutDate, CheckInDate, CheckOutDate).Count(&row)
 	if txSelect.Error != nil {
-		return nil, txSelect.Error
+		return 0, txSelect.Error
 	}
 	return row, nil
 }
