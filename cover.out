@@ -62,7 +62,7 @@ alta-airbnb-be/features/rooms/service/validate.go:15.2,15.31 1 1
 alta-airbnb-be/features/rooms/service/validate.go:15.31,17.3 1 1
 alta-airbnb-be/features/rooms/service/validate.go:18.2,18.12 1 1
 alta-airbnb-be/features/users/delivery/adapter.go:5.73,11.2 1 1
-alta-airbnb-be/features/users/delivery/adapter.go:13.74,22.2 1 0
+alta-airbnb-be/features/users/delivery/adapter.go:13.74,22.2 1 1
 alta-airbnb-be/features/users/delivery/adapter.go:24.94,29.2 1 0
 alta-airbnb-be/features/users/delivery/adapter.go:31.71,41.2 1 1
 alta-airbnb-be/features/users/delivery/handler.go:18.69,22.20 4 0
@@ -89,11 +89,11 @@ alta-airbnb-be/features/users/delivery/handler.go:89.2,89.82 1 1
 alta-airbnb-be/features/users/delivery/handler.go:93.69,96.22 3 1
 alta-airbnb-be/features/users/delivery/handler.go:96.22,98.3 1 1
 alta-airbnb-be/features/users/delivery/handler.go:99.2,99.75 1 1
-alta-airbnb-be/features/users/delivery/handler.go:103.69,107.20 4 0
+alta-airbnb-be/features/users/delivery/handler.go:103.69,107.20 4 1
 alta-airbnb-be/features/users/delivery/handler.go:107.20,109.3 1 0
-alta-airbnb-be/features/users/delivery/handler.go:110.2,111.22 2 0
+alta-airbnb-be/features/users/delivery/handler.go:110.2,111.22 2 1
 alta-airbnb-be/features/users/delivery/handler.go:111.22,113.3 1 0
-alta-airbnb-be/features/users/delivery/handler.go:115.2,115.83 1 0
+alta-airbnb-be/features/users/delivery/handler.go:115.2,115.83 1 1
 alta-airbnb-be/features/users/delivery/handler.go:119.70,123.20 4 0
 alta-airbnb-be/features/users/delivery/handler.go:123.20,125.3 1 0
 alta-airbnb-be/features/users/delivery/handler.go:126.2,127.30 2 0

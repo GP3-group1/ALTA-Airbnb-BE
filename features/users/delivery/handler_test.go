@@ -277,7 +277,7 @@ func TestDelete(t *testing.T) {
 
 		srv := New(usecase)
 
-		req := httptest.NewRequest(http.MethodGet, "/users", nil)
+		req := httptest.NewRequest(http.MethodDelete, "/users", nil)
 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
@@ -308,7 +308,7 @@ func TestDelete(t *testing.T) {
 
 		srv := New(usecase)
 
-		req := httptest.NewRequest(http.MethodGet, "/users", nil)
+		req := httptest.NewRequest(http.MethodDelete, "/users", nil)
 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
@@ -328,4 +328,75 @@ func TestDelete(t *testing.T) {
 		}
 		usecase.AssertExpectations(t)
 	})
+}
+
+func TestUpdateAccount(t *testing.T) {
+	reqBody, err := json.Marshal(mock_insert_user)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+	returnData := mock_data_user
+
+	e := echo.New()
+	usecase := new(mocks.UserService)
+
+	t.Run("Success", func(t *testing.T) {
+		usecase.On("ModifyData", mock.Anything, mock.Anything).Return(nil).Once()
+		token, errToken := middlewares.CreateToken(returnData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPut, "/users", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.UpdateAccount))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusOK, rec.Code)
+			assert.Equal(t, "succesfully update user data", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	// t.Run("Failed Add User when bind error", func(t *testing.T) {
+
+	// 	var dataFail = map[string]int{
+	// 		"name": 134,
+	// 	}
+	// 	reqBodyFail, _ := json.Marshal(dataFail)
+	// 	srv := New(usecase)
+
+	// 	req := httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(reqBodyFail))
+	// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	// 	rec := httptest.NewRecorder()
+	// 	echoContext := e.NewContext(req, rec)
+	// 	echoContext.SetPath("/users")
+
+	// 	responseData := ResponseGlobal{}
+
+	// 	if assert.NoError(t, srv.Register(echoContext)) {
+	// 		responseBody := rec.Body.String()
+	// 		err := json.Unmarshal([]byte(responseBody), &responseData)
+	// 		if err != nil {
+	// 			assert.Error(t, err, "error")
+	// 		}
+	// 		assert.Equal(t, http.StatusBadRequest, rec.Code)
+	// 		assert.Equal(t, "error bind user data", responseData.Message)
+	// 	}
+	// 	usecase.AssertExpectations(t)
+	// })
+
 }

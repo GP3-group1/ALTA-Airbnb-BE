@@ -61,9 +61,9 @@
 				
 				<option value="file2">alta-airbnb-be/features/rooms/service/validate.go (100.0%)</option>
 				
-				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (50.0%)</option>
+				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (75.0%)</option>
 				
-				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (41.9%)</option>
+				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (53.2%)</option>
 				
 				<option value="file5">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
@@ -332,7 +332,7 @@ func registerToEntity(userRegister users.UserRegister) users.UserEntity <span cl
         }
 }</span>
 
-func requestUpdateToEntity(userUpdate users.UserUpdate) users.UserEntity <span class="cov0" title="0">{
+func requestUpdateToEntity(userUpdate users.UserUpdate) users.UserEntity <span class="cov8" title="1">{
         return users.UserEntity{
                 Name:        userUpdate.Name,
                 Email:       userUpdate.Email,
@@ -465,19 +465,19 @@ func (userHandler *UserHandler) RemoveAccount(c echo.Context) error <span class=
 }
 
 // UpdateAccount implements users.UserDeliveryInterface_
-func (userHandler *UserHandler) UpdateAccount(c echo.Context) error <span class="cov0" title="0">{
+func (userHandler *UserHandler) UpdateAccount(c echo.Context) error <span class="cov8" title="1">{
         userID := middlewares.ExtractTokenUserId(c)
         userInput := users.UserUpdate{}
         errBind := c.Bind(&amp;userInput)
         if errBind != nil </span><span class="cov0" title="0">{
                 return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
         }</span>
-        <span class="cov0" title="0">errUpdate := userHandler.userService.ModifyData(userID, requestUpdateToEntity(userInput))
+        <span class="cov8" title="1">errUpdate := userHandler.userService.ModifyData(userID, requestUpdateToEntity(userInput))
         if errUpdate != nil </span><span class="cov0" title="0">{
                 return c.JSON(helpers.ErrorResponse(errUpdate))
         }</span>
 
-        <span class="cov0" title="0">return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateUserData))</span>
+        <span class="cov8" title="1">return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateUserData))</span>
 }
 
 // UpdatePassword implements users.UserDeliveryInterface_
