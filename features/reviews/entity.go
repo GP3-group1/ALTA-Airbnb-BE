@@ -1,10 +1,14 @@
 package reviews
 
+import "time"
+
 type ReviewEntity struct {
-	UserID  uint
-	RoomID  uint
-	Comment string  `validate:"required"`
-	Rating  float64 `validate:"required"`
+	UserID    uint
+	Username  string
+	RoomID    uint
+	Comment   string  `validate:"required"`
+	Rating    float64 `validate:"required"`
+	CreatedAt time.Time
 }
 
 type ReviewRequest struct {
@@ -15,8 +19,10 @@ type ReviewRequest struct {
 }
 
 type ReviewResponse struct {
-	UserID  uint    `json:"user_id"`
-	RoomID  uint    `json:"room_id"`
-	Comment string  `json:"comment"`
-	Rating  float64 `json:"rating"`
+	UserID    uint      `json:"user_id,omitempty"`
+	Username  string    `json:"username,omitempty"`
+	RoomID    uint      `json:"room_id,omitempty"`
+	Comment   string    `json:"comment,omitempty"`
+	Rating    float64   `json:"rating,omitempty"`
+	CreatedAt string `json:"created_at,omitempty"`
 }

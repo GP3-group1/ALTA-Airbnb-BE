@@ -14,15 +14,22 @@ func ConvertToEntity(reviewRequest *reviews.ReviewRequest) reviews.ReviewEntity 
 	return reviewEntity
 }
 
+func ConvertToResponse(reviewEntitiy *reviews.ReviewEntity) reviews.ReviewResponse {
+	reviewResponse := reviews.ReviewResponse{
+		UserID:    reviewEntitiy.UserID,
+		Username:  reviewEntitiy.Comment,
+		RoomID:    reviewEntitiy.RoomID,
+		Comment:   reviewEntitiy.Comment,
+		Rating:    reviewEntitiy.Rating,
+		CreatedAt: reviewEntitiy.CreatedAt.Format("2006-02-01"),
+	}
+	return reviewResponse
+}
+
 func ConvertToResponses(reviewEntities []*reviews.ReviewEntity) []reviews.ReviewResponse {
 	reviewResponses := []reviews.ReviewResponse{}
 	for _, val := range reviewEntities {
-		reviewResponses = append(reviewResponses, reviews.ReviewResponse{
-			UserID:  val.UserID,
-			RoomID:  val.RoomID,
-			Comment: val.Comment,
-			Rating:  val.Rating,
-		})
+		reviewResponses = append(reviewResponses, ConvertToResponse(val))
 	}
 	return reviewResponses
 }

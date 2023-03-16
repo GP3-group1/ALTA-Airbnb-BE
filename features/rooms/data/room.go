@@ -207,5 +207,11 @@ func (roomData *RoomData) SelectReviewsByRoomId(reviewEntity *reviews.ReviewEnti
 	}
 
 	reviewEntities := _reviewData.ConvertToEntities(reviewsGormOutput)
+	for _, val := range reviewEntities {
+		tx = roomData.db.Raw("SELECT us.name FROM reviews LEFT JOIN users us on us.id = reviews.user_id WHERE room_id = ? AND reviews.deleted_AT IS NULL", val.RoomID).Scan(&val.Username)
+		if tx.Error != nil {
+			return nil, errors.New(consts.SERVER_InternalServerError)
+		}
+	}
 	return reviewEntities, nil
 }
