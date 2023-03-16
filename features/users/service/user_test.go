@@ -261,6 +261,20 @@ func TestUpdatePassword(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
+	t.Run("Failed when update data", func(t *testing.T) {
+		input := users.UserEntity{
+			Password:    "thegreatest",
+			NewPassword: "goat",
+		}
+		repo.On("SelectData", mock.Anything).Return(core, nil).Once()
+		repo.On("UpdateData", mock.Anything, mock.Anything).Return(errors.New("error update")).Once()
+
+		srv := New(repo)
+		err := srv.ModifyPassword(id, input)
+		assert.NotNil(t, err)
+		repo.AssertExpectations(t)
+	})
+
 	t.Run("Failed validate", func(t *testing.T) {
 		input := users.UserEntity{
 			Password:    "",

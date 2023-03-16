@@ -61,7 +61,7 @@
 				
 				<option value="file2">alta-airbnb-be/features/rooms/service/validate.go (100.0%)</option>
 				
-				<option value="file3">alta-airbnb-be/features/users/service/user.go (93.8%)</option>
+				<option value="file3">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
 				</select>
 			</div>
@@ -447,7 +447,7 @@ func (userService *userService) ModifyPassword(userID uint, input users.UserEnti
         <span class="cov8" title="1">input.Password = hashedPassword
 
         errUpdatePassword := userService.userData.UpdateData(userID, input)
-        if errUpdatePassword != nil </span><span class="cov0" title="0">{
+        if errUpdatePassword != nil </span><span class="cov8" title="1">{
                 return errUpdatePassword
         }</span>
         <span class="cov8" title="1">return nil</span>
