@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (20.5%)</option>
+				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (22.7%)</option>
 				
 				<option value="file1">alta-airbnb-be/features/users/service/user.go (87.5%)</option>
 				
@@ -91,7 +91,7 @@ type reservationService struct {
 // CheckReservation implements reservations.ReservationService_
 func (reservationService *reservationService) CheckReservation(input reservations.ReservationEntity, roomID uint) (int64, error) <span class="cov8" title="1">{
         errValidate := reservationService.validate.StructExcept(input, "Room", "User")
-        if errValidate != nil </span><span class="cov0" title="0">{
+        if errValidate != nil </span><span class="cov8" title="1">{
                 return 0, errValidate
         }</span>
 
