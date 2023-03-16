@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (38.6%)</option>
+				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (84.1%)</option>
 				
 				<option value="file1">alta-airbnb-be/features/users/service/user.go (87.5%)</option>
 				
@@ -120,14 +120,14 @@ func (reservationService *reservationService) GetAll(page, limit int, userID uin
 }
 
 // Create implements reservations.ReservationServiceInterface_
-func (reservationService *reservationService) Create(userID, idParam uint, inputReservation reservations.ReservationEntity) (reservations.MidtransResponse, error) <span class="cov0" title="0">{
+func (reservationService *reservationService) Create(userID, idParam uint, inputReservation reservations.ReservationEntity) (reservations.MidtransResponse, error) <span class="cov8" title="1">{
         errValidate := reservationService.validate.StructExcept(inputReservation, "Room", "User")
         if errValidate != nil </span><span class="cov0" title="0">{
                 return reservations.MidtransResponse{}, errValidate
         }</span>
 
         // input user id and room id
-        <span class="cov0" title="0">inputReservation.UserID = userID
+        <span class="cov8" title="1">inputReservation.UserID = userID
         inputReservation.RoomID = idParam
 
         // count total night
@@ -140,13 +140,13 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
         }</span>
 
         // get room data by id
-        <span class="cov0" title="0">selectRoom, errSelectRoom := reservationService.reservationData.SelectRoom(idParam)
+        <span class="cov8" title="1">selectRoom, errSelectRoom := reservationService.reservationData.SelectRoom(idParam)
         if errSelectRoom != nil </span><span class="cov0" title="0">{
                 return reservations.MidtransResponse{}, errSelectRoom
         }</span>
 
         // count total price
-        <span class="cov0" title="0">inputReservation.TotalPrice = float64(selectRoom.Room.Price) * float64(inputReservation.TotalNight)
+        <span class="cov8" title="1">inputReservation.TotalPrice = float64(selectRoom.Room.Price) * float64(inputReservation.TotalNight)
 
         // get user data by id
         selectUser, errSelectUser := reservationService.reservationData.SelectUser(userID)
@@ -155,12 +155,12 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
         }</span>
 
         // balance validation
-        <span class="cov0" title="0">if selectUser.User.Balance &lt; inputReservation.TotalPrice </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if selectUser.User.Balance &lt; inputReservation.TotalPrice </span><span class="cov0" title="0">{
                 return reservations.MidtransResponse{}, errors.New(consts.RESERVATION_InsertFailed)
         }</span>
 
         // decrease user balance
-        <span class="cov0" title="0">inputUser := users.UserEntity{}
+        <span class="cov8" title="1">inputUser := users.UserEntity{}
         inputUser.Balance = selectUser.User.Balance - inputReservation.TotalPrice
 
         // insert to reservations and update user balance
@@ -170,8 +170,8 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
         }</span>
 
         // midtrans helpers
-        <span class="cov0" title="0">midtransResponse, errSnap := helpers.RequestSnapMidtrans(selectUser, selectRoom, inputReservation)
-        if errSnap != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">midtransResponse, errSnap := helpers.RequestSnapMidtrans(selectUser, selectRoom, inputReservation)
+        if errSnap != nil </span><span class="cov8" title="1">{
                 return reservations.MidtransResponse{}, errSnap
         }</span>
 

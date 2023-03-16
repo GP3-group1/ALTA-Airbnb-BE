@@ -108,13 +108,67 @@ func TestGetAll(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
-	t.Run("Success Get All", func(t *testing.T) {
+	t.Run("Failed Get All", func(t *testing.T) {
 		repo.On("SelectAll", mock.Anything, mock.Anything, mock.Anything).Return([]reservations.ReservationEntity{}, errors.New("error select")).Once()
 
 		srv := New(repo)
 		response, err := srv.GetAll(page, limit, uint(userID))
 		assert.NotNil(t, err)
 		assert.Equal(t, []reservations.ReservationEntity{}, response)
+		repo.AssertExpectations(t)
+	})
+}
+
+func TestCreate(t *testing.T) {
+	repo := new(mocks.ReservationData)
+	returnDataMidtrans := reservations.MidtransResponse{
+		Token:       "",
+		RedirectUrl: "",
+	}
+
+	selectUser := reservations.ReservationEntity{
+		User: reservations.UserEntity{
+			ID:          1,
+			Name:        "Muhammad Ali",
+			Email:       "ali@mail.com",
+			Address:     "Lewo",
+			PhoneNumber: "08123456789",
+			Balance:     1000000,
+		},
+	}
+
+	selectRoom := reservations.ReservationEntity{
+		Room: reservations.RoomEntity{
+			ID:    1,
+			Name:  "Villa Indah Hijau",
+			Price: 200,
+		},
+	}
+
+	userID := uint(1)
+	roomID := uint(1)
+
+	t.Run("Success", func(t *testing.T) {
+		input := reservations.ReservationEntity{
+			UserID:       1,
+			RoomID:       1,
+			CheckInDate:  time.Date(2023, time.March, 16, 0, 0, 0, 0, time.UTC),
+			CheckOutDate: time.Date(2023, time.March, 17, 0, 0, 0, 0, time.UTC),
+			TotalNight:   1,
+			TotalPrice:   200,
+		}
+
+		repo.On("SelectRoom", mock.Anything).Return(selectRoom, nil).Once()
+
+		repo.On("SelectUser", mock.Anything).Return(selectUser, nil).Once()
+
+		repo.On("Insert", mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+
+		srv := New(repo)
+
+		response, err := srv.Create(userID, roomID, input)
+		assert.NotNil(t, err)
+		assert.Equal(t, returnDataMidtrans, response)
 		repo.AssertExpectations(t)
 	})
 }
