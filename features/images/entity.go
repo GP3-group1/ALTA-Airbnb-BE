@@ -8,7 +8,7 @@ import (
 
 type ImageEntity struct {
 	ID        uint
-	RoomID    uint
+	RoomID    uint `validate:"required"`
 	Url       string
 	Image     multipart.File
 	ImageName string
