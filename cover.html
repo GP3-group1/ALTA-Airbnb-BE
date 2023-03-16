@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (22.7%)</option>
+				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (25.0%)</option>
 				
 				<option value="file1">alta-airbnb-be/features/users/service/user.go (87.5%)</option>
 				
@@ -98,7 +98,7 @@ func (reservationService *reservationService) CheckReservation(input reservation
         // date validation: check in date must lower than check out date
         <span class="cov8" title="1">diff := input.CheckOutDate.Sub(input.CheckInDate)
         totalNight := int(diff.Hours() / 24)
-        if totalNight &lt; 1 </span><span class="cov0" title="0">{
+        if totalNight &lt; 1 </span><span class="cov8" title="1">{
                 return 0, errors.New(consts.RESERVATION_InvalidInput)
         }</span>
 

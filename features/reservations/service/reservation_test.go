@@ -49,4 +49,16 @@ func TestCheckReservation(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
+	t.Run("Failed validate date", func(t *testing.T) {
+		input := reservations.ReservationEntity{
+			CheckInDate:  time.Date(2023, time.March, 17, 0, 0, 0, 0, time.UTC),
+			CheckOutDate: time.Date(2023, time.March, 16, 0, 0, 0, 0, time.UTC),
+		}
+		srv := New(repo)
+		row, err := srv.CheckReservation(input, id)
+		assert.NotNil(t, err)
+		assert.Equal(t, int64(0), row)
+		repo.AssertExpectations(t)
+	})
+
 }
