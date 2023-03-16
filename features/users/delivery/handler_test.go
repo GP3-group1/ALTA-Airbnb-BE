@@ -404,4 +404,34 @@ func TestUpdateAccount(t *testing.T) {
 		usecase.AssertExpectations(t)
 	})
 
+	t.Run("Failed when modify data", func(t *testing.T) {
+		usecase.On("ModifyData", mock.Anything, mock.Anything).Return(errors.New("error update")).Once()
+		token, errToken := middlewares.CreateToken(returnData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPut, "/users", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.UpdateAccount))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "error update", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
 }
