@@ -509,33 +509,143 @@ func TestUpdatePassword(t *testing.T) {
 		usecase.AssertExpectations(t)
 	})
 
-	// t.Run("Failed when modify data", func(t *testing.T) {
-	// 	usecase.On("ModifyData", mock.Anything, mock.Anything).Return(errors.New("error update")).Once()
-	// 	token, errToken := middlewares.CreateToken(returnData.ID)
-	// 	if errToken != nil {
-	// 		assert.Error(t, errToken)
-	// 	}
+	t.Run("Failed update password when bind error", func(t *testing.T) {
+		token, errToken := middlewares.CreateToken(returnData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
 
-	// 	srv := New(usecase)
+		var dataFail = map[string]int{
+			"old_password": 1234,
+		}
+		reqBodyFail, _ := json.Marshal(dataFail)
+		srv := New(usecase)
 
-	// 	req := httptest.NewRequest(http.MethodPut, "/users", bytes.NewBuffer(reqBody))
-	// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-	// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	// 	rec := httptest.NewRecorder()
-	// 	echoContext := e.NewContext(req, rec)
-	// 	echoContext.SetPath("/users")
+		req := httptest.NewRequest(http.MethodPut, "/users/password", bytes.NewBuffer(reqBodyFail))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users/password")
 
-	// 	responseData := ResponseGlobal{}
+		responseData := ResponseGlobal{}
 
-	// 	callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.UpdateAccount))(echoContext)
-	// 	if assert.NoError(t, callFunc) {
-	// 		responseBody := rec.Body.String()
-	// 		err := json.Unmarshal([]byte(responseBody), &responseData)
-	// 		if err != nil {
-	// 			assert.Error(t, err, "error")
-	// 		}
-	// 		assert.Equal(t, "error update", responseData.Message)
-	// 	}
-	// 	usecase.AssertExpectations(t)
-	// })
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.UpdatePassword))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "error bind user data", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+}
+
+func TestUpdateBalance(t *testing.T) {
+	input := users.UserUpdate{
+		Balance: 5000,
+	}
+	reqBody, err := json.Marshal(input)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+	returnData := mock_data_user
+
+	e := echo.New()
+	usecase := new(mocks.UserService)
+
+	t.Run("Success", func(t *testing.T) {
+		usecase.On("UpdateBalance", mock.Anything, mock.Anything).Return(nil).Once()
+		token, errToken := middlewares.CreateToken(returnData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPut, "/users/balances", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users/balances")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.UpdateBalance))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusOK, rec.Code)
+			assert.Equal(t, "succesfully update user balance data", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed Update password when func error", func(t *testing.T) {
+		usecase.On("UpdateBalance", mock.Anything, mock.Anything).Return(errors.New("error update")).Once()
+		token, errToken := middlewares.CreateToken(returnData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPut, "/users/balances", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users/balances")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.UpdateBalance))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "error update", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed update balance when bind error", func(t *testing.T) {
+		token, errToken := middlewares.CreateToken(returnData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		var dataFail = map[string]string{
+			"amount": "asdfasd",
+		}
+		reqBodyFail, _ := json.Marshal(dataFail)
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPut, "/users/balances", bytes.NewBuffer(reqBodyFail))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users/balances")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.UpdateBalance))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "error bind user data", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
 }

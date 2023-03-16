@@ -63,7 +63,7 @@
 				
 				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (100.0%)</option>
 				
-				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (69.4%)</option>
+				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (85.5%)</option>
 				
 				<option value="file5">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
@@ -380,19 +380,19 @@ type UserHandler struct {
 }
 
 // UpdateBalance implements users.UserDelivery_
-func (userHandler *UserHandler) UpdateBalance(c echo.Context) error <span class="cov0" title="0">{
+func (userHandler *UserHandler) UpdateBalance(c echo.Context) error <span class="cov8" title="1">{
         userID := middlewares.ExtractTokenUserId(c)
         userInput := users.UserUpdate{}
         errBind := c.Bind(&amp;userInput)
-        if errBind != nil </span><span class="cov0" title="0">{
+        if errBind != nil </span><span class="cov8" title="1">{
                 return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
         }</span>
-        <span class="cov0" title="0">errUpdate := userHandler.userService.UpdateBalance(userID, requestUpdateToEntity(userInput))
-        if errUpdate != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">errUpdate := userHandler.userService.UpdateBalance(userID, requestUpdateToEntity(userInput))
+        if errUpdate != nil </span><span class="cov8" title="1">{
                 return c.JSON(helpers.ErrorResponse(errUpdate))
         }</span>
 
-        <span class="cov0" title="0">return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateBalance))</span>
+        <span class="cov8" title="1">return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateBalance))</span>
 }
 
 // GetUserBalance implements users.UserDelivery_
@@ -485,7 +485,7 @@ func (userHandler *UserHandler) UpdatePassword(c echo.Context) error <span class
         userID := middlewares.ExtractTokenUserId(c)
         input := users.UserUpdatePassword{}
         errBind := c.Bind(&amp;input)
-        if errBind != nil </span><span class="cov0" title="0">{
+        if errBind != nil </span><span class="cov8" title="1">{
                 return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
         }</span>
         <span class="cov8" title="1">errUpdatePassword := userHandler.userService.ModifyPassword(userID, requestUpdatePasswordToEntity(input))
