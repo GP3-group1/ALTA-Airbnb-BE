@@ -16,24 +16,24 @@ type reservationService struct {
 }
 
 // CheckReservation implements reservations.ReservationService_
-func (reservationService *reservationService) CheckReservation(input reservations.ReservationEntity, roomID uint) ([]reservations.ReservationEntity, error) {
+func (reservationService *reservationService) CheckReservation(input reservations.ReservationEntity, roomID uint) (int64, error) {
 	errValidate := reservationService.validate.StructExcept(input, "Room", "User")
 	if errValidate != nil {
-		return nil, errValidate
+		return 0, errValidate
 	}
 
 	// date validation: check in date must lower than check out date
 	diff := input.CheckOutDate.Sub(input.CheckInDate)
 	totalNight := int(diff.Hours() / 24)
 	if totalNight < 1 {
-		return nil, errors.New(consts.RESERVATION_InvalidInput)
+		return 0, errors.New(consts.RESERVATION_InvalidInput)
 	}
 
-	reservationEntity, errSelect := reservationService.reservationData.CheckReservation(input, roomID)
+	row, errSelect := reservationService.reservationData.CheckReservation(input, roomID)
 	if errSelect != nil {
-		return nil, errSelect
+		return 0, errSelect
 	}
-	return reservationEntity, nil
+	return row, nil
 }
 
 // GetAll implements reservations.ReservationServiceInterface_

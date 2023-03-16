@@ -64,17 +64,16 @@ func (reservationHandler *ReservationHandler) CheckReservation(c echo.Context) e
 		return c.JSON(http.StatusBadRequest, helpers.Response(errMapping.Error()))
 	}
 
-	reservationEntity, errSelect := reservationHandler.reservationService.CheckReservation(inputReservationEntity, idParam)
+	row, errSelect := reservationHandler.reservationService.CheckReservation(inputReservationEntity, idParam)
 	if errSelect != nil {
 		return c.JSON(helpers.ErrorResponse(errSelect))
 	}
 
-	data := entityToResponseList(reservationEntity)
-	if len(data) != 0 {
-		return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_RoomNotAvailable))
+	if row == 0 {
+		return c.JSON(http.StatusOK, helpers.Response(consts.RESERVATION_RoomAvailable))
 	}
 
-	return c.JSON(http.StatusOK, helpers.Response(consts.RESERVATION_RoomAvailable))
+	return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_RoomNotAvailable))
 }
 
 // GetAllReservation implements reservations.ReservationDeliveryInterface_
