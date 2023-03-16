@@ -262,3 +262,70 @@ func TestGetBalance(t *testing.T) {
 		usecase.AssertExpectations(t)
 	})
 }
+
+func TestDelete(t *testing.T) {
+	e := echo.New()
+	usecase := new(mocks.UserService)
+	returnData := mock_data_user
+
+	t.Run("Success", func(t *testing.T) {
+		usecase.On("Remove", mock.Anything).Return(nil).Once()
+		token, errToken := middlewares.CreateToken(returnData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodGet, "/users", nil)
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.RemoveAccount))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusOK, rec.Code)
+			assert.Equal(t, "succesfully delete user", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	// t.Run("Failed when select data", func(t *testing.T) {
+	// 	usecase.On("GetData", mock.Anything).Return(users.UserEntity{}, errors.New("error select data")).Once()
+	// 	token, errToken := middlewares.CreateToken(returnData.ID)
+	// 	if errToken != nil {
+	// 		assert.Error(t, errToken)
+	// 	}
+
+	// 	srv := New(usecase)
+
+	// 	req := httptest.NewRequest(http.MethodGet, "/users/balances", nil)
+	// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	// 	rec := httptest.NewRecorder()
+	// 	echoContext := e.NewContext(req, rec)
+	// 	echoContext.SetPath("/users/balances")
+
+	// 	var responseData ResponseGlobal
+
+	// 	callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.GetUserBalance))(echoContext)
+	// 	if assert.NoError(t, callFunc) {
+	// 		responseBody := rec.Body.String()
+	// 		err := json.Unmarshal([]byte(responseBody), &responseData)
+	// 		if err != nil {
+	// 			assert.Error(t, err, "error")
+	// 		}
+	// 		assert.Equal(t, "error select data", responseData.Message)
+	// 	}
+	// 	usecase.AssertExpectations(t)
+	// })
+}

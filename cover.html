@@ -63,7 +63,7 @@
 				
 				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (50.0%)</option>
 				
-				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (33.9%)</option>
+				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (40.3%)</option>
 				
 				<option value="file5">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
@@ -455,13 +455,13 @@ func (userHandler *UserHandler) Register(c echo.Context) error <span class="cov8
 }
 
 // RemoveAccount implements users.UserDeliveryInterface_
-func (userHandler *UserHandler) RemoveAccount(c echo.Context) error <span class="cov0" title="0">{
+func (userHandler *UserHandler) RemoveAccount(c echo.Context) error <span class="cov8" title="1">{
         userID := middlewares.ExtractTokenUserId(c)
         errDelete := userHandler.userService.Remove(userID)
         if errDelete != nil </span><span class="cov0" title="0">{
                 return c.JSON(helpers.ErrorResponse(errDelete))
         }</span>
-        <span class="cov0" title="0">return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessDelete))</span>
+        <span class="cov8" title="1">return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessDelete))</span>
 }
 
 // UpdateAccount implements users.UserDeliveryInterface_
