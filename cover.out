@@ -12,7 +12,7 @@ alta-airbnb-be/features/reservations/service/reservation.go:46.2,46.31 1 1
 alta-airbnb-be/features/reservations/service/reservation.go:50.164,52.24 2 1
 alta-airbnb-be/features/reservations/service/reservation.go:52.24,54.3 1 1
 alta-airbnb-be/features/reservations/service/reservation.go:57.2,65.37 5 1
-alta-airbnb-be/features/reservations/service/reservation.go:65.37,67.3 1 0
+alta-airbnb-be/features/reservations/service/reservation.go:65.37,67.3 1 1
 alta-airbnb-be/features/reservations/service/reservation.go:70.2,71.26 2 1
 alta-airbnb-be/features/reservations/service/reservation.go:71.26,73.3 1 0
 alta-airbnb-be/features/reservations/service/reservation.go:76.2,80.26 3 1
