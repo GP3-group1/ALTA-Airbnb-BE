@@ -1,11 +1,11 @@
 mode: set
 alta-airbnb-be/features/users/service/user.go:19.90,20.23 1 1
 alta-airbnb-be/features/users/service/user.go:20.23,22.3 1 1
-alta-airbnb-be/features/users/service/user.go:25.2,26.22 2 0
+alta-airbnb-be/features/users/service/user.go:25.2,26.22 2 1
 alta-airbnb-be/features/users/service/user.go:26.22,28.3 1 0
-alta-airbnb-be/features/users/service/user.go:30.2,32.22 3 0
+alta-airbnb-be/features/users/service/user.go:30.2,32.22 3 1
 alta-airbnb-be/features/users/service/user.go:32.22,34.3 1 0
-alta-airbnb-be/features/users/service/user.go:36.2,36.12 1 0
+alta-airbnb-be/features/users/service/user.go:36.2,36.12 1 1
 alta-airbnb-be/features/users/service/user.go:40.70,42.24 2 1
 alta-airbnb-be/features/users/service/user.go:42.24,44.3 1 1
 alta-airbnb-be/features/users/service/user.go:46.2,47.20 2 1

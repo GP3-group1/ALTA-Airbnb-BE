@@ -251,8 +251,21 @@ func TestUpdatePassword(t *testing.T) {
 
 func TestUpdateBalance(t *testing.T) {
 	repo := new(mocks.UserData)
-	// core := mock_data_user
+	core := mock_data_user
 	id := mock_data_user.ID
+
+	t.Run("Success", func(t *testing.T) {
+		input := users.UserEntity{
+			Balance: 5000,
+		}
+		repo.On("UpdateData", mock.Anything, mock.Anything).Return(nil).Once()
+		repo.On("SelectData", mock.Anything).Return(core, nil).Once()
+
+		srv := New(repo)
+		err := srv.UpdateBalance(id, input)
+		assert.Nil(t, err)
+		repo.AssertExpectations(t)
+	})
 
 	t.Run("Failed validate", func(t *testing.T) {
 		input := users.UserEntity{

@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/users/service/user.go (78.1%)</option>
+				<option value="file0">alta-airbnb-be/features/users/service/user.go (87.5%)</option>
 				
 				</select>
 			</div>
@@ -93,18 +93,18 @@ func (userService *userService) UpdateBalance(userID uint, input users.UserEntit
         }</span>
 
         // get user balance
-        <span class="cov0" title="0">userEntity, errSelect := userService.userData.SelectData(userID)
+        <span class="cov8" title="1">userEntity, errSelect := userService.userData.SelectData(userID)
         if errSelect != nil </span><span class="cov0" title="0">{
                 return errSelect
         }</span>
 
-        <span class="cov0" title="0">input.Balance += userEntity.Balance
+        <span class="cov8" title="1">input.Balance += userEntity.Balance
         errUpdate := userService.userData.UpdateData(userID, input)
         if errUpdate != nil </span><span class="cov0" title="0">{
                 return errUpdate
         }</span>
 
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 
 // Create implements users.UserServiceInterface_
