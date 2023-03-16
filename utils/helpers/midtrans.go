@@ -3,21 +3,24 @@ package helpers
 import (
 	"alta-airbnb-be/app/config"
 	"alta-airbnb-be/features/reservations"
+	"fmt"
 	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/snap"
 )
 
-func RequestSnapMidtrans(user reservations.ReservationEntity, room reservations.ReservationEntity, reservation reservations.ReservationEntity, input reservations.ReservationEntity) (reservations.MidtransResponse, error) {
+func RequestSnapMidtrans(user reservations.ReservationEntity, room reservations.ReservationEntity, input reservations.ReservationEntity) (reservations.MidtransResponse, error) {
 	// request midtrans snap
 	var snapClient = snap.Client{}
 	snapClient.New(config.MIDTRANS_SERVER_KEY, midtrans.Sandbox)
 
-	// parsing user id and item id
+	// parsing user id, room id, uuid
 	user_id := strconv.Itoa(int(input.UserID))
-	reservation_id := strconv.Itoa(int(reservation.ID))
 	room_id := strconv.Itoa(int(input.RoomID))
+	uuid := uuid.New()
+	order_id := fmt.Sprintf("%v", uuid)
 
 	// customer
 	custAddress := &midtrans.CustomerAddress{
@@ -29,7 +32,7 @@ func RequestSnapMidtrans(user reservations.ReservationEntity, room reservations.
 
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
-			OrderID:  "ALTA-Airbnb-" + user_id + "-" + reservation_id,
+			OrderID:  "ALTA-Airbnb-" + user_id + "-" + order_id,
 			GrossAmt: int64(input.TotalPrice),
 		},
 		CreditCard: &snap.CreditCardDetails{

@@ -96,14 +96,8 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 		return reservations.MidtransResponse{}, errInsert
 	}
 
-	// get reservation id
-	selectReservation, errSelectReservation := reservationService.reservationData.SelectReservation()
-	if errSelectReservation != nil {
-		return reservations.MidtransResponse{}, errSelectReservation
-	}
-
 	// midtrans helpers
-	midtransResponse, errSnap := helpers.RequestSnapMidtrans(selectUser, selectRoom, selectReservation, inputReservation)
+	midtransResponse, errSnap := helpers.RequestSnapMidtrans(selectUser, selectRoom, inputReservation)
 	if errSnap != nil {
 		return reservations.MidtransResponse{}, errSnap
 	}
