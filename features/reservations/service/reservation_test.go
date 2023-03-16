@@ -3,6 +3,7 @@ package service
 import (
 	"alta-airbnb-be/features/reservations"
 	"alta-airbnb-be/mocks"
+	"errors"
 	"testing"
 	"time"
 
@@ -34,6 +35,21 @@ func TestCheckReservation(t *testing.T) {
 		row, err := srv.CheckReservation(input, id)
 		assert.Nil(t, err)
 		assert.Equal(t, returnRow, row)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Failed when check reservation error", func(t *testing.T) {
+		input := reservations.ReservationEntity{
+			CheckInDate:  time.Date(2023, time.March, 16, 0, 0, 0, 0, time.UTC),
+			CheckOutDate: time.Date(2023, time.March, 17, 0, 0, 0, 0, time.UTC),
+		}
+		repo.On("CheckReservation", mock.Anything, mock.Anything).Return(int64(0), errors.New("error check reservation")).Once()
+
+		srv := New(repo)
+		row, err := srv.CheckReservation(input, id)
+		assert.NotNil(t, err)
+		assert.Equal(t, int64(0), row)
+		assert.Equal(t, "error check reservation", err.Error())
 		repo.AssertExpectations(t)
 	})
 
