@@ -63,7 +63,7 @@
 				
 				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (100.0%)</option>
 				
-				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (85.5%)</option>
+				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (100.0%)</option>
 				
 				<option value="file5">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
@@ -421,17 +421,17 @@ func (userHandler *UserHandler) GetUserData(c echo.Context) error <span class="c
 }
 
 // Login implements users.UserDeliveryInterface_
-func (userHandler *UserHandler) Login(c echo.Context) error <span class="cov0" title="0">{
+func (userHandler *UserHandler) Login(c echo.Context) error <span class="cov8" title="1">{
         loginInput := users.UserLogin{}
         errBind := c.Bind(&amp;loginInput)
-        if errBind != nil </span><span class="cov0" title="0">{
+        if errBind != nil </span><span class="cov8" title="1">{
                 return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
         }</span>
-        <span class="cov0" title="0">userEntity, token, errLogin := userHandler.userService.Login(loginInput.Email, loginInput.Password)
-        if errLogin != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">userEntity, token, errLogin := userHandler.userService.Login(loginInput.Email, loginInput.Password)
+        if errLogin != nil </span><span class="cov8" title="1">{
                 return c.JSON(helpers.ErrorResponse(errLogin))
         }</span>
-        <span class="cov0" title="0">dataResponse := map[string]any{
+        <span class="cov8" title="1">dataResponse := map[string]any{
                 "id":    userEntity.ID,
                 "name":  userEntity.Name,
                 "token": token,

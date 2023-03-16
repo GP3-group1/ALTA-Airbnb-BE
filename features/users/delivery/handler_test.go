@@ -649,3 +649,98 @@ func TestUpdateBalance(t *testing.T) {
 		usecase.AssertExpectations(t)
 	})
 }
+
+func TestLogin(t *testing.T) {
+	input := users.UserLogin{
+		Email:    "ali@mail.com",
+		Password: "thegreatest",
+	}
+
+	reqBody, err := json.Marshal(input)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	returnData := mock_data_user
+	token := "asasdasd"
+
+	e := echo.New()
+	usecase := new(mocks.UserService)
+
+	t.Run("Success", func(t *testing.T) {
+		usecase.On("Login", mock.Anything, mock.Anything).Return(returnData, token, nil).Once()
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/login")
+
+		responseData := mock_data_user
+
+		if assert.NoError(t, srv.Login(echoContext)) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusOK, rec.Code)
+			assert.Equal(t, returnData.Name, responseData.Name)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed login when bind error", func(t *testing.T) {
+
+		var dataFail = map[string]int{
+			"email": 134,
+		}
+		reqBodyFail, _ := json.Marshal(dataFail)
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(reqBodyFail))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/login")
+
+		responseData := ResponseGlobal{}
+
+		if assert.NoError(t, srv.Login(echoContext)) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+			assert.Equal(t, "error bind user data", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed login when func error", func(t *testing.T) {
+		usecase.On("Login", mock.Anything, mock.Anything).Return(users.UserEntity{}, "", errors.New("errror login")).Once()
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/login")
+
+		responseData := ResponseGlobal{}
+
+		if assert.NoError(t, srv.Login(echoContext)) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "errror login", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+}
