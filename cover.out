@@ -74,7 +74,7 @@ alta-airbnb-be/features/users/delivery/handler.go:34.70,37.22 3 0
 alta-airbnb-be/features/users/delivery/handler.go:37.22,39.3 1 0
 alta-airbnb-be/features/users/delivery/handler.go:40.2,45.102 3 0
 alta-airbnb-be/features/users/delivery/handler.go:49.67,52.22 3 1
-alta-airbnb-be/features/users/delivery/handler.go:52.22,54.3 1 0
+alta-airbnb-be/features/users/delivery/handler.go:52.22,54.3 1 1
 alta-airbnb-be/features/users/delivery/handler.go:55.2,55.119 1 1
 alta-airbnb-be/features/users/delivery/handler.go:59.61,62.20 3 0
 alta-airbnb-be/features/users/delivery/handler.go:62.20,64.3 1 0

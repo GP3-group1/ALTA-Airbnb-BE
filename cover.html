@@ -63,7 +63,7 @@
 				
 				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (25.0%)</option>
 				
-				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (8.1%)</option>
+				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (9.7%)</option>
 				
 				<option value="file5">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
@@ -414,7 +414,7 @@ func (userHandler *UserHandler) GetUserBalance(c echo.Context) error <span class
 func (userHandler *UserHandler) GetUserData(c echo.Context) error <span class="cov8" title="1">{
         userID := middlewares.ExtractTokenUserId(c)
         userEntity, errSelect := userHandler.userService.GetData(userID)
-        if errSelect != nil </span><span class="cov0" title="0">{
+        if errSelect != nil </span><span class="cov8" title="1">{
                 return c.JSON(helpers.ErrorResponse(errSelect))
         }</span>
         <span class="cov8" title="1">return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.USER_SuccessReadUserData, entityToResponse(userEntity)))</span>
