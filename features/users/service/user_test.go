@@ -143,4 +143,14 @@ func TestSelectData(t *testing.T) {
 		assert.Equal(t, returnCore.Name, core.Name)
 		repo.AssertExpectations(t)
 	})
+
+	t.Run("Success", func(t *testing.T) {
+		repo.On("SelectData", mock.Anything).Return(users.UserEntity{}, errors.New("error select")).Once()
+
+		srv := New(repo)
+		core, err := srv.GetData(id)
+		assert.NotNil(t, err)
+		assert.Equal(t, users.UserEntity{}.Name, core.Name)
+		repo.AssertExpectations(t)
+	})
 }
