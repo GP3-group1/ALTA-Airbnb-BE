@@ -577,6 +577,8 @@ components:
             properties:
               id:
                 type: integer
+              room_id:
+                type: integer
               room_name:
                 type: string
               check_in:
@@ -1241,6 +1243,7 @@ components:
               [
                 {
                   id: 1,
+                  room_id: 2,
                   room_name: Villa Lautan Biru,
                   check_in: 2023-12-03,
                   check_out: 2023-14-03,
@@ -1250,6 +1253,7 @@ components:
                 },
                 {
                   id: 2,
+                  room_id: 3,
                   room_name: Penginapan Romantis - Private Sunset Pool,
                   check_in: 2023-12-04,
                   check_out: 2023-14-04,
@@ -1259,6 +1263,7 @@ components:
                 },
                 {
                   id: 3,
+                  room_id: 5,
                   room_name: Kubu d'Ume,
                   check_in: 2023-01-03,
                   check_out: 2023-02-03,
