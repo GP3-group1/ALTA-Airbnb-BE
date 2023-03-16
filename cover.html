@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>service: Go Coverage Report</title>
+		<title>delivery: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,17 +55,21 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (95.5%)</option>
+				<option value="file0">alta-airbnb-be/features/reservations/delivery/adapter.go (50.0%)</option>
 				
-				<option value="file1">alta-airbnb-be/features/rooms/service/room.go (100.0%)</option>
+				<option value="file1">alta-airbnb-be/features/reservations/delivery/handler.go (23.1%)</option>
 				
-				<option value="file2">alta-airbnb-be/features/rooms/service/validate.go (100.0%)</option>
+				<option value="file2">alta-airbnb-be/features/reservations/service/reservation.go (95.5%)</option>
 				
-				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (100.0%)</option>
+				<option value="file3">alta-airbnb-be/features/rooms/service/room.go (100.0%)</option>
 				
-				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (100.0%)</option>
+				<option value="file4">alta-airbnb-be/features/rooms/service/validate.go (100.0%)</option>
 				
-				<option value="file5">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
+				<option value="file5">alta-airbnb-be/features/users/delivery/adapter.go (100.0%)</option>
+				
+				<option value="file6">alta-airbnb-be/features/users/delivery/handler.go (100.0%)</option>
+				
+				<option value="file7">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
 				</select>
 			</div>
@@ -79,7 +83,172 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package service
+		<pre class="file" id="file0" style="display: none">package delivery
+
+import (
+        "alta-airbnb-be/features/reservations"
+        "errors"
+        "time"
+)
+
+func insertToEntity(reservationInsert reservations.ReservationInsert) (reservations.ReservationEntity, error) <span class="cov0" title="0">{
+        CheckInDate, err := time.Parse("2006-01-02", reservationInsert.CheckInDate)
+        if err != nil </span><span class="cov0" title="0">{
+                return reservations.ReservationEntity{}, errors.New("invalid check in date format must YYYY-MM-DD")
+        }</span>
+        <span class="cov0" title="0">CheckOutDate, err := time.Parse("2006-01-02", reservationInsert.CheckOutDate)
+        if err != nil </span><span class="cov0" title="0">{
+                return reservations.ReservationEntity{}, errors.New("invalid check out date format must YYYY-MM-DD")
+        }</span>
+        <span class="cov0" title="0">return reservations.ReservationEntity{
+                CheckInDate:  CheckInDate,
+                CheckOutDate: CheckOutDate,
+        }, nil</span>
+}
+
+func entityToResponse(reservationEntity reservations.ReservationEntity) reservations.ReservationResponse <span class="cov8" title="1">{
+        CheckInDate := reservationEntity.CheckInDate.Format("2006-01-02")
+        CheckOutDate := reservationEntity.CheckOutDate.Format("2006-01-02")
+        return reservations.ReservationResponse{
+                ID:           reservationEntity.ID,
+                RoomID:       reservationEntity.RoomID,
+                RoomName:     reservationEntity.Room.Name,
+                CheckInDate:  CheckInDate,
+                CheckOutDate: CheckOutDate,
+                Price:        float64(reservationEntity.Room.Price),
+                TotalNight:   reservationEntity.TotalNight,
+                TotalPrice:   reservationEntity.TotalPrice,
+        }
+}</span>
+
+func entityToResponseList(reservationEntity []reservations.ReservationEntity) []reservations.ReservationResponse <span class="cov8" title="1">{
+        var dataResponse []reservations.ReservationResponse
+        for _, v := range reservationEntity </span><span class="cov8" title="1">{
+                dataResponse = append(dataResponse, entityToResponse(v))
+        }</span>
+        <span class="cov8" title="1">return dataResponse</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package delivery
+
+import (
+        "alta-airbnb-be/features/reservations"
+        "alta-airbnb-be/middlewares"
+        "alta-airbnb-be/utils/consts"
+        "alta-airbnb-be/utils/helpers"
+        "net/http"
+        "strconv"
+
+        "github.com/labstack/echo/v4"
+)
+
+type ReservationHandler struct {
+        reservationService reservations.ReservationService_
+}
+
+// AddReservation implements reservations.ReservationDeliveryInterface_
+func (reservationHandler *ReservationHandler) AddReservation(c echo.Context) error <span class="cov0" title="0">{
+        userID := middlewares.ExtractTokenUserId(c)
+        idParam, errParam := helpers.ExtractIDParam(c)
+        if errParam != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(errParam.Error()))
+        }</span>
+
+        <span class="cov0" title="0">input := reservations.ReservationInsert{}
+        errBind := c.Bind(&amp;input)
+        if errBind != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_ErrorBindReservationData))
+        }</span>
+
+        <span class="cov0" title="0">reservationEntity, errMapping := insertToEntity(input)
+        if errMapping != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(errMapping.Error()))
+        }</span>
+
+        <span class="cov0" title="0">midTransResponse, errInsert := reservationHandler.reservationService.Create(userID, uint(idParam), reservationEntity)
+        if errInsert != nil </span><span class="cov0" title="0">{
+                return c.JSON(helpers.ErrorResponse(errInsert))
+        }</span>
+
+        <span class="cov0" title="0">dataResponse := map[string]any{
+                "token":        midTransResponse.Token,
+                "redirect_url": midTransResponse.RedirectUrl,
+        }
+        return c.JSON(http.StatusCreated, helpers.ResponseWithData(consts.RESERVATION_InsertSuccess, dataResponse))</span>
+}
+
+// CheckReservation implements reservations.ReservationDeliveryInterface_
+func (reservationHandler *ReservationHandler) CheckReservation(c echo.Context) error <span class="cov0" title="0">{
+        idParam, errParam := helpers.ExtractIDParam(c)
+        if errParam != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(errParam.Error()))
+        }</span>
+
+        <span class="cov0" title="0">input := reservations.ReservationInsert{}
+        errBind := c.Bind(&amp;input)
+        if errBind != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_ErrorBindReservationData))
+        }</span>
+
+        <span class="cov0" title="0">inputReservationEntity, errMapping := insertToEntity(input)
+        if errMapping != nil </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(errMapping.Error()))
+        }</span>
+
+        <span class="cov0" title="0">row, errSelect := reservationHandler.reservationService.CheckReservation(inputReservationEntity, idParam)
+        if errSelect != nil </span><span class="cov0" title="0">{
+                return c.JSON(helpers.ErrorResponse(errSelect))
+        }</span>
+
+        <span class="cov0" title="0">if row == 0 </span><span class="cov0" title="0">{
+                return c.JSON(http.StatusOK, helpers.Response(consts.RESERVATION_RoomAvailable))
+        }</span>
+
+        <span class="cov0" title="0">return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_RoomNotAvailable))</span>
+}
+
+// GetAllReservation implements reservations.ReservationDeliveryInterface_
+func (reservationHandler *ReservationHandler) GetAllReservation(c echo.Context) error <span class="cov8" title="1">{
+        userID := middlewares.ExtractTokenUserId(c)
+
+        var page int = 1
+        pageParam := c.QueryParam("page")
+        if pageParam != "" </span><span class="cov0" title="0">{
+                pageConv, errConv := strconv.Atoi(pageParam)
+                if errConv != nil </span><span class="cov0" title="0">{
+                        return c.JSON(http.StatusBadRequest, helpers.Response(consts.ECHO_InvaildPageParam))
+                }</span> else<span class="cov0" title="0"> {
+                        page = pageConv
+                }</span>
+        }
+
+        <span class="cov8" title="1">var limit int = 8
+        limitParam := c.QueryParam("limit")
+        if limitParam != "" </span><span class="cov0" title="0">{
+                limitConv, errConv := strconv.Atoi(limitParam)
+                if errConv != nil </span><span class="cov0" title="0">{
+                        return c.JSON(http.StatusBadRequest, helpers.Response(consts.ECHO_InvaildLimitParam))
+                }</span> else<span class="cov0" title="0"> {
+                        limit = limitConv
+                }</span>
+        }
+
+        <span class="cov8" title="1">reservationEntity, errSelect := reservationHandler.reservationService.GetAll(page, limit, userID)
+        if errSelect != nil </span><span class="cov8" title="1">{
+                return c.JSON(helpers.ErrorResponse(errSelect))
+        }</span>
+        <span class="cov8" title="1">return c.JSON(http.StatusOK, helpers.ResponseWithData("Success", entityToResponseList(reservationEntity)))</span>
+}
+
+func New(reservationService reservations.ReservationService_) reservations.ReservationDelivery_ <span class="cov8" title="1">{
+        return &amp;ReservationHandler{
+                reservationService: reservationService,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package service
 
 import (
         "alta-airbnb-be/features/reservations"
@@ -194,7 +363,7 @@ func New(reservationData reservations.ReservationData_) reservations.Reservation
 }</span>
 </pre>
 		
-		<pre class="file" id="file1" style="display: none">package service
+		<pre class="file" id="file3" style="display: none">package service
 
 import (
         "alta-airbnb-be/features/reviews"
@@ -300,7 +469,7 @@ func (roomService *RoomService) GetReviewsByRoomId(reviewEntity *reviews.ReviewE
 }
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package service
+		<pre class="file" id="file4" style="display: none">package service
 
 import (
         "alta-airbnb-be/features/reviews"
@@ -320,7 +489,7 @@ func Validate(roomService *RoomService, reviewEntity *reviews.ReviewEntity) erro
         <span class="cov8" title="1">return nil</span>
 }</pre>
 		
-		<pre class="file" id="file3" style="display: none">package delivery
+		<pre class="file" id="file5" style="display: none">package delivery
 
 import "alta-airbnb-be/features/users"
 
@@ -363,7 +532,7 @@ func entityToResponse(userEntity users.UserEntity) users.UserResponse <span clas
 }</span>
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package delivery
+		<pre class="file" id="file6" style="display: none">package delivery
 
 import (
         "alta-airbnb-be/features/users"
@@ -502,7 +671,7 @@ func New(userService users.UserService_) users.UserDelivery_ <span class="cov8" 
 }</span>
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package service
+		<pre class="file" id="file7" style="display: none">package service
 
 import (
         "alta-airbnb-be/features/users"
