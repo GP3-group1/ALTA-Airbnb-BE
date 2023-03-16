@@ -17,7 +17,7 @@ func ConvertToEntity(reviewRequest *reviews.ReviewRequest) reviews.ReviewEntity 
 func ConvertToResponse(reviewEntitiy *reviews.ReviewEntity) reviews.ReviewResponse {
 	reviewResponse := reviews.ReviewResponse{
 		UserID:    reviewEntitiy.UserID,
-		Username:  reviewEntitiy.Comment,
+		Username:  reviewEntitiy.Username,
 		RoomID:    reviewEntitiy.RoomID,
 		Comment:   reviewEntitiy.Comment,
 		Rating:    reviewEntitiy.Rating,
