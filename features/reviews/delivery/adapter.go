@@ -21,7 +21,7 @@ func ConvertToResponse(reviewEntitiy *reviews.ReviewEntity) reviews.ReviewRespon
 		RoomID:    reviewEntitiy.RoomID,
 		Comment:   reviewEntitiy.Comment,
 		Rating:    reviewEntitiy.Rating,
-		CreatedAt: reviewEntitiy.CreatedAt.Format("2006-02-01"),
+		CreatedAt: reviewEntitiy.CreatedAt.Format("2006-01-02"),
 	}
 	return reviewResponse
 }
