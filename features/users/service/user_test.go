@@ -128,6 +128,17 @@ func TestLogin(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
+	t.Run("Success", func(t *testing.T) {
+		repo.On("Login", mock.Anything).Return(returnCore, nil).Once()
+
+		srv := New(repo)
+		core, token, err := srv.Login(email, "asdasd")
+		assert.NotNil(t, err)
+		assert.Equal(t, "", core.Name)
+		assert.Equal(t, "", token)
+		repo.AssertExpectations(t)
+	})
+
 	t.Run("Failed validate", func(t *testing.T) {
 		input := users.UserEntity{
 			Email:    "",

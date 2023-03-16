@@ -61,7 +61,7 @@
 				
 				<option value="file2">alta-airbnb-be/features/rooms/service/validate.go (100.0%)</option>
 				
-				<option value="file3">alta-airbnb-be/features/users/service/user.go (90.6%)</option>
+				<option value="file3">alta-airbnb-be/features/users/service/user.go (92.2%)</option>
 				
 				</select>
 			</div>
@@ -397,7 +397,7 @@ func (userService *userService) Login(email string, password string) (users.User
                 return users.UserEntity{}, "", errLogin
         }</span>
 
-        <span class="cov8" title="1">if !helpers.CompareHashPassword(password, userEntity.Password) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if !helpers.CompareHashPassword(password, userEntity.Password) </span><span class="cov8" title="1">{
                 return users.UserEntity{}, "", errors.New(consts.USER_WrongPassword)
         }</span>
 
