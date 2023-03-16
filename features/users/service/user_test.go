@@ -128,3 +128,19 @@ func TestLogin(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 }
+
+func TestSelectData(t *testing.T) {
+	repo := new(mocks.UserData)
+	returnCore := mock_data_user
+	id := mock_data_user.ID
+
+	t.Run("Success", func(t *testing.T) {
+		repo.On("SelectData", mock.Anything).Return(returnCore, nil).Once()
+
+		srv := New(repo)
+		core, err := srv.GetData(id)
+		assert.Nil(t, err)
+		assert.Equal(t, returnCore.Name, core.Name)
+		repo.AssertExpectations(t)
+	})
+}

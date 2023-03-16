@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/users/service/user.go (37.5%)</option>
+				<option value="file0">alta-airbnb-be/features/users/service/user.go (42.2%)</option>
 				
 				</select>
 			</div>
@@ -131,12 +131,12 @@ func (userService *userService) Create(input users.UserEntity) error <span class
 }
 
 // GetData implements users.UserServiceInterface_
-func (userService *userService) GetData(userID uint) (users.UserEntity, error) <span class="cov0" title="0">{
+func (userService *userService) GetData(userID uint) (users.UserEntity, error) <span class="cov8" title="1">{
         userEntity, errSelect := userService.userData.SelectData(userID)
         if errSelect != nil </span><span class="cov0" title="0">{
                 return users.UserEntity{}, errSelect
         }</span>
-        <span class="cov0" title="0">return userEntity, nil</span>
+        <span class="cov8" title="1">return userEntity, nil</span>
 }
 
 // Login implements users.UserServiceInterface_
