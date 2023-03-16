@@ -116,4 +116,15 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, token, token)
 		repo.AssertExpectations(t)
 	})
+
+	t.Run("Failed when select user by email return error", func(t *testing.T) {
+		repo.On("Login", mock.Anything).Return(users.UserEntity{}, errors.New("error login")).Once()
+
+		srv := New(repo)
+		core, token, err := srv.Login("dummy@mail.com", password)
+		assert.NotNil(t, err)
+		assert.Equal(t, users.UserEntity{}.Name, core.Name)
+		assert.Equal(t, "", token)
+		repo.AssertExpectations(t)
+	})
 }
