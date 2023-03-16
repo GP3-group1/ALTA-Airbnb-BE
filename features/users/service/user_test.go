@@ -144,13 +144,48 @@ func TestSelectData(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Failed", func(t *testing.T) {
 		repo.On("SelectData", mock.Anything).Return(users.UserEntity{}, errors.New("error select")).Once()
 
 		srv := New(repo)
 		core, err := srv.GetData(id)
 		assert.NotNil(t, err)
 		assert.Equal(t, users.UserEntity{}.Name, core.Name)
+		repo.AssertExpectations(t)
+	})
+}
+
+func TestUpdateData(t *testing.T) {
+	repo := new(mocks.UserData)
+	core := mock_data_user
+	id := mock_data_user.ID
+
+	t.Run("Success", func(t *testing.T) {
+		repo.On("UpdateData", mock.Anything, mock.Anything).Return(nil).Once()
+
+		srv := New(repo)
+		err := srv.ModifyData(id, core)
+		assert.Nil(t, err)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Failed validate", func(t *testing.T) {
+		inputData := users.UserEntity{
+			Name: "Muhammad Ali",
+		}
+		srv := New(repo)
+		err := srv.ModifyData(id, inputData)
+		assert.NotNil(t, err)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Failed when func Update return error", func(t *testing.T) {
+		repo.On("UpdateData", mock.Anything, mock.Anything).Return(errors.New("error update data")).Once()
+
+		srv := New(repo)
+		err := srv.ModifyData(id, core)
+		assert.NotNil(t, err)
+		assert.Equal(t, "error update data", err.Error())
 		repo.AssertExpectations(t)
 	})
 }
