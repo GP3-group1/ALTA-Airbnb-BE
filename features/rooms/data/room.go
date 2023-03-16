@@ -150,12 +150,9 @@ func (roomData *RoomData) SelectRoomByRoomId(roomEntity *rooms.RoomEntity) (*roo
 	}
 
 	roomEntity = convertToEntity(&roomGorm)
-	row := roomData.db.Raw("SELECT u.name AS username, COALESCE(AVG(rs.rating), 0) AS avg_ratings FROM rooms LEFT JOIN reviews rs on rs.room_id  = rooms.id LEFT JOIN users u on u.id  = rooms.user_id WHERE rooms.id = ? AND rooms.deleted_AT IS NULL", roomEntity.ID).Row()
+	row := roomData.db.Raw("SELECT u.name AS username, COALESCE(AVG(rs.rating), 0) AS avg_ratings FROM rooms LEFT JOIN reviews rs on rs.room_id  = rooms.id LEFT JOIN users u on u.id  = rooms.user_id WHERE rooms.id = ? AND rooms.deleted_AT IS NULL GROUP BY rooms.id, rs.id", roomEntity.ID).Row()
 	row.Scan(&roomEntity.Username, &roomEntity.AVG_Ratings)
-	if tx.Error != nil {
-		if tx.Error.Error() == gorm.ErrRecordNotFound.Error() {
-			return nil, tx.Error
-		}
+	if row.Err() != nil {
 		return nil, errors.New(consts.SERVER_InternalServerError)
 	}
 
