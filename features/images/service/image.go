@@ -40,7 +40,12 @@ func (imageService *ImageService) checkPermission(userId uint, imageEntity *imag
 }
 
 func (imageService *ImageService) CreateImage(userId uint, imageEntity *images.ImageEntity) (*images.ImageEntity, error) {
-	err := imageService.checkPermission(userId, imageEntity)
+	err := imageService.validate.Struct(imageEntity)
+	if err != nil {
+		return nil, errors.New(consts.IMAGE_InvalidInput)
+	}
+
+	err = imageService.checkPermission(userId, imageEntity)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +58,12 @@ func (imageService *ImageService) CreateImage(userId uint, imageEntity *images.I
 }
 
 func (imageService *ImageService) ChangeImage(userId uint, imageEntity *images.ImageEntity) (*images.ImageEntity, error) {
-	err := imageService.checkPermission(userId, imageEntity)
+	err := imageService.validate.Struct(imageEntity)
+	if err != nil {
+		return nil, errors.New(consts.IMAGE_InvalidInput)
+	}
+
+	err = imageService.checkPermission(userId, imageEntity)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +76,12 @@ func (imageService *ImageService) ChangeImage(userId uint, imageEntity *images.I
 }
 
 func (imageService *ImageService) RemoveImage(userId uint, imageEntity *images.ImageEntity) error {
-	err := imageService.checkPermission(userId, imageEntity)
+	err := imageService.validate.Struct(imageEntity)
+	if err != nil {
+		return errors.New(consts.IMAGE_InvalidInput)
+	}
+
+	err = imageService.checkPermission(userId, imageEntity)
 	if err != nil {
 		return err
 	}
