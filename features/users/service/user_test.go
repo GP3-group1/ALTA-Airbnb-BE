@@ -128,6 +128,17 @@ func TestLogin(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
+	t.Run("Success", func(t *testing.T) {
+		repo.On("Login", mock.Anything).Return(returnCore, nil).Once()
+
+		srv := New(repo)
+		core, token, err := srv.Login(email, "asdasd")
+		assert.NotNil(t, err)
+		assert.Equal(t, "", core.Name)
+		assert.Equal(t, "", token)
+		repo.AssertExpectations(t)
+	})
+
 	t.Run("Failed validate", func(t *testing.T) {
 		input := users.UserEntity{
 			Email:    "",
@@ -223,6 +234,19 @@ func TestUpdatePassword(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
+	t.Run("Failed when select data", func(t *testing.T) {
+		input := users.UserEntity{
+			Password:    "thegreatest",
+			NewPassword: "goat",
+		}
+		repo.On("SelectData", mock.Anything).Return(users.UserEntity{}, errors.New("error select")).Once()
+
+		srv := New(repo)
+		err := srv.ModifyPassword(id, input)
+		assert.NotNil(t, err)
+		repo.AssertExpectations(t)
+	})
+
 	t.Run("wrong password", func(t *testing.T) {
 		input := users.UserEntity{
 			Password:    "asdasd",
@@ -234,6 +258,20 @@ func TestUpdatePassword(t *testing.T) {
 		err := srv.ModifyPassword(id, input)
 		assert.NotNil(t, err)
 		assert.Equal(t, "wrong password", err.Error())
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Failed when update data", func(t *testing.T) {
+		input := users.UserEntity{
+			Password:    "thegreatest",
+			NewPassword: "goat",
+		}
+		repo.On("SelectData", mock.Anything).Return(core, nil).Once()
+		repo.On("UpdateData", mock.Anything, mock.Anything).Return(errors.New("error update")).Once()
+
+		srv := New(repo)
+		err := srv.ModifyPassword(id, input)
+		assert.NotNil(t, err)
 		repo.AssertExpectations(t)
 	})
 
@@ -264,6 +302,31 @@ func TestUpdateBalance(t *testing.T) {
 		srv := New(repo)
 		err := srv.UpdateBalance(id, input)
 		assert.Nil(t, err)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Error when select data", func(t *testing.T) {
+		input := users.UserEntity{
+			Balance: 5000,
+		}
+		repo.On("SelectData", mock.Anything).Return(users.UserEntity{}, errors.New("error select")).Once()
+
+		srv := New(repo)
+		err := srv.UpdateBalance(id, input)
+		assert.NotNil(t, err)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Success", func(t *testing.T) {
+		input := users.UserEntity{
+			Balance: 5000,
+		}
+		repo.On("SelectData", mock.Anything).Return(core, nil).Once()
+		repo.On("UpdateData", mock.Anything, mock.Anything).Return(errors.New("error update")).Once()
+
+		srv := New(repo)
+		err := srv.UpdateBalance(id, input)
+		assert.NotNil(t, err)
 		repo.AssertExpectations(t)
 	})
 

@@ -171,4 +171,100 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, returnDataMidtrans, response)
 		repo.AssertExpectations(t)
 	})
+
+	t.Run("Failed validate", func(t *testing.T) {
+		input := reservations.ReservationEntity{
+			CheckInDate:  time.Time{},
+			CheckOutDate: time.Date(2023, time.March, 17, 0, 0, 0, 0, time.UTC)}
+		srv := New(repo)
+		response, err := srv.Create(userID, roomID, input)
+		assert.NotNil(t, err)
+		assert.Equal(t, returnDataMidtrans, response)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Failed validate date", func(t *testing.T) {
+		input := reservations.ReservationEntity{
+			CheckInDate:  time.Date(2023, time.March, 17, 0, 0, 0, 0, time.UTC),
+			CheckOutDate: time.Date(2023, time.March, 16, 0, 0, 0, 0, time.UTC),
+		}
+		srv := New(repo)
+		response, err := srv.Create(userID, roomID, input)
+		assert.NotNil(t, err)
+		assert.Equal(t, returnDataMidtrans, response)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Failed when select room", func(t *testing.T) {
+		input := reservations.ReservationEntity{
+			UserID:       1,
+			RoomID:       1,
+			CheckInDate:  time.Date(2023, time.March, 16, 0, 0, 0, 0, time.UTC),
+			CheckOutDate: time.Date(2023, time.March, 17, 0, 0, 0, 0, time.UTC),
+			TotalNight:   1,
+			TotalPrice:   200,
+		}
+
+		repo.On("SelectRoom", mock.Anything).Return(reservations.ReservationEntity{}, errors.New("error select")).Once()
+
+		srv := New(repo)
+
+		response, err := srv.Create(userID, roomID, input)
+		assert.NotNil(t, err)
+		assert.Equal(t, returnDataMidtrans, response)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Failed when select user", func(t *testing.T) {
+		input := reservations.ReservationEntity{
+			UserID:       1,
+			RoomID:       1,
+			CheckInDate:  time.Date(2023, time.March, 16, 0, 0, 0, 0, time.UTC),
+			CheckOutDate: time.Date(2023, time.March, 17, 0, 0, 0, 0, time.UTC),
+			TotalNight:   1,
+			TotalPrice:   200,
+		}
+
+		repo.On("SelectRoom", mock.Anything).Return(selectRoom, nil).Once()
+		repo.On("SelectUser", mock.Anything).Return(reservations.ReservationEntity{}, errors.New("error select")).Once()
+
+		srv := New(repo)
+
+		response, err := srv.Create(userID, roomID, input)
+		assert.NotNil(t, err)
+		assert.Equal(t, returnDataMidtrans, response)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Failed when validate user's balance", func(t *testing.T) {
+		input := reservations.ReservationEntity{
+			UserID:       1,
+			RoomID:       1,
+			CheckInDate:  time.Date(2023, time.March, 16, 0, 0, 0, 0, time.UTC),
+			CheckOutDate: time.Date(2023, time.March, 17, 0, 0, 0, 0, time.UTC),
+			TotalNight:   1,
+			TotalPrice:   200,
+		}
+
+		selectUser := reservations.ReservationEntity{
+			User: reservations.UserEntity{
+				ID:          1,
+				Name:        "Muhammad Ali",
+				Email:       "ali@mail.com",
+				Address:     "Lewo",
+				PhoneNumber: "08123456789",
+				Balance:     0,
+			},
+		}
+
+		repo.On("SelectRoom", mock.Anything).Return(selectRoom, nil).Once()
+		repo.On("SelectUser", mock.Anything).Return(selectUser, nil).Once()
+
+		srv := New(repo)
+
+		response, err := srv.Create(userID, roomID, input)
+		assert.NotNil(t, err)
+		assert.Equal(t, returnDataMidtrans, response)
+		repo.AssertExpectations(t)
+	})
 }
