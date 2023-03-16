@@ -57,7 +57,7 @@
 				
 				<option value="file0">alta-airbnb-be/features/reservations/delivery/adapter.go (92.9%)</option>
 				
-				<option value="file1">alta-airbnb-be/features/reservations/delivery/handler.go (53.8%)</option>
+				<option value="file1">alta-airbnb-be/features/reservations/delivery/handler.go (69.2%)</option>
 				
 				<option value="file2">alta-airbnb-be/features/reservations/service/reservation.go (95.5%)</option>
 				
@@ -214,22 +214,22 @@ func (reservationHandler *ReservationHandler) GetAllReservation(c echo.Context) 
 
         var page int = 1
         pageParam := c.QueryParam("page")
-        if pageParam != "" </span><span class="cov0" title="0">{
+        if pageParam != "" </span><span class="cov8" title="1">{
                 pageConv, errConv := strconv.Atoi(pageParam)
-                if errConv != nil </span><span class="cov0" title="0">{
+                if errConv != nil </span><span class="cov8" title="1">{
                         return c.JSON(http.StatusBadRequest, helpers.Response(consts.ECHO_InvaildPageParam))
-                }</span> else<span class="cov0" title="0"> {
+                }</span> else<span class="cov8" title="1"> {
                         page = pageConv
                 }</span>
         }
 
         <span class="cov8" title="1">var limit int = 8
         limitParam := c.QueryParam("limit")
-        if limitParam != "" </span><span class="cov0" title="0">{
+        if limitParam != "" </span><span class="cov8" title="1">{
                 limitConv, errConv := strconv.Atoi(limitParam)
-                if errConv != nil </span><span class="cov0" title="0">{
+                if errConv != nil </span><span class="cov8" title="1">{
                         return c.JSON(http.StatusBadRequest, helpers.Response(consts.ECHO_InvaildLimitParam))
-                }</span> else<span class="cov0" title="0"> {
+                }</span> else<span class="cov8" title="1"> {
                         limit = limitConv
                 }</span>
         }

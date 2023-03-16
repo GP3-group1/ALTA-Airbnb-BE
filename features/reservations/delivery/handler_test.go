@@ -65,12 +65,12 @@ func TestGetAll(t *testing.T) {
 
 		srv := New(usecase)
 
-		req := httptest.NewRequest(http.MethodGet, "/users/reservation", nil)
+		req := httptest.NewRequest(http.MethodGet, "/users/reservation?page=2&limit=4", nil)
 		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		rec := httptest.NewRecorder()
 		echoContext := e.NewContext(req, rec)
-		echoContext.SetPath("/users/reservation")
+		echoContext.SetPath("/users/reservationpage=2&limit=4")
 
 		responseData := reservations.ReservationEntity{}
 
@@ -113,6 +113,64 @@ func TestGetAll(t *testing.T) {
 				assert.Error(t, err, "error")
 			}
 			assert.Equal(t, "error select", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed when page query error", func(t *testing.T) {
+		token, errToken := middlewares.CreateToken(userData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodGet, "/users/reservations?page=asdfas", nil)
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users/reservations?page=asdfas")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.GetAllReservation))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "invalid page parameter", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed when limit query error", func(t *testing.T) {
+		token, errToken := middlewares.CreateToken(userData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodGet, "/users/reservations?limit=asdfas", nil)
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users/reservations?limit=asdfas")
+
+		responseData := ResponseGlobal{}
+
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.GetAllReservation))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "invalid limit parameter", responseData.Message)
 		}
 		usecase.AssertExpectations(t)
 	})
