@@ -70,7 +70,7 @@ type MidtransResponse struct {
 type ReservationService_ interface {
 	Create(userID, idParam uint, inputReservation ReservationEntity) (MidtransResponse, error)
 	GetAll(page, limit int, userID uint) ([]ReservationEntity, error)
-	CheckReservation(input ReservationEntity, roomID uint) ([]ReservationEntity, error)
+	CheckReservation(input ReservationEntity, roomID uint) (int, error)
 }
 
 //go:generate mockery --name ReservationData_ --output ../../mocks
@@ -79,7 +79,7 @@ type ReservationData_ interface {
 	SelectUser(userID uint) (ReservationEntity, error)
 	Insert(inputReservation ReservationEntity, inputUser users.UserEntity, userID uint) error
 	SelectAll(limit, offset int, userID uint) ([]ReservationEntity, error)
-	CheckReservation(input ReservationEntity, roomID uint) ([]ReservationEntity, error)
+	CheckReservation(input ReservationEntity, roomID uint) (int, error)
 }
 
 //go:generate mockery --name ReservationDelivery_ --output ../../mocks
