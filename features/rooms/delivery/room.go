@@ -63,12 +63,6 @@ func (roomDelivery *RoomDelivery) ModifyRoom(c echo.Context) error {
 	roomRequest.ID = roomId
 	roomRequest.UserID = userId
 
-	file, _, err := helpers.ExtractImage(c, "image")
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, helpers.Response(err.Error()))
-	}
-	roomRequest.Image = file
-
 	roomEntity := convertToEntity(&roomRequest)
 	err = roomDelivery.roomService.ChangeRoom(&roomEntity)
 	if err != nil {
