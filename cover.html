@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>delivery: Go Coverage Report</title>
+		<title>service: Go Coverage Report</title>
 		<style>
 			body {
 				background: black;
@@ -55,21 +55,23 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/reservations/delivery/adapter.go (100.0%)</option>
+				<option value="file0">alta-airbnb-be/features/images/service/image.go (92.5%)</option>
 				
-				<option value="file1">alta-airbnb-be/features/reservations/delivery/handler.go (100.0%)</option>
+				<option value="file1">alta-airbnb-be/features/reservations/delivery/adapter.go (100.0%)</option>
 				
-				<option value="file2">alta-airbnb-be/features/reservations/service/reservation.go (95.5%)</option>
+				<option value="file2">alta-airbnb-be/features/reservations/delivery/handler.go (100.0%)</option>
 				
-				<option value="file3">alta-airbnb-be/features/rooms/service/room.go (100.0%)</option>
+				<option value="file3">alta-airbnb-be/features/reservations/service/reservation.go (95.5%)</option>
 				
-				<option value="file4">alta-airbnb-be/features/rooms/service/validate.go (100.0%)</option>
+				<option value="file4">alta-airbnb-be/features/rooms/service/room.go (100.0%)</option>
 				
-				<option value="file5">alta-airbnb-be/features/users/delivery/adapter.go (100.0%)</option>
+				<option value="file5">alta-airbnb-be/features/rooms/service/validate.go (100.0%)</option>
 				
-				<option value="file6">alta-airbnb-be/features/users/delivery/handler.go (100.0%)</option>
+				<option value="file6">alta-airbnb-be/features/users/delivery/adapter.go (100.0%)</option>
 				
-				<option value="file7">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
+				<option value="file7">alta-airbnb-be/features/users/delivery/handler.go (100.0%)</option>
+				
+				<option value="file8">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
 				</select>
 			</div>
@@ -83,7 +85,103 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package delivery
+		<pre class="file" id="file0" style="display: none">package service
+
+import (
+        "alta-airbnb-be/features/images"
+        "alta-airbnb-be/features/rooms"
+        "alta-airbnb-be/utils/consts"
+        "errors"
+
+        "github.com/go-playground/validator/v10"
+)
+
+type ImageService struct {
+        imageData images.ImageData_
+        roomData  rooms.RoomData_
+        validate  *validator.Validate
+}
+
+func New(imageData images.ImageData_, roomData rooms.RoomData_) images.ImageService_ <span class="cov8" title="1">{
+        return &amp;ImageService{
+                imageData: imageData,
+                roomData:  roomData,
+                validate:  validator.New(),
+        }
+}</span>
+
+func (imageService *ImageService) checkPermission(userId uint, imageEntity *images.ImageEntity) error <span class="cov8" title="1">{
+        roomEntity := rooms.RoomEntity{UserID: userId}
+        roomEntities, err := imageService.roomData.SelectRoomsByUserId(&amp;roomEntity)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">if len(roomEntities) != 0 </span><span class="cov8" title="1">{
+                for _, val := range roomEntities </span><span class="cov8" title="1">{
+                        if val.ID == imageEntity.RoomID </span><span class="cov8" title="1">{
+                                return nil
+                        }</span>
+                }
+        }
+        <span class="cov8" title="1">return errors.New(consts.SERVER_ForbiddenRequest)</span>
+}
+
+func (imageService *ImageService) CreateImage(userId uint, imageEntity *images.ImageEntity) (*images.ImageEntity, error) <span class="cov8" title="1">{
+        err := imageService.validate.Struct(imageEntity)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, errors.New(consts.IMAGE_InvalidInput)
+        }</span>
+
+        <span class="cov8" title="1">err = imageService.checkPermission(userId, imageEntity)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">imageEntity, err = imageService.imageData.InsertImage(imageEntity)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return imageEntity, nil</span>
+}
+
+func (imageService *ImageService) ChangeImage(userId uint, imageEntity *images.ImageEntity) (*images.ImageEntity, error) <span class="cov8" title="1">{
+        err := imageService.validate.Struct(imageEntity)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, errors.New(consts.IMAGE_InvalidInput)
+        }</span>
+
+        <span class="cov8" title="1">err = imageService.checkPermission(userId, imageEntity)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">imageEntity, err = imageService.imageData.UpdateImage(imageEntity)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return imageEntity, nil</span>
+}
+
+func (imageService *ImageService) RemoveImage(userId uint, imageEntity *images.ImageEntity) error <span class="cov8" title="1">{
+        err := imageService.validate.Struct(imageEntity)
+        if err != nil </span><span class="cov8" title="1">{
+                return errors.New(consts.IMAGE_InvalidInput)
+        }</span>
+
+        <span class="cov8" title="1">err = imageService.checkPermission(userId, imageEntity)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">err = imageService.imageData.DeleteImage(imageEntity)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package delivery
 
 import (
         "alta-airbnb-be/features/reservations"
@@ -130,7 +228,7 @@ func entityToResponseList(reservationEntity []reservations.ReservationEntity) []
 }
 </pre>
 		
-		<pre class="file" id="file1" style="display: none">package delivery
+		<pre class="file" id="file2" style="display: none">package delivery
 
 import (
         "alta-airbnb-be/features/reservations"
@@ -248,7 +346,7 @@ func New(reservationService reservations.ReservationService_) reservations.Reser
 }</span>
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package service
+		<pre class="file" id="file3" style="display: none">package service
 
 import (
         "alta-airbnb-be/features/reservations"
@@ -363,7 +461,7 @@ func New(reservationData reservations.ReservationData_) reservations.Reservation
 }</span>
 </pre>
 		
-		<pre class="file" id="file3" style="display: none">package service
+		<pre class="file" id="file4" style="display: none">package service
 
 import (
         "alta-airbnb-be/features/reviews"
@@ -469,7 +567,7 @@ func (roomService *RoomService) GetReviewsByRoomId(reviewEntity *reviews.ReviewE
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package service
+		<pre class="file" id="file5" style="display: none">package service
 
 import (
         "alta-airbnb-be/features/reviews"
@@ -489,7 +587,7 @@ func Validate(roomService *RoomService, reviewEntity *reviews.ReviewEntity) erro
         <span class="cov8" title="1">return nil</span>
 }</pre>
 		
-		<pre class="file" id="file5" style="display: none">package delivery
+		<pre class="file" id="file6" style="display: none">package delivery
 
 import "alta-airbnb-be/features/users"
 
@@ -532,7 +630,7 @@ func entityToResponse(userEntity users.UserEntity) users.UserResponse <span clas
 }</span>
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package delivery
+		<pre class="file" id="file7" style="display: none">package delivery
 
 import (
         "alta-airbnb-be/features/users"
@@ -671,7 +769,7 @@ func New(userService users.UserService_) users.UserDelivery_ <span class="cov8" 
 }</span>
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package service
+		<pre class="file" id="file8" style="display: none">package service
 
 import (
         "alta-airbnb-be/features/users"
