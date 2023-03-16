@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/users/service/user.go (23.4%)</option>
+				<option value="file0">alta-airbnb-be/features/users/service/user.go (25.0%)</option>
 				
 				</select>
 			</div>
@@ -123,7 +123,7 @@ func (userService *userService) Create(input users.UserEntity) error <span class
         input.Balance = 0
 
         errInsert := userService.userData.Insert(input)
-        if errInsert != nil </span><span class="cov0" title="0">{
+        if errInsert != nil </span><span class="cov8" title="1">{
                 return errInsert
         }</span>
 

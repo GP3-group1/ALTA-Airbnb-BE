@@ -42,12 +42,12 @@ func TestDelete(t *testing.T) {
 
 	t.Run("Failed when func Delete return error", func(t *testing.T) {
 		id := uint(1)
-		repo.On("Delete", mock.Anything).Return(errors.New("error delete data user")).Once()
+		repo.On("Delete", mock.Anything).Return(errors.New("error delete data")).Once()
 
 		srv := New(repo)
 		err := srv.Remove(id)
 		assert.NotNil(t, err)
-		assert.Equal(t, "error delete data user", err.Error())
+		assert.Equal(t, "error delete data", err.Error())
 		repo.AssertExpectations(t)
 	})
 }
@@ -72,6 +72,16 @@ func TestInsert(t *testing.T) {
 		srv := New(repo)
 		err := srv.Create(inputData)
 		assert.NotNil(t, err)
+		repo.AssertExpectations(t)
+	})
+
+	t.Run("Failed when func Insert return error", func(t *testing.T) {
+		repo.On("Insert", mock.Anything).Return(errors.New("error insert data")).Once()
+
+		srv := New(repo)
+		err := srv.Create(mock_data_user)
+		assert.NotNil(t, err)
+		assert.Equal(t, "error insert data", err.Error())
 		repo.AssertExpectations(t)
 	})
 }
