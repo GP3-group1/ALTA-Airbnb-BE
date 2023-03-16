@@ -22,7 +22,7 @@ func (reservationQuery *reservationQuery) CheckReservation(input reservations.Re
 	CheckOutDate := input.CheckOutDate.Format("2006-01-02")
 
 	var row int64
-	txSelect := reservationQuery.db.Model(&models.Reservation{}).Where("room_id = ?", roomID).Where("(start_date <= ? AND end_date >= ?) OR (start_date >= ? AND end_date <= ?) OR (start_date <= ? AND end_date >= ?)", CheckOutDate, CheckInDate, CheckInDate, CheckOutDate, CheckInDate, CheckOutDate).Count(&row)
+	txSelect := reservationQuery.db.Model(&models.Reservation{}).Where("room_id = ?", roomID).Where("(check_in_date <= ? AND check_out_date >= ?) OR (check_in_date >= ? AND check_out_date <= ?) OR (check_in_date <= ? AND check_out_date >= ?)", CheckOutDate, CheckInDate, CheckInDate, CheckOutDate, CheckInDate, CheckOutDate).Count(&row)
 	if txSelect.Error != nil {
 		return 0, txSelect.Error
 	}
