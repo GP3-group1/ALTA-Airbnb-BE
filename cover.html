@@ -55,9 +55,9 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/reservations/delivery/adapter.go (50.0%)</option>
+				<option value="file0">alta-airbnb-be/features/reservations/delivery/adapter.go (92.9%)</option>
 				
-				<option value="file1">alta-airbnb-be/features/reservations/delivery/handler.go (23.1%)</option>
+				<option value="file1">alta-airbnb-be/features/reservations/delivery/handler.go (53.8%)</option>
 				
 				<option value="file2">alta-airbnb-be/features/reservations/service/reservation.go (95.5%)</option>
 				
@@ -91,16 +91,16 @@ import (
         "time"
 )
 
-func insertToEntity(reservationInsert reservations.ReservationInsert) (reservations.ReservationEntity, error) <span class="cov0" title="0">{
+func insertToEntity(reservationInsert reservations.ReservationInsert) (reservations.ReservationEntity, error) <span class="cov8" title="1">{
         CheckInDate, err := time.Parse("2006-01-02", reservationInsert.CheckInDate)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return reservations.ReservationEntity{}, errors.New("invalid check in date format must YYYY-MM-DD")
         }</span>
-        <span class="cov0" title="0">CheckOutDate, err := time.Parse("2006-01-02", reservationInsert.CheckOutDate)
+        <span class="cov8" title="1">CheckOutDate, err := time.Parse("2006-01-02", reservationInsert.CheckOutDate)
         if err != nil </span><span class="cov0" title="0">{
                 return reservations.ReservationEntity{}, errors.New("invalid check out date format must YYYY-MM-DD")
         }</span>
-        <span class="cov0" title="0">return reservations.ReservationEntity{
+        <span class="cov8" title="1">return reservations.ReservationEntity{
                 CheckInDate:  CheckInDate,
                 CheckOutDate: CheckOutDate,
         }, nil</span>
@@ -179,33 +179,33 @@ func (reservationHandler *ReservationHandler) AddReservation(c echo.Context) err
 }
 
 // CheckReservation implements reservations.ReservationDeliveryInterface_
-func (reservationHandler *ReservationHandler) CheckReservation(c echo.Context) error <span class="cov0" title="0">{
+func (reservationHandler *ReservationHandler) CheckReservation(c echo.Context) error <span class="cov8" title="1">{
         idParam, errParam := helpers.ExtractIDParam(c)
-        if errParam != nil </span><span class="cov0" title="0">{
+        if errParam != nil </span><span class="cov8" title="1">{
                 return c.JSON(http.StatusBadRequest, helpers.Response(errParam.Error()))
         }</span>
 
-        <span class="cov0" title="0">input := reservations.ReservationInsert{}
+        <span class="cov8" title="1">input := reservations.ReservationInsert{}
         errBind := c.Bind(&amp;input)
-        if errBind != nil </span><span class="cov0" title="0">{
+        if errBind != nil </span><span class="cov8" title="1">{
                 return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_ErrorBindReservationData))
         }</span>
 
-        <span class="cov0" title="0">inputReservationEntity, errMapping := insertToEntity(input)
-        if errMapping != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">inputReservationEntity, errMapping := insertToEntity(input)
+        if errMapping != nil </span><span class="cov8" title="1">{
                 return c.JSON(http.StatusBadRequest, helpers.Response(errMapping.Error()))
         }</span>
 
-        <span class="cov0" title="0">row, errSelect := reservationHandler.reservationService.CheckReservation(inputReservationEntity, idParam)
-        if errSelect != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">row, errSelect := reservationHandler.reservationService.CheckReservation(inputReservationEntity, idParam)
+        if errSelect != nil </span><span class="cov8" title="1">{
                 return c.JSON(helpers.ErrorResponse(errSelect))
         }</span>
 
-        <span class="cov0" title="0">if row == 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if row == 0 </span><span class="cov8" title="1">{
                 return c.JSON(http.StatusOK, helpers.Response(consts.RESERVATION_RoomAvailable))
         }</span>
 
-        <span class="cov0" title="0">return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_RoomNotAvailable))</span>
+        <span class="cov8" title="1">return c.JSON(http.StatusBadRequest, helpers.Response(consts.RESERVATION_RoomNotAvailable))</span>
 }
 
 // GetAllReservation implements reservations.ReservationDeliveryInterface_
