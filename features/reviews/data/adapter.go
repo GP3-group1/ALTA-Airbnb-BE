@@ -7,10 +7,11 @@ import (
 
 func ConvertToEntity(reviewModel _reviewModel.Review) *reviews.ReviewEntity {
 	reviewEntity := reviews.ReviewEntity{
-		UserID:  reviewModel.UserID,
-		RoomID:  reviewModel.RoomID,
-		Comment: reviewModel.Comment,
-		Rating:  reviewModel.Rating,
+		UserID:    reviewModel.UserID,
+		RoomID:    reviewModel.RoomID,
+		Comment:   reviewModel.Comment,
+		Rating:    reviewModel.Rating,
+		CreatedAt: reviewModel.CreatedAt,
 	}
 	return &reviewEntity
 }
@@ -18,12 +19,7 @@ func ConvertToEntity(reviewModel _reviewModel.Review) *reviews.ReviewEntity {
 func ConvertToEntities(reviewModels []_reviewModel.Review) []*reviews.ReviewEntity {
 	reviewEntities := []*reviews.ReviewEntity{}
 	for _, val := range reviewModels {
-		reviewEntities = append(reviewEntities, &reviews.ReviewEntity{
-			UserID:  val.UserID,
-			RoomID:  val.RoomID,
-			Comment: val.Comment,
-			Rating:  val.Rating,
-		})
+		reviewEntities = append(reviewEntities, ConvertToEntity(val))
 	}
 	return reviewEntities
 }
