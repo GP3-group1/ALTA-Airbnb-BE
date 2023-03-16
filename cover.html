@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (27.3%)</option>
+				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (36.4%)</option>
 				
 				<option value="file1">alta-airbnb-be/features/users/service/user.go (87.5%)</option>
 				
@@ -110,13 +110,13 @@ func (reservationService *reservationService) CheckReservation(input reservation
 }
 
 // GetAll implements reservations.ReservationServiceInterface_
-func (reservationService *reservationService) GetAll(page, limit int, userID uint) ([]reservations.ReservationEntity, error) <span class="cov0" title="0">{
+func (reservationService *reservationService) GetAll(page, limit int, userID uint) ([]reservations.ReservationEntity, error) <span class="cov8" title="1">{
         offset := (page - 1) * limit
         reservationEntity, errSelect := reservationService.reservationData.SelectAll(limit, offset, userID)
         if errSelect != nil </span><span class="cov0" title="0">{
                 return []reservations.ReservationEntity{}, errSelect
         }</span>
-        <span class="cov0" title="0">return reservationEntity, nil</span>
+        <span class="cov8" title="1">return reservationEntity, nil</span>
 }
 
 // Create implements reservations.ReservationServiceInterface_

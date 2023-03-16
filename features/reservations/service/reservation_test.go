@@ -76,5 +76,35 @@ func TestCheckReservation(t *testing.T) {
 		assert.Equal(t, int64(0), row)
 		repo.AssertExpectations(t)
 	})
+}
 
+func TestGetAll(t *testing.T) {
+	repo := new(mocks.ReservationData)
+	returnData := []reservations.ReservationEntity{
+		{
+			ID:     1,
+			RoomID: 1,
+			Room: reservations.RoomEntity{
+				Name:  "Villa Biru Laut",
+				Price: 200,
+			},
+			CheckInDate:  time.Date(2023, time.March, 16, 0, 0, 0, 0, time.UTC),
+			CheckOutDate: time.Date(2023, time.March, 17, 0, 0, 0, 0, time.UTC),
+			TotalNight:   1,
+			TotalPrice:   200,
+		},
+	}
+	page := 1
+	limit := 10
+	userID := 1
+
+	t.Run("Success Get All", func(t *testing.T) {
+		repo.On("SelectAll", mock.Anything, mock.Anything, mock.Anything).Return(returnData, nil).Once()
+
+		srv := New(repo)
+		response, err := srv.GetAll(page, limit, uint(userID))
+		assert.Nil(t, err)
+		assert.Equal(t, returnData[0].RoomID, response[0].RoomID)
+		repo.AssertExpectations(t)
+	})
 }
