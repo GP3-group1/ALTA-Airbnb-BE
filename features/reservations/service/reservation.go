@@ -1,16 +1,13 @@
 package service
 
 import (
-	"alta-airbnb-be/app/config"
 	"alta-airbnb-be/features/reservations"
 	"alta-airbnb-be/features/users"
 	"alta-airbnb-be/utils/consts"
+	"alta-airbnb-be/utils/helpers"
 	"errors"
-	"strconv"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/midtrans/midtrans-go"
-	"github.com/midtrans/midtrans-go/snap"
 )
 
 type reservationService struct {
@@ -105,56 +102,10 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 		return reservations.MidtransResponse{}, errSelectReservation
 	}
 
-	// request midtrans snap
-	var snapClient = snap.Client{}
-	snapClient.New(config.MIDTRANS_SERVER_KEY, midtrans.Sandbox)
-
-	// parsing user id and item id
-	user_id := strconv.Itoa(int(userID))
-	item_id := strconv.Itoa(int(selectReservation.ID))
-
-	// customer
-	custAddress := &midtrans.CustomerAddress{
-		FName:       selectUser.User.Name,
-		Phone:       selectUser.User.PhoneNumber,
-		Address:     selectUser.User.Address,
-		CountryCode: "IDN",
-	}
-
-	req := &snap.Request{
-		TransactionDetails: midtrans.TransactionDetails{
-			OrderID:  "ALTA-Airbnb-" + user_id + "-" + item_id,
-			GrossAmt: int64(inputReservation.TotalPrice),
-		},
-		CreditCard: &snap.CreditCardDetails{
-			Secure: true,
-		},
-		CustomerDetail: &midtrans.CustomerDetails{
-			FName:    selectUser.User.Name,
-			Email:    selectUser.User.Email,
-			Phone:    selectUser.User.PhoneNumber,
-			BillAddr: custAddress,
-			ShipAddr: custAddress,
-		},
-		EnabledPayments: snap.AllSnapPaymentType,
-		Items: &[]midtrans.ItemDetails{
-			{
-				ID:    "Room-" + item_id,
-				Qty:   int32(inputReservation.TotalNight),
-				Price: int64(selectRoom.Room.Price),
-				Name:  selectRoom.Room.Name,
-			},
-		},
-	}
-
-	response, errSnap := snapClient.CreateTransaction(req)
+	// midtrans helpers
+	midtransResponse, errSnap := helpers.RequestSnapMidtrans(selectUser, selectRoom, selectReservation, inputReservation)
 	if errSnap != nil {
 		return reservations.MidtransResponse{}, errSnap
-	}
-
-	midtransResponse := reservations.MidtransResponse{
-		Token:       response.Token,
-		RedirectUrl: response.RedirectURL,
 	}
 
 	return midtransResponse, nil
