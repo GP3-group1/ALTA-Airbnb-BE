@@ -107,4 +107,14 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, returnData[0].RoomID, response[0].RoomID)
 		repo.AssertExpectations(t)
 	})
+
+	t.Run("Success Get All", func(t *testing.T) {
+		repo.On("SelectAll", mock.Anything, mock.Anything, mock.Anything).Return([]reservations.ReservationEntity{}, errors.New("error select")).Once()
+
+		srv := New(repo)
+		response, err := srv.GetAll(page, limit, uint(userID))
+		assert.NotNil(t, err)
+		assert.Equal(t, []reservations.ReservationEntity{}, response)
+		repo.AssertExpectations(t)
+	})
 }
