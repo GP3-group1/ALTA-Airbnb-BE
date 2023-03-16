@@ -63,4 +63,15 @@ func TestInsert(t *testing.T) {
 		assert.Nil(t, err)
 		repo.AssertExpectations(t)
 	})
+
+	t.Run("Failed validate", func(t *testing.T) {
+		inputData := users.UserEntity{
+			Name:  "Muhammad Ali",
+			Email: "ali@mail.com",
+		}
+		srv := New(repo)
+		err := srv.Create(inputData)
+		assert.NotNil(t, err)
+		repo.AssertExpectations(t)
+	})
 }
