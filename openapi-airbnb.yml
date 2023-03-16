@@ -11,7 +11,7 @@ servers:
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/JURRASIC_1/ALTA-Airbnb-API/1.0
   - description: ALTA Airbnb Base Server
-    url: http://104.198.56.90:8081
+    url: https://airbnb.my-extravaganza.site
 tags:
   - name: Authentication
     description: Endpoint for verifying who a user is
