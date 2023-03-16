@@ -127,6 +127,20 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, "", token)
 		repo.AssertExpectations(t)
 	})
+
+	t.Run("Failed validate", func(t *testing.T) {
+		input := users.UserEntity{
+			Email:    "",
+			Password: "",
+		}
+		srv := New(repo)
+		core, token, err := srv.Login(input.Email, input.Password)
+		assert.NotNil(t, err)
+		assert.NotNil(t, err)
+		assert.Equal(t, users.UserEntity{}.Name, core.Name)
+		assert.Equal(t, "", token)
+		repo.AssertExpectations(t)
+	})
 }
 
 func TestSelectData(t *testing.T) {
