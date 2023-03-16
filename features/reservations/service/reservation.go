@@ -79,7 +79,7 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
 	inputReservation.TotalPrice = float64(selectRoom.Room.Price) * float64(inputReservation.TotalNight)
 
 	// get user data by id
-	selectUser, errSelectUser := reservationService.reservationData.SelectUser(inputReservation.UserID)
+	selectUser, errSelectUser := reservationService.reservationData.SelectUser(userID)
 	if errSelectUser != nil {
 		return reservations.MidtransResponse{}, errSelectUser
 	}
