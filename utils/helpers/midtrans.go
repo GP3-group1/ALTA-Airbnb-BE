@@ -15,9 +15,9 @@ func RequestSnapMidtrans(user reservations.ReservationEntity, room reservations.
 	snapClient.New(config.MIDTRANS_SERVER_KEY, midtrans.Sandbox)
 
 	// parsing user id and item id
-	user_id := strconv.Itoa(int(user.User.ID))
+	user_id := strconv.Itoa(int(input.UserID))
 	reservation_id := strconv.Itoa(int(reservation.ID))
-	room_id := strconv.Itoa(int(room.Room.ID))
+	room_id := strconv.Itoa(int(input.RoomID))
 
 	// customer
 	custAddress := &midtrans.CustomerAddress{
