@@ -61,7 +61,11 @@
 				
 				<option value="file2">alta-airbnb-be/features/rooms/service/validate.go (100.0%)</option>
 				
-				<option value="file3">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
+				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (100.0%)</option>
+				
+				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (100.0%)</option>
+				
+				<option value="file5">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
 				</select>
 			</div>
@@ -316,7 +320,189 @@ func Validate(roomService *RoomService, reviewEntity *reviews.ReviewEntity) erro
         <span class="cov8" title="1">return nil</span>
 }</pre>
 		
-		<pre class="file" id="file3" style="display: none">package service
+		<pre class="file" id="file3" style="display: none">package delivery
+
+import "alta-airbnb-be/features/users"
+
+func registerToEntity(userRegister users.UserRegister) users.UserEntity <span class="cov8" title="1">{
+        return users.UserEntity{
+                Name:     userRegister.Name,
+                Email:    userRegister.Email,
+                Password: userRegister.Password,
+        }
+}</span>
+
+func requestUpdateToEntity(userUpdate users.UserUpdate) users.UserEntity <span class="cov8" title="1">{
+        return users.UserEntity{
+                Name:        userUpdate.Name,
+                Email:       userUpdate.Email,
+                Sex:         userUpdate.Sex,
+                Address:     userUpdate.Address,
+                PhoneNumber: userUpdate.PhoneNumber,
+                Balance:     userUpdate.Balance,
+        }
+}</span>
+
+func requestUpdatePasswordToEntity(UpdatePassword users.UserUpdatePassword) users.UserEntity <span class="cov8" title="1">{
+        return users.UserEntity{
+                Password:    UpdatePassword.Password,
+                NewPassword: UpdatePassword.NewPassword,
+        }
+}</span>
+
+func entityToResponse(userEntity users.UserEntity) users.UserResponse <span class="cov8" title="1">{
+        return users.UserResponse{
+                ID:          userEntity.ID,
+                Name:        userEntity.Name,
+                Email:       userEntity.Email,
+                Sex:         userEntity.Sex,
+                Address:     userEntity.Address,
+                PhoneNumber: userEntity.PhoneNumber,
+                Balance:     userEntity.Balance,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package delivery
+
+import (
+        "alta-airbnb-be/features/users"
+        "alta-airbnb-be/middlewares"
+        "alta-airbnb-be/utils/consts"
+        "alta-airbnb-be/utils/helpers"
+        "net/http"
+
+        "github.com/labstack/echo/v4"
+)
+
+type UserHandler struct {
+        userService users.UserService_
+}
+
+// UpdateBalance implements users.UserDelivery_
+func (userHandler *UserHandler) UpdateBalance(c echo.Context) error <span class="cov8" title="1">{
+        userID := middlewares.ExtractTokenUserId(c)
+        userInput := users.UserUpdate{}
+        errBind := c.Bind(&amp;userInput)
+        if errBind != nil </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
+        }</span>
+        <span class="cov8" title="1">errUpdate := userHandler.userService.UpdateBalance(userID, requestUpdateToEntity(userInput))
+        if errUpdate != nil </span><span class="cov8" title="1">{
+                return c.JSON(helpers.ErrorResponse(errUpdate))
+        }</span>
+
+        <span class="cov8" title="1">return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateBalance))</span>
+}
+
+// GetUserBalance implements users.UserDelivery_
+func (userHandler *UserHandler) GetUserBalance(c echo.Context) error <span class="cov8" title="1">{
+        userID := middlewares.ExtractTokenUserId(c)
+        userEntity, errSelect := userHandler.userService.GetData(userID)
+        if errSelect != nil </span><span class="cov8" title="1">{
+                return c.JSON(helpers.ErrorResponse(errSelect))
+        }</span>
+        <span class="cov8" title="1">response := entityToResponse(userEntity)
+        dataResponse := map[string]any{
+                "id":      response.ID,
+                "balance": response.Balance,
+        }
+        return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.USER_SuccessReadBalance, dataResponse))</span>
+}
+
+// GetUserData implements users.UserDeliveryInterface_
+func (userHandler *UserHandler) GetUserData(c echo.Context) error <span class="cov8" title="1">{
+        userID := middlewares.ExtractTokenUserId(c)
+        userEntity, errSelect := userHandler.userService.GetData(userID)
+        if errSelect != nil </span><span class="cov8" title="1">{
+                return c.JSON(helpers.ErrorResponse(errSelect))
+        }</span>
+        <span class="cov8" title="1">return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.USER_SuccessReadUserData, entityToResponse(userEntity)))</span>
+}
+
+// Login implements users.UserDeliveryInterface_
+func (userHandler *UserHandler) Login(c echo.Context) error <span class="cov8" title="1">{
+        loginInput := users.UserLogin{}
+        errBind := c.Bind(&amp;loginInput)
+        if errBind != nil </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
+        }</span>
+        <span class="cov8" title="1">userEntity, token, errLogin := userHandler.userService.Login(loginInput.Email, loginInput.Password)
+        if errLogin != nil </span><span class="cov8" title="1">{
+                return c.JSON(helpers.ErrorResponse(errLogin))
+        }</span>
+        <span class="cov8" title="1">dataResponse := map[string]any{
+                "id":    userEntity.ID,
+                "name":  userEntity.Name,
+                "token": token,
+        }
+        return c.JSON(http.StatusOK, helpers.ResponseWithData(consts.USER_LoginSuccess, dataResponse))</span>
+}
+
+// Register implements users.UserDeliveryInterface_
+func (userHandler *UserHandler) Register(c echo.Context) error <span class="cov8" title="1">{
+        userInput := users.UserRegister{}
+        errBind := c.Bind(&amp;userInput)
+        if errBind != nil </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
+        }</span>
+        <span class="cov8" title="1">errInsert := userHandler.userService.Create(registerToEntity(userInput))
+        if errInsert != nil </span><span class="cov8" title="1">{
+                return c.JSON(helpers.ErrorResponse(errInsert))
+        }</span>
+
+        <span class="cov8" title="1">return c.JSON(http.StatusCreated, helpers.Response(consts.USER_RegisterSuccess))</span>
+}
+
+// RemoveAccount implements users.UserDeliveryInterface_
+func (userHandler *UserHandler) RemoveAccount(c echo.Context) error <span class="cov8" title="1">{
+        userID := middlewares.ExtractTokenUserId(c)
+        errDelete := userHandler.userService.Remove(userID)
+        if errDelete != nil </span><span class="cov8" title="1">{
+                return c.JSON(helpers.ErrorResponse(errDelete))
+        }</span>
+        <span class="cov8" title="1">return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessDelete))</span>
+}
+
+// UpdateAccount implements users.UserDeliveryInterface_
+func (userHandler *UserHandler) UpdateAccount(c echo.Context) error <span class="cov8" title="1">{
+        userID := middlewares.ExtractTokenUserId(c)
+        userInput := users.UserUpdate{}
+        errBind := c.Bind(&amp;userInput)
+        if errBind != nil </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
+        }</span>
+        <span class="cov8" title="1">errUpdate := userHandler.userService.ModifyData(userID, requestUpdateToEntity(userInput))
+        if errUpdate != nil </span><span class="cov8" title="1">{
+                return c.JSON(helpers.ErrorResponse(errUpdate))
+        }</span>
+
+        <span class="cov8" title="1">return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateUserData))</span>
+}
+
+// UpdatePassword implements users.UserDeliveryInterface_
+func (userHandler *UserHandler) UpdatePassword(c echo.Context) error <span class="cov8" title="1">{
+        userID := middlewares.ExtractTokenUserId(c)
+        input := users.UserUpdatePassword{}
+        errBind := c.Bind(&amp;input)
+        if errBind != nil </span><span class="cov8" title="1">{
+                return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
+        }</span>
+        <span class="cov8" title="1">errUpdatePassword := userHandler.userService.ModifyPassword(userID, requestUpdatePasswordToEntity(input))
+        if errUpdatePassword != nil </span><span class="cov8" title="1">{
+                return c.JSON(helpers.ErrorResponse(errUpdatePassword))
+        }</span>
+        <span class="cov8" title="1">return c.JSON(http.StatusOK, helpers.Response(consts.USER_SuccessUpdateUserData))</span>
+}
+
+func New(userService users.UserService_) users.UserDelivery_ <span class="cov8" title="1">{
+        return &amp;UserHandler{
+                userService: userService,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package service
 
 import (
         "alta-airbnb-be/features/users"
