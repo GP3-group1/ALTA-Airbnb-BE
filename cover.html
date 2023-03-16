@@ -61,9 +61,9 @@
 				
 				<option value="file2">alta-airbnb-be/features/rooms/service/validate.go (100.0%)</option>
 				
-				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (25.0%)</option>
+				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (50.0%)</option>
 				
-				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (9.7%)</option>
+				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (19.4%)</option>
 				
 				<option value="file5">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
@@ -324,7 +324,7 @@ func Validate(roomService *RoomService, reviewEntity *reviews.ReviewEntity) erro
 
 import "alta-airbnb-be/features/users"
 
-func registerToEntity(userRegister users.UserRegister) users.UserEntity <span class="cov0" title="0">{
+func registerToEntity(userRegister users.UserRegister) users.UserEntity <span class="cov8" title="1">{
         return users.UserEntity{
                 Name:     userRegister.Name,
                 Email:    userRegister.Email,
@@ -440,18 +440,18 @@ func (userHandler *UserHandler) Login(c echo.Context) error <span class="cov0" t
 }
 
 // Register implements users.UserDeliveryInterface_
-func (userHandler *UserHandler) Register(c echo.Context) error <span class="cov0" title="0">{
+func (userHandler *UserHandler) Register(c echo.Context) error <span class="cov8" title="1">{
         userInput := users.UserRegister{}
         errBind := c.Bind(&amp;userInput)
         if errBind != nil </span><span class="cov0" title="0">{
                 return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
         }</span>
-        <span class="cov0" title="0">errInsert := userHandler.userService.Create(registerToEntity(userInput))
+        <span class="cov8" title="1">errInsert := userHandler.userService.Create(registerToEntity(userInput))
         if errInsert != nil </span><span class="cov0" title="0">{
                 return c.JSON(helpers.ErrorResponse(errInsert))
         }</span>
 
-        <span class="cov0" title="0">return c.JSON(http.StatusCreated, helpers.Response(consts.USER_RegisterSuccess))</span>
+        <span class="cov8" title="1">return c.JSON(http.StatusCreated, helpers.Response(consts.USER_RegisterSuccess))</span>
 }
 
 // RemoveAccount implements users.UserDeliveryInterface_

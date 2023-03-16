@@ -4,6 +4,7 @@ import (
 	"alta-airbnb-be/features/users"
 	"alta-airbnb-be/middlewares"
 	"alta-airbnb-be/mocks"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -28,6 +29,12 @@ var (
 		Balance:     5000,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
+	}
+
+	mock_insert_user = users.UserEntity{
+		Name:     "Muhammad Ali",
+		Email:    "ali@mail.com",
+		Password: "thegreatest",
 	}
 )
 
@@ -97,6 +104,41 @@ func TestGetUser(t *testing.T) {
 				assert.Error(t, err, "error")
 			}
 			assert.Equal(t, "error select data", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+}
+
+func TestInsert(t *testing.T) {
+	reqBody, err := json.Marshal(mock_insert_user)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	e := echo.New()
+	usecase := new(mocks.UserService)
+
+	t.Run("Success Add User", func(t *testing.T) {
+		usecase.On("Create", mock.Anything).Return(nil).Once()
+
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(reqBody))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users")
+
+		responseData := ResponseGlobal{}
+
+		if assert.NoError(t, srv.Register(echoContext)) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusCreated, rec.Code)
+			assert.Equal(t, "succesfully insert user data", responseData.Message)
 		}
 		usecase.AssertExpectations(t)
 	})
