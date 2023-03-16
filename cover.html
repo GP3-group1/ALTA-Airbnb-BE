@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (93.2%)</option>
+				<option value="file0">alta-airbnb-be/features/reservations/service/reservation.go (95.5%)</option>
 				
 				<option value="file1">alta-airbnb-be/features/rooms/service/room.go (100.0%)</option>
 				
@@ -159,7 +159,7 @@ func (reservationService *reservationService) Create(userID, idParam uint, input
         }</span>
 
         // balance validation
-        <span class="cov8" title="1">if selectUser.User.Balance &lt; inputReservation.TotalPrice </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if selectUser.User.Balance &lt; inputReservation.TotalPrice </span><span class="cov8" title="1">{
                 return reservations.MidtransResponse{}, errors.New(consts.RESERVATION_InsertFailed)
         }</span>
 
