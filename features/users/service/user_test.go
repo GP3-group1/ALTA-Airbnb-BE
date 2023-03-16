@@ -189,3 +189,19 @@ func TestUpdateData(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 }
+
+func TestUpdatePassword(t *testing.T) {
+	repo := new(mocks.UserData)
+	id := mock_data_user.ID
+
+	t.Run("Failed validate", func(t *testing.T) {
+		inputData := users.UserEntity{
+			Password:    "",
+			NewPassword: "",
+		}
+		srv := New(repo)
+		err := srv.ModifyPassword(id, inputData)
+		assert.NotNil(t, err)
+		repo.AssertExpectations(t)
+	})
+}
