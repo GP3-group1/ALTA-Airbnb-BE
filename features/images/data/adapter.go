@@ -19,7 +19,7 @@ func convertToGorm(imageEntity *images.ImageEntity) _imageModel.Image {
 func ConvertToEntity(imageModel _imageModel.Image) images.ImageEntity {
 	imageEntity := images.ImageEntity{
 		ID:     imageModel.ID,
-		RoomID: imageModel.ID,
+		RoomID: imageModel.RoomID,
 		Url:    imageModel.Url,
 	}
 	return imageEntity
