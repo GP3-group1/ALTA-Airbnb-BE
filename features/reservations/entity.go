@@ -52,6 +52,7 @@ type ReservationRequest struct {
 
 type ReservationResponse struct {
 	ID           uint    `json:"id"`
+	RoomID       uint    `json:"room_id"`
 	RoomName     string  `json:"room_name"`
 	CheckInDate  string  `json:"check_in"`
 	CheckOutDate string  `json:"check_out"`
