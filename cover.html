@@ -55,7 +55,7 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">alta-airbnb-be/features/users/service/user.go (73.4%)</option>
+				<option value="file0">alta-airbnb-be/features/users/service/user.go (75.0%)</option>
 				
 				</select>
 			</div>
@@ -188,7 +188,7 @@ func (userService *userService) ModifyPassword(userID uint, input users.UserEnti
                 return errSelect
         }</span>
 
-        <span class="cov8" title="1">if !helpers.CompareHashPassword(input.Password, userEntity.Password) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if !helpers.CompareHashPassword(input.Password, userEntity.Password) </span><span class="cov8" title="1">{
                 return errors.New(consts.USER_WrongPassword)
         }</span>
 
