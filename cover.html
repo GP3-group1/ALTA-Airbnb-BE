@@ -63,7 +63,7 @@
 				
 				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (50.0%)</option>
 				
-				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (22.6%)</option>
+				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (33.9%)</option>
 				
 				<option value="file5">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
@@ -396,13 +396,13 @@ func (userHandler *UserHandler) UpdateBalance(c echo.Context) error <span class=
 }
 
 // GetUserBalance implements users.UserDelivery_
-func (userHandler *UserHandler) GetUserBalance(c echo.Context) error <span class="cov0" title="0">{
+func (userHandler *UserHandler) GetUserBalance(c echo.Context) error <span class="cov8" title="1">{
         userID := middlewares.ExtractTokenUserId(c)
         userEntity, errSelect := userHandler.userService.GetData(userID)
-        if errSelect != nil </span><span class="cov0" title="0">{
+        if errSelect != nil </span><span class="cov8" title="1">{
                 return c.JSON(helpers.ErrorResponse(errSelect))
         }</span>
-        <span class="cov0" title="0">response := entityToResponse(userEntity)
+        <span class="cov8" title="1">response := entityToResponse(userEntity)
         dataResponse := map[string]any{
                 "id":      response.ID,
                 "balance": response.Balance,
