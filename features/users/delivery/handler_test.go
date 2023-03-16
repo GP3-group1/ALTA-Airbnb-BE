@@ -371,32 +371,37 @@ func TestUpdateAccount(t *testing.T) {
 		usecase.AssertExpectations(t)
 	})
 
-	// t.Run("Failed Add User when bind error", func(t *testing.T) {
+	t.Run("Failed Add User when bind error", func(t *testing.T) {
+		token, errToken := middlewares.CreateToken(returnData.ID)
+		if errToken != nil {
+			assert.Error(t, errToken)
+		}
 
-	// 	var dataFail = map[string]int{
-	// 		"name": 134,
-	// 	}
-	// 	reqBodyFail, _ := json.Marshal(dataFail)
-	// 	srv := New(usecase)
+		var dataFail = map[string]int{
+			"name": 134,
+		}
+		reqBodyFail, _ := json.Marshal(dataFail)
+		srv := New(usecase)
 
-	// 	req := httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(reqBodyFail))
-	// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	// 	rec := httptest.NewRecorder()
-	// 	echoContext := e.NewContext(req, rec)
-	// 	echoContext.SetPath("/users")
+		req := httptest.NewRequest(http.MethodPut, "/users", bytes.NewBuffer(reqBodyFail))
+		req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users")
 
-	// 	responseData := ResponseGlobal{}
+		responseData := ResponseGlobal{}
 
-	// 	if assert.NoError(t, srv.Register(echoContext)) {
-	// 		responseBody := rec.Body.String()
-	// 		err := json.Unmarshal([]byte(responseBody), &responseData)
-	// 		if err != nil {
-	// 			assert.Error(t, err, "error")
-	// 		}
-	// 		assert.Equal(t, http.StatusBadRequest, rec.Code)
-	// 		assert.Equal(t, "error bind user data", responseData.Message)
-	// 	}
-	// 	usecase.AssertExpectations(t)
-	// })
+		callFunc := middlewares.JWTMiddleware()(echo.HandlerFunc(srv.UpdateAccount))(echoContext)
+		if assert.NoError(t, callFunc) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, "error bind user data", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
 
 }
