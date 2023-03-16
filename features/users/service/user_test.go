@@ -267,6 +267,18 @@ func TestUpdateBalance(t *testing.T) {
 		repo.AssertExpectations(t)
 	})
 
+	t.Run("Error when select data", func(t *testing.T) {
+		input := users.UserEntity{
+			Balance: 5000,
+		}
+		repo.On("SelectData", mock.Anything).Return(users.UserEntity{}, errors.New("error select")).Once()
+
+		srv := New(repo)
+		err := srv.UpdateBalance(id, input)
+		assert.NotNil(t, err)
+		repo.AssertExpectations(t)
+	})
+
 	t.Run("Failed validate", func(t *testing.T) {
 		input := users.UserEntity{
 			Balance: -1,

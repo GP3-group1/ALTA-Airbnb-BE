@@ -61,7 +61,7 @@
 				
 				<option value="file2">alta-airbnb-be/features/rooms/service/validate.go (100.0%)</option>
 				
-				<option value="file3">alta-airbnb-be/features/users/service/user.go (87.5%)</option>
+				<option value="file3">alta-airbnb-be/features/users/service/user.go (89.1%)</option>
 				
 				</select>
 			</div>
@@ -341,7 +341,7 @@ func (userService *userService) UpdateBalance(userID uint, input users.UserEntit
 
         // get user balance
         <span class="cov8" title="1">userEntity, errSelect := userService.userData.SelectData(userID)
-        if errSelect != nil </span><span class="cov0" title="0">{
+        if errSelect != nil </span><span class="cov8" title="1">{
                 return errSelect
         }</span>
 

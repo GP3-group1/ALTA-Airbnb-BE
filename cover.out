@@ -64,7 +64,7 @@ alta-airbnb-be/features/rooms/service/validate.go:18.2,18.12 1 1
 alta-airbnb-be/features/users/service/user.go:19.90,20.23 1 1
 alta-airbnb-be/features/users/service/user.go:20.23,22.3 1 1
 alta-airbnb-be/features/users/service/user.go:25.2,26.22 2 1
-alta-airbnb-be/features/users/service/user.go:26.22,28.3 1 0
+alta-airbnb-be/features/users/service/user.go:26.22,28.3 1 1
 alta-airbnb-be/features/users/service/user.go:30.2,32.22 3 1
 alta-airbnb-be/features/users/service/user.go:32.22,34.3 1 0
 alta-airbnb-be/features/users/service/user.go:36.2,36.12 1 1
