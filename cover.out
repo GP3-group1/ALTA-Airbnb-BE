@@ -14,7 +14,7 @@ alta-airbnb-be/features/users/service/user.go:51.2,55.22 4 1
 alta-airbnb-be/features/users/service/user.go:55.22,57.3 1 1
 alta-airbnb-be/features/users/service/user.go:59.2,59.12 1 1
 alta-airbnb-be/features/users/service/user.go:63.80,65.22 2 1
-alta-airbnb-be/features/users/service/user.go:65.22,67.3 1 0
+alta-airbnb-be/features/users/service/user.go:65.22,67.3 1 1
 alta-airbnb-be/features/users/service/user.go:68.2,68.24 1 1
 alta-airbnb-be/features/users/service/user.go:72.104,73.35 1 1
 alta-airbnb-be/features/users/service/user.go:73.35,75.3 1 0
