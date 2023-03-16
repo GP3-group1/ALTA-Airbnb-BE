@@ -63,7 +63,7 @@
 				
 				<option value="file3">alta-airbnb-be/features/users/delivery/adapter.go (50.0%)</option>
 				
-				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (19.4%)</option>
+				<option value="file4">alta-airbnb-be/features/users/delivery/handler.go (21.0%)</option>
 				
 				<option value="file5">alta-airbnb-be/features/users/service/user.go (95.3%)</option>
 				
@@ -443,7 +443,7 @@ func (userHandler *UserHandler) Login(c echo.Context) error <span class="cov0" t
 func (userHandler *UserHandler) Register(c echo.Context) error <span class="cov8" title="1">{
         userInput := users.UserRegister{}
         errBind := c.Bind(&amp;userInput)
-        if errBind != nil </span><span class="cov0" title="0">{
+        if errBind != nil </span><span class="cov8" title="1">{
                 return c.JSON(http.StatusBadRequest, helpers.Response(consts.USER_ErrorBindUserData))
         }</span>
         <span class="cov8" title="1">errInsert := userHandler.userService.Create(registerToEntity(userInput))

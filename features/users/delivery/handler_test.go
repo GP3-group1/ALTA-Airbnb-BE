@@ -118,7 +118,7 @@ func TestInsert(t *testing.T) {
 	e := echo.New()
 	usecase := new(mocks.UserService)
 
-	t.Run("Success Add User", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		usecase.On("Create", mock.Anything).Return(nil).Once()
 
 		srv := New(usecase)
@@ -139,6 +139,34 @@ func TestInsert(t *testing.T) {
 			}
 			assert.Equal(t, http.StatusCreated, rec.Code)
 			assert.Equal(t, "succesfully insert user data", responseData.Message)
+		}
+		usecase.AssertExpectations(t)
+	})
+
+	t.Run("Failed Add User when bind error", func(t *testing.T) {
+
+		var dataFail = map[string]int{
+			"name": 134,
+		}
+		reqBodyFail, _ := json.Marshal(dataFail)
+		srv := New(usecase)
+
+		req := httptest.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(reqBodyFail))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		echoContext := e.NewContext(req, rec)
+		echoContext.SetPath("/users")
+
+		responseData := ResponseGlobal{}
+
+		if assert.NoError(t, srv.Register(echoContext)) {
+			responseBody := rec.Body.String()
+			err := json.Unmarshal([]byte(responseBody), &responseData)
+			if err != nil {
+				assert.Error(t, err, "error")
+			}
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
+			assert.Equal(t, "error bind user data", responseData.Message)
 		}
 		usecase.AssertExpectations(t)
 	})
