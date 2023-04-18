@@ -22,7 +22,11 @@ func New(db *gorm.DB) images.ImageData_ {
 func (imageData *ImageData) InsertImage(imageEntity *images.ImageEntity) (*images.ImageEntity, error) {
 	imageGorm := convertToGorm(imageEntity)
 
-	imageUrl, err := storage.GetStorageClient().UploadFile(imageEntity.Image, imageEntity.ImageName)
+	// Local
+	imageUrl, err := storage.UploadFile(imageEntity.Image, imageEntity.ImageName)
+
+	//GCS
+	// imageUrl, err := storage.GetStorageClient().UploadFile(imageEntity.Image, imageEntity.ImageName)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +44,11 @@ func (imageData *ImageData) InsertImage(imageEntity *images.ImageEntity) (*image
 func (imageData *ImageData) UpdateImage(imageEntity *images.ImageEntity) (*images.ImageEntity, error) {
 	imageGorm := convertToGorm(imageEntity)
 
-	imageUrl, err := storage.GetStorageClient().UploadFile(imageEntity.Image, imageEntity.ImageName)
+	// Local
+	imageUrl, err := storage.UploadFile(imageEntity.Image, imageEntity.ImageName)
+
+	//GCS
+	// imageUrl, err := storage.GetStorageClient().UploadFile(imageEntity.Image, imageEntity.ImageName)
 	if err != nil {
 		return nil, err
 	}

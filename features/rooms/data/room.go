@@ -47,13 +47,17 @@ func (roomData *RoomData) InsertRoom(roomEntity *rooms.RoomEntity) error {
 		return errors.New(consts.SERVER_InternalServerError)
 	}
 
-	imageName, err := storage.GetStorageClient().UploadFile(roomEntity.Image, roomEntity.ImageName)
+	// Local
+	imageUrl, err := storage.UploadFile(roomEntity.Image, roomEntity.ImageName)
+
+	//GCS
+	// imageUrl, err := storage.GetStorageClient().UploadFile(imageEntity.Image, imageEntity.ImageName)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	tx = txTransaction.Create(&_imageModel.Image{RoomID: roomGorm.ID, Url: imageName})
+	tx = txTransaction.Create(&_imageModel.Image{RoomID: roomGorm.ID, Url: imageUrl})
 	if tx.Error != nil {
 		txTransaction.Rollback()
 		return errors.New(consts.SERVER_InternalServerError)
