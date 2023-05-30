@@ -56,5 +56,5 @@ cd ALTA-Airbnb-BE
 </h3>
 
 <p align="right" style="padding: 5px; border-radius: 100%; background-color: red; font-size: 2rem;">
-  <b><a href="#Immersive-Dashboard">BACK TO TOP</a></b>
+  <b><a href="#Airbnb-App-Project">BACK TO TOP</a></b>
 </p>
